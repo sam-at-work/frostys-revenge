@@ -61,14 +61,14 @@ game/
 - [x] Phase 2: Player Character ✅
 - [x] Phase 3: Level Design ✅
 - [x] Phase 4: Enemies ✅
-- [ ] Phase 5: Boss Battle
+- [x] Phase 5: Boss Battle ✅
 - [ ] Phase 6: Power-ups & Lives
 - [ ] Phase 7: Polish & Assets
 - [ ] Phase 8: Testing & Refinement
 
 ## Current Status
 
-**Phase 4 Complete!** Elf enemies are now patrolling the level:
+**Phase 5 Complete!** Santa boss battle is now implemented:
 - ✅ Excalibur.js installed and configured
 - ✅ TypeScript configuration
 - ✅ Vite build system
@@ -89,6 +89,11 @@ game/
 - ✅ Jump-on-head mechanic to defeat elves
 - ✅ Snowball collision to defeat elves
 - ✅ 14 elves placed throughout the level
+- ✅ Santa boss at the end of the level
+- ✅ Santa throws sparkly Christmas decorations
+- ✅ Decorations follow arc trajectory
+- ✅ Win condition when reaching past Santa
+- ✅ Win scene with replay option
 
 ### What's Working
 - Player can move left/right with Arrow Keys or WASD
@@ -109,12 +114,19 @@ game/
 - Shoot snowballs at elves to defeat them
 - Touching an elf from the side causes damage
 - Player bounces slightly when jumping on elves
+- Santa appears at x=4900 near the end
+- Santa throws golden decorations every 2 seconds
+- Decorations arc through the air with gravity
+- Decorations rotate and pulse for sparkly effect
+- Touching decorations causes damage (unless invincible)
+- Reach x=5100 to win the game
+- Win scene displays with option to play again
 
-### Next Steps (Phase 5)
-- Implement Santa boss at the end of the level
-- Add decoration throwing pattern
-- Create boss encounter mechanics
-- Add win condition
+### Next Steps (Phase 6)
+- Implement Super Banana power-up
+- Add power-up spawning in level
+- Polish lives system UI
+- Add temporary invincibility visuals
 
 ## Technology Stack
 

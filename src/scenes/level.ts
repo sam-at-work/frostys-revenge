@@ -17,12 +17,15 @@ import {
 import { Config } from "../config";
 import { Player } from "../actors/player";
 import { Elf } from "../actors/elf";
+import { Santa } from "../actors/santa";
 import { SnowEmitter } from "../effects/snow";
 
 export class LevelScene extends Scene {
   private player!: Player;
   private livesLabel!: Label;
   private snowEmitter!: SnowEmitter;
+  private santa!: Santa;
+  private winZoneX: number = 5100; // X position to reach to win
 
   public onInitialize() {
     // Set background color
@@ -36,6 +39,9 @@ export class LevelScene extends Scene {
 
     // Create enemies
     this.createEnemies();
+
+    // Create boss
+    this.createBoss();
 
     // Create player
     this.createPlayer();
@@ -229,6 +235,12 @@ export class LevelScene extends Scene {
     this.add(elf);
   }
 
+  private createBoss() {
+    // Place Santa at the end of the level
+    this.santa = new Santa(new Vector(4900, Config.GAME_HEIGHT - 96));
+    this.add(this.santa);
+  }
+
   private createPlayer() {
     const startPos = new Vector(100, Config.GAME_HEIGHT / 2);
     this.player = new Player(startPos);
@@ -268,6 +280,11 @@ export class LevelScene extends Scene {
     // Update snow effect
     if (this.snowEmitter) {
       this.snowEmitter.update(engine, delta, this.camera.pos.x);
+    }
+
+    // Check win condition
+    if (this.player && this.player.pos.x >= this.winZoneX) {
+      engine.goToScene("win");
     }
   }
 }

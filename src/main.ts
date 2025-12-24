@@ -7,6 +7,7 @@ import { Engine, DisplayMode, Color, Loader, Vector } from "excalibur";
 import { Config } from "./config";
 import { LevelScene } from "./scenes/level";
 import { GameOverScene } from "./scenes/gameover";
+import { WinScene } from "./scenes/win";
 
 class Game extends Engine {
   constructor() {
@@ -27,6 +28,7 @@ class Game extends Engine {
     // Add scenes
     this.addScene("level", new LevelScene());
     this.addScene("gameover", new GameOverScene());
+    this.addScene("win", new WinScene());
 
     // Start with the level scene
     this.goToScene("level");

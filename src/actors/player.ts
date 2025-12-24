@@ -7,6 +7,7 @@ import { Actor, Vector, Color, CollisionType, Engine, Keys } from "excalibur";
 import { Config } from "../config";
 import { Snowball } from "./snowball";
 import { Elf } from "./elf";
+import { Decoration } from "./decoration";
 
 export class Player extends Actor {
   private lives: number = Config.PLAYER.MAX_LIVES;
@@ -51,6 +52,13 @@ export class Player extends Actor {
           // Side collision - player takes damage
           this.takeDamage();
         }
+      }
+
+      // Check collision with Santa's decorations
+      if (other instanceof Decoration && !this.isInvincible) {
+        // Decorations always damage the player (unless invincible)
+        this.takeDamage();
+        other.kill();
       }
     });
   }
