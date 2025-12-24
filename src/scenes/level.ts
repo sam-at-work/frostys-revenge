@@ -44,11 +44,13 @@ export class LevelScene extends Scene {
   }
 
   public onActivate() {
-    // Reset player when scene activates
-    if (this.player) {
-      this.player.kill();
+    // Only create player if it doesn't exist (first time or after game over)
+    if (!this.player || !this.player.active) {
+      if (this.player) {
+        this.player.kill();
+      }
+      this.createPlayer();
     }
-    this.createPlayer();
   }
 
   private createLevel() {

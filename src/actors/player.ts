@@ -62,7 +62,8 @@ export class Player extends Actor {
     );
 
     // Check if player fell off the world
-    if (this.pos.y > Config.GAME_HEIGHT + 100) {
+    // Only trigger if player is actually falling (positive Y velocity)
+    if (this.pos.y > Config.GAME_HEIGHT + 100 && this.vel.y > 0) {
       this.die();
     }
   }
