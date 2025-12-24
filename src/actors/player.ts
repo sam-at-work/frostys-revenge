@@ -14,6 +14,7 @@ export class Player extends Actor {
   private bananaTimer: number = 0;
   private snowballCooldown: number = 0;
   private facingDirection: number = 1; // 1 = right, -1 = left
+  private isOnGround: boolean = false;
 
   constructor(pos: Vector) {
     super({
@@ -31,6 +32,11 @@ export class Player extends Actor {
   }
 
   public onPreUpdate(engine: Engine, delta: number): void {
+    // Simple ground detection: player is grounded if falling/stationary with small downward velocity
+    // Must be moving down (or stationary) to prevent jump at peak of arc
+    // Velocity check is strict: between 0 and 10 pixels/sec downward
+    this.isOnGround = this.vel.y >= 0 && this.vel.y <= 10;
+
     // Update timers
     if (this.snowballCooldown > 0) {
       this.snowballCooldown -= delta;
@@ -91,13 +97,9 @@ export class Player extends Actor {
     const keyboard = engine.input.keyboard;
 
     // Jump (Arrow Up or W)
-    // Check if player is on ground by seeing if vertical velocity is small
-    // This means they're resting on something or falling very slowly
-    const isOnGround = Math.abs(this.vel.y) < 50;
-
     if (
       (keyboard.wasPressed(Keys.Up) || keyboard.wasPressed(Keys.W)) &&
-      isOnGround
+      this.isOnGround
     ) {
       this.vel.y = Config.PLAYER.JUMP_VELOCITY;
     }
