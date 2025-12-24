@@ -19,6 +19,7 @@ import { Player } from "../actors/player";
 import { Elf } from "../actors/elf";
 import { Santa } from "../actors/santa";
 import { SnowEmitter } from "../effects/snow";
+import { BananaBlock } from "../powerups/bananablock";
 
 export class LevelScene extends Scene {
   private player!: Player;
@@ -42,6 +43,9 @@ export class LevelScene extends Scene {
 
     // Create boss
     this.createBoss();
+
+    // Create power-ups
+    this.createPowerUps();
 
     // Create player
     this.createPlayer();
@@ -239,10 +243,29 @@ export class LevelScene extends Scene {
     this.add(this.santa);
   }
 
+  private createPowerUps() {
+    // Place banana blocks throughout the level (like ? blocks in Mario)
+    // Early game - easy to reach
+    this.createBananaBlock(300, Config.GAME_HEIGHT - 200);
+
+    // Mid section - on elevated platform
+    this.createBananaBlock(1500, Config.GAME_HEIGHT - 264);
+
+    // Later section
+    this.createBananaBlock(2600, Config.GAME_HEIGHT - 180);
+
+    // Near end - before boss
+    this.createBananaBlock(3800, Config.GAME_HEIGHT - 200);
+  }
+
+  private createBananaBlock(x: number, y: number) {
+    const block = new BananaBlock(new Vector(x, y));
+    this.add(block);
+  }
+
   private createPlayer() {
-    // TEMPORARY: Start near Santa for testing boss battle
-    // const startPos = new Vector(100, Config.GAME_HEIGHT / 2);
-    const startPos = new Vector(4600, Config.GAME_HEIGHT / 2);
+    // Start at beginning of level
+    const startPos = new Vector(100, Config.GAME_HEIGHT / 2);
     this.player = new Player(startPos);
     this.add(this.player);
   }
