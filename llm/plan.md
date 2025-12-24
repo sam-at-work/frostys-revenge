@@ -98,13 +98,14 @@ game/
 - [x] Implement snowball shooting on spacebar
 - [x] Add animation states (idle, walk, jump) - using placeholder rectangles
 
-#### Phase 3: Level Design
-- [ ] Create platform/ground tiles
-- [ ] Design single level layout
-- [ ] Add collision boundaries
-- [ ] Implement camera following player
-- [ ] Add background layers (parallax if time permits)
-- [ ] Place decorative elements (pine trees)
+#### Phase 3: Level Design ✅
+- [x] Create platform/ground tiles
+- [x] Design single level layout
+- [x] Add collision boundaries
+- [x] Implement camera following player
+- [x] Add background layers with depth
+- [x] Place decorative elements (pine trees)
+- [x] Add snow particle effects
 
 #### Phase 4: Enemies
 - [ ] Implement Elf enemy class

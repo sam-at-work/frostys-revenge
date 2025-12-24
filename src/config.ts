@@ -56,18 +56,18 @@ export const Config = {
   LEVEL: {
     GROUND_HEIGHT: 64,
     TILE_SIZE: 32,
-    LENGTH: 5000, // 5x screen width approximately
+    LENGTH: 5200, // Extended to accommodate full level with boss area
   },
 
   // Colors (for placeholder graphics)
   COLORS: {
-    GROUND: '#E8F4F8',
-    SNOWMAN: '#FFFFFF',
-    ELF: '#228B22',
-    SANTA: '#DC143C',
-    SNOWBALL: '#ADD8E6',
-    BANANA: '#FFE135',
-    SKY: '#87CEEB',
-    DECORATION: '#FFD700',
+    GROUND: "#E8F4F8",
+    SNOWMAN: "#FFFFFF",
+    ELF: "#228B22",
+    SANTA: "#DC143C",
+    SNOWBALL: "#ADD8E6",
+    BANANA: "#FFE135",
+    SKY: "#87CEEB",
+    DECORATION: "#FFD700",
   },
 } as const;
