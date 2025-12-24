@@ -6,10 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview",
-    "install": "pnpm install"
+    "preview": "vite preview"
   },
-  "packageManager": "pnpm@8.0.0",
+  "packageManager": "pnpm@9.0.0",
   "keywords": [
     "game",
     "excalibur",
