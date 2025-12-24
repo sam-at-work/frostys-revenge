@@ -3,7 +3,16 @@
  * Frosty's Revenge
  */
 
-import { Actor, Vector, Color, CollisionType, Engine, Keys } from "excalibur";
+import {
+  Actor,
+  Vector,
+  Color,
+  CollisionType,
+  Engine,
+  Keys,
+  ParticleEmitter,
+  EmitterType,
+} from "excalibur";
 import { Config } from "../config";
 import { Snowball } from "./snowball";
 import { Elf } from "./elf";
@@ -17,6 +26,10 @@ export class Player extends Actor {
   private snowballCooldown: number = 0;
   private facingDirection: number = 1; // 1 = right, -1 = left
   private isOnGround: boolean = false;
+  private flashTimer: number = 0;
+  private invincibilityEmitter?: ParticleEmitter;
+  private damageFlashTimer: number = 0;
+  private isDamageFlashing: boolean = false;
 
   constructor(pos: Vector) {
     super({
@@ -76,8 +89,31 @@ export class Player extends Actor {
 
     if (this.isBanana) {
       this.bananaTimer -= delta;
+
+      // Update flash effect for invincibility
+      this.flashTimer += delta;
+      const flashSpeed = 0.01;
+      this.graphics.opacity =
+        0.7 + Math.sin(this.flashTimer * flashSpeed) * 0.3;
+
+      // Update particle emitter position
+      if (this.invincibilityEmitter) {
+        this.invincibilityEmitter.pos = this.pos.clone();
+      }
+
       if (this.bananaTimer <= 0) {
         this.deactivateBanana();
+      }
+    }
+
+    // Handle damage flash effect
+    if (this.isDamageFlashing) {
+      this.damageFlashTimer -= delta;
+      this.color = Color.Red;
+
+      if (this.damageFlashTimer <= 0) {
+        this.isDamageFlashing = false;
+        this.color = Color.fromHex(Config.COLORS.SNOWMAN);
       }
     }
 
@@ -163,18 +199,57 @@ export class Player extends Actor {
     this.isInvincible = true;
     this.bananaTimer = Config.BANANA.DURATION;
     this.color = Color.fromHex(Config.COLORS.BANANA);
+
+    // Create particle effect for invincibility
+    this.createInvincibilityEffect();
   }
 
   private deactivateBanana(): void {
     this.isBanana = false;
     this.isInvincible = false;
     this.color = Color.fromHex(Config.COLORS.SNOWMAN);
+    this.graphics.opacity = 1; // Reset opacity
+
+    // Stop invincibility particle effect
+    if (this.invincibilityEmitter) {
+      this.invincibilityEmitter.isEmitting = false;
+      setTimeout(() => this.invincibilityEmitter?.kill(), 500);
+      this.invincibilityEmitter = undefined;
+    }
+  }
+
+  private createInvincibilityEffect(): void {
+    // Create sparkle particles around the player during invincibility
+    this.invincibilityEmitter = new ParticleEmitter({
+      pos: this.pos.clone(),
+      width: this.width,
+      height: this.height,
+      emitterType: EmitterType.Circle,
+      radius: 25,
+      minVel: 20,
+      maxVel: 50,
+      minAngle: 0,
+      maxAngle: Math.PI * 2,
+      isEmitting: true,
+      emitRate: 30,
+      particleLife: 600,
+      maxSize: 4,
+      minSize: 2,
+      beginColor: Color.fromHex("#FFD700"), // Gold
+      endColor: Color.Transparent,
+    });
+
+    this.scene?.add(this.invincibilityEmitter);
   }
 
   public takeDamage(): void {
     if (this.isInvincible) {
       return;
     }
+
+    // Flash red briefly before dying
+    this.isDamageFlashing = true;
+    this.damageFlashTimer = 200; // 200ms red flash
 
     this.die();
   }

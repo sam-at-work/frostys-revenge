@@ -134,14 +134,17 @@ game/
 - [x] Add running banana mechanic
 - [x] Add power-up timer display
 
-#### Phase 7: Polish & Assets
-- [ ] Create/source all sprite assets
-- [ ] Add background with Santa & reindeer in sky
-- [ ] Add sound effects
-- [ ] Add particle effects (snow, sparkles)
-- [ ] Add game over screen
-- [ ] Add win screen
-- [ ] Optimize performance
+#### Phase 7: Polish & Assets ✅
+- [x] Add particle effects (snow, sparkles, defeat, impact)
+- [x] Add visual feedback (damage flash, invincibility glow)
+- [x] Add gradient sky background
+- [x] Add sparkle effects for power-ups
+- [x] Add pulsing animation for banana blocks
+- [x] Add game over screen
+- [x] Add win screen
+- [ ] Create/source sprite assets (using placeholder graphics)
+- [ ] Add background with Santa & reindeer in sky (future enhancement)
+- [ ] Add sound effects (future enhancement)
 
 #### Phase 8: Testing & Refinement
 - [ ] Test all game mechanics

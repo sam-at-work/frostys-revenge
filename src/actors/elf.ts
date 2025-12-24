@@ -3,7 +3,15 @@
  * Frosty's Revenge
  */
 
-import { Actor, Vector, Color, CollisionType, Engine } from "excalibur";
+import {
+  Actor,
+  Vector,
+  Color,
+  CollisionType,
+  Engine,
+  ParticleEmitter,
+  EmitterType,
+} from "excalibur";
 import { Config } from "../config";
 
 export class Elf extends Actor {
@@ -11,7 +19,10 @@ export class Elf extends Actor {
   private patrolDistance: number;
   private movingRight: boolean = true;
 
-  constructor(pos: Vector, patrolDistance: number = Config.ELF.PATROL_DISTANCE) {
+  constructor(
+    pos: Vector,
+    patrolDistance: number = Config.ELF.PATROL_DISTANCE,
+  ) {
     super({
       pos: pos,
       width: Config.ELF.WIDTH,
@@ -53,8 +64,41 @@ export class Elf extends Actor {
   }
 
   public defeat(): void {
+    // Create particle effect for defeat
+    this.createDefeatParticles();
+
     // Remove elf from scene
     this.kill();
+  }
+
+  private createDefeatParticles(): void {
+    // Create a burst of green particles when defeated
+    const emitter = new ParticleEmitter({
+      pos: this.pos.clone(),
+      width: 10,
+      height: 10,
+      emitterType: EmitterType.Circle,
+      radius: 5,
+      minVel: 50,
+      maxVel: 150,
+      minAngle: 0,
+      maxAngle: Math.PI * 2,
+      isEmitting: true,
+      emitRate: 50,
+      particleLife: 500,
+      maxSize: 5,
+      minSize: 2,
+      beginColor: Color.fromHex(Config.COLORS.ELF),
+      endColor: Color.Transparent,
+    });
+
+    this.scene?.add(emitter);
+
+    // Stop emitting after a short burst
+    setTimeout(() => {
+      emitter.isEmitting = false;
+      setTimeout(() => emitter.kill(), 1000);
+    }, 100);
   }
 
   public isDefeated(): boolean {

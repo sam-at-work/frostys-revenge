@@ -3,7 +3,15 @@
  * Frosty's Revenge
  */
 
-import { Actor, Vector, Color, CollisionType, Engine } from "excalibur";
+import {
+  Actor,
+  Vector,
+  Color,
+  CollisionType,
+  Engine,
+  ParticleEmitter,
+  EmitterType,
+} from "excalibur";
 import { Config } from "../config";
 import { Banana } from "./banana";
 import { Player } from "../actors/player";
@@ -13,6 +21,8 @@ export class BananaBlock extends Actor {
   private originalY: number;
   private bumpTimer: number = 0;
   private isBumping: boolean = false;
+  private pulseTimer: number = 0;
+  private sparkleEmitter?: ParticleEmitter;
 
   constructor(pos: Vector) {
     super({
@@ -42,9 +52,49 @@ export class BananaBlock extends Actor {
         }
       }
     });
+
+    // Add sparkle effect to unused blocks
+    if (!this.hasBeenHit) {
+      this.createSparkleEffect();
+    }
+  }
+
+  private createSparkleEffect(): void {
+    // Create subtle sparkle particles around unused blocks
+    this.sparkleEmitter = new ParticleEmitter({
+      pos: this.pos.clone(),
+      width: this.width,
+      height: this.height,
+      emitterType: EmitterType.Rectangle,
+      minVel: 5,
+      maxVel: 15,
+      minAngle: 0,
+      maxAngle: Math.PI * 2,
+      isEmitting: true,
+      emitRate: 5,
+      particleLife: 1000,
+      maxSize: 2,
+      minSize: 1,
+      beginColor: Color.fromHex("#FFD700"), // Gold
+      endColor: Color.Transparent,
+    });
+
+    this.scene?.add(this.sparkleEmitter);
   }
 
   public onPreUpdate(_engine: Engine, delta: number): void {
+    // Update pulse animation for unused blocks
+    if (!this.hasBeenHit) {
+      this.pulseTimer += delta;
+      const pulse = Math.sin(this.pulseTimer * 0.003) * 0.15 + 0.85;
+      this.graphics.opacity = pulse;
+
+      // Update sparkle position
+      if (this.sparkleEmitter) {
+        this.sparkleEmitter.pos = this.pos.clone();
+      }
+    }
+
     // Handle bump animation
     if (this.isBumping) {
       this.bumpTimer += delta;
@@ -70,13 +120,20 @@ export class BananaBlock extends Actor {
 
     this.hasBeenHit = true;
 
+    // Stop sparkle effect
+    if (this.sparkleEmitter) {
+      this.sparkleEmitter.isEmitting = false;
+      setTimeout(() => this.sparkleEmitter?.kill(), 500);
+    }
+
     // Change color to indicate it's been used (darker)
     this.color = Color.fromHex("#8B7355");
+    this.graphics.opacity = 1; // Reset opacity
 
     // Spawn banana above the block
     const bananaPos = new Vector(
       this.pos.x,
-      this.pos.y - Config.LEVEL.TILE_SIZE - Config.BANANA.HEIGHT / 2
+      this.pos.y - Config.LEVEL.TILE_SIZE - Config.BANANA.HEIGHT / 2,
     );
 
     const banana = new Banana(bananaPos);

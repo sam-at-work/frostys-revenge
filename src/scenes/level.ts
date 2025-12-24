@@ -30,8 +30,8 @@ export class LevelScene extends Scene {
   private winZoneX: number = 5100; // X position to reach to win
 
   public onInitialize() {
-    // Set background color
-    this.backgroundColor = Color.fromHex(Config.COLORS.SKY);
+    // Create gradient sky background
+    this.createSkyBackground();
 
     // Create level platforms
     this.createLevel();
@@ -64,6 +64,31 @@ export class LevelScene extends Scene {
       this.player.kill();
     }
     this.createPlayer();
+  }
+
+  private createSkyBackground() {
+    // Create a gradient sky effect with multiple colored rectangles
+    const skyHeight = Config.GAME_HEIGHT;
+    const numLayers = 5;
+
+    for (let i = 0; i < numLayers; i++) {
+      const layerHeight = skyHeight / numLayers;
+      const y = i * layerHeight;
+
+      // Gradient from light blue at top to darker blue at bottom
+      const blueValue = 135 + i * 30; // 135 to 255
+      const greenValue = 206 - i * 20; // 206 to 126
+
+      const skyLayer = new Actor({
+        pos: new Vector(Config.LEVEL.LENGTH / 2, y + layerHeight / 2),
+        width: Config.LEVEL.LENGTH,
+        height: layerHeight,
+        color: Color.fromRGB(135, greenValue, blueValue),
+        z: -100,
+      });
+      skyLayer.body.collisionType = CollisionType.PreventCollision;
+      this.add(skyLayer);
+    }
   }
 
   private createLevel() {
