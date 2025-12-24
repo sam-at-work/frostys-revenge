@@ -6,6 +6,7 @@
 import { Actor, Vector, Color, CollisionType, Engine, Keys } from "excalibur";
 import { Config } from "../config";
 import { Snowball } from "./snowball";
+import { Elf } from "./elf";
 
 export class Player extends Actor {
   private lives: number = Config.PLAYER.MAX_LIVES;
@@ -29,6 +30,29 @@ export class Player extends Actor {
   public onInitialize(_engine: Engine): void {
     // Enable gravity for the player
     this.body.useGravity = true;
+
+    // Set up collision handling with enemies
+    this.on("precollision", (evt) => {
+      const other = evt.other;
+
+      // Check collision with elves
+      if (other instanceof Elf && !other.isDefeated()) {
+        // If invincible (banana mode), defeat elves on any contact
+        if (this.isInvincible) {
+          other.defeat();
+        }
+        // Check if player is jumping on the elf (player is above elf)
+        else if (this.pos.y < other.pos.y && this.vel.y > 0) {
+          // Jump on head - defeat the elf
+          other.defeat();
+          // Bounce the player up a bit
+          this.vel.y = -300;
+        } else {
+          // Side collision - player takes damage
+          this.takeDamage();
+        }
+      }
+    });
   }
 
   public onPreUpdate(engine: Engine, delta: number): void {

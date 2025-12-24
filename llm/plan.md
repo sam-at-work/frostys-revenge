@@ -107,13 +107,13 @@ game/
 - [x] Place decorative elements (pine trees)
 - [x] Add snow particle effects
 
-#### Phase 4: Enemies
-- [ ] Implement Elf enemy class
-- [ ] Add basic AI (patrol/movement)
-- [ ] Implement jump-on-head defeat mechanism
-- [ ] Implement snowball collision/defeat
-- [ ] Add elf spawning at designated locations
-- [ ] Add death animations
+#### Phase 4: Enemies ✅
+- [x] Implement Elf enemy class
+- [x] Add basic AI (patrol/movement)
+- [x] Implement jump-on-head defeat mechanism
+- [x] Implement snowball collision/defeat
+- [x] Add elf spawning at designated locations
+- [x] Add death animations (elves disappear when defeated)
 
 #### Phase 5: Boss Battle
 - [ ] Implement Santa boss class

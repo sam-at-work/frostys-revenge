@@ -5,6 +5,7 @@
 
 import { Actor, Vector, Color, CollisionType, Engine } from "excalibur";
 import { Config } from "../config";
+import { Elf } from "./elf";
 
 export class Snowball extends Actor {
   private lifetime: number = 0;
@@ -24,6 +25,19 @@ export class Snowball extends Actor {
   public onInitialize(_engine: Engine): void {
     // Snowball doesn't have gravity
     this.body.useGravity = false;
+
+    // Set up collision handling with enemies
+    this.on("precollision", (evt) => {
+      const other = evt.other;
+
+      // Check collision with elves
+      if (other instanceof Elf && !other.isDefeated()) {
+        // Defeat the elf
+        other.defeat();
+        // Remove the snowball
+        this.kill();
+      }
+    });
   }
 
   public onPreUpdate(_engine: Engine, delta: number): void {

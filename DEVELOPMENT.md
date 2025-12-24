@@ -60,7 +60,7 @@ game/
 - [x] Phase 1: Project Setup ✅
 - [x] Phase 2: Player Character ✅
 - [x] Phase 3: Level Design ✅
-- [ ] Phase 4: Enemies
+- [x] Phase 4: Enemies ✅
 - [ ] Phase 5: Boss Battle
 - [ ] Phase 6: Power-ups & Lives
 - [ ] Phase 7: Polish & Assets
@@ -68,7 +68,7 @@ game/
 
 ## Current Status
 
-**Phase 3 Complete!** The level design is now complete with varied platforming:
+**Phase 4 Complete!** Elf enemies are now patrolling the level:
 - ✅ Excalibur.js installed and configured
 - ✅ TypeScript configuration
 - ✅ Vite build system
@@ -85,6 +85,10 @@ game/
 - ✅ Elevated platforms for jumping variety
 - ✅ Decorative pine trees (foreground and background)
 - ✅ Falling snow particle effects
+- ✅ Elf enemies with patrol AI
+- ✅ Jump-on-head mechanic to defeat elves
+- ✅ Snowball collision to defeat elves
+- ✅ 14 elves placed throughout the level
 
 ### What's Working
 - Player can move left/right with Arrow Keys or WASD
@@ -100,13 +104,17 @@ game/
 - Gaps between platforms require jumping
 - Pine trees add visual atmosphere
 - Snow particles fall continuously for winter theme
+- Elves patrol back and forth on platforms
+- Jump on elves from above to defeat them
+- Shoot snowballs at elves to defeat them
+- Touching an elf from the side causes damage
+- Player bounces slightly when jumping on elves
 
-### Next Steps (Phase 4)
-- Implement Elf enemies
-- Add basic AI (patrol/movement)
-- Implement jump-on-head defeat mechanism
-- Implement snowball collision/defeat
-- Add elf spawning at designated locations
+### Next Steps (Phase 5)
+- Implement Santa boss at the end of the level
+- Add decoration throwing pattern
+- Create boss encounter mechanics
+- Add win condition
 
 ## Technology Stack
 

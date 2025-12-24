@@ -16,6 +16,7 @@ import {
 } from "excalibur";
 import { Config } from "../config";
 import { Player } from "../actors/player";
+import { Elf } from "../actors/elf";
 import { SnowEmitter } from "../effects/snow";
 
 export class LevelScene extends Scene {
@@ -32,6 +33,9 @@ export class LevelScene extends Scene {
 
     // Create decorative elements
     this.createDecorations();
+
+    // Create enemies
+    this.createEnemies();
 
     // Create player
     this.createPlayer();
@@ -187,6 +191,42 @@ export class LevelScene extends Scene {
     });
     foliage3.body.collisionType = CollisionType.PreventCollision;
     this.add(foliage3);
+  }
+
+  private createEnemies() {
+    // Place elves throughout the level
+    // Near the start
+    this.createElf(400, Config.GAME_HEIGHT - 96);
+    this.createElf(650, Config.GAME_HEIGHT - 96);
+
+    // After first gap
+    this.createElf(1100, Config.GAME_HEIGHT - 96);
+    this.createElf(1400, Config.GAME_HEIGHT - 96);
+
+    // On elevated platform
+    this.createElf(1450, Config.GAME_HEIGHT - 232, 100);
+
+    // Mid section
+    this.createElf(1900, Config.GAME_HEIGHT - 96);
+    this.createElf(2100, Config.GAME_HEIGHT - 96);
+    this.createElf(2450, Config.GAME_HEIGHT - 252, 80);
+
+    // Later section
+    this.createElf(2900, Config.GAME_HEIGHT - 96);
+    this.createElf(3200, Config.GAME_HEIGHT - 96);
+    this.createElf(3500, Config.GAME_HEIGHT - 96);
+
+    // On elevated platform near end
+    this.createElf(3250, Config.GAME_HEIGHT - 212, 80);
+
+    // Near the end before boss
+    this.createElf(3900, Config.GAME_HEIGHT - 96);
+    this.createElf(4200, Config.GAME_HEIGHT - 152, 60);
+  }
+
+  private createElf(x: number, y: number, patrolDistance?: number) {
+    const elf = new Elf(new Vector(x, y), patrolDistance);
+    this.add(elf);
   }
 
   private createPlayer() {
