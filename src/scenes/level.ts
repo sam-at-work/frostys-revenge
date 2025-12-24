@@ -24,6 +24,7 @@ import { BananaBlock } from "../powerups/bananablock";
 export class LevelScene extends Scene {
   private player!: Player;
   private livesLabel!: Label;
+  private powerUpLabel!: Label;
   private snowEmitter!: SnowEmitter;
   private santa!: Santa;
   private winZoneX: number = 5100; // X position to reach to win
@@ -286,6 +287,20 @@ export class LevelScene extends Scene {
     // Make UI element stay in screen space (not world space)
     this.livesLabel.z = 100;
     this.add(this.livesLabel);
+
+    // Power-up timer display
+    this.powerUpLabel = new Label({
+      text: "",
+      pos: new Vector(10, 40),
+      font: new Font({
+        family: "Arial",
+        size: 18,
+        unit: FontUnit.Px,
+        color: Color.fromHex(Config.COLORS.BANANA),
+      }),
+    });
+    this.powerUpLabel.z = 100;
+    this.add(this.powerUpLabel);
   }
 
   public onPreUpdate(engine: Engine, delta: number) {
@@ -297,6 +312,22 @@ export class LevelScene extends Scene {
       this.livesLabel.pos = new Vector(
         this.camera.pos.x - Config.GAME_WIDTH / 2 + 10,
         this.camera.pos.y - Config.GAME_HEIGHT / 2 + 10,
+      );
+    }
+
+    // Update power-up timer display
+    if (this.player && this.powerUpLabel) {
+      if (this.player.isInvincibleState()) {
+        const timeLeft = this.player.getBananaTimeLeft();
+        this.powerUpLabel.text = `BANANA MODE: ${Math.ceil(timeLeft / 1000)}s`;
+      } else {
+        this.powerUpLabel.text = "";
+      }
+
+      // Keep UI fixed to camera
+      this.powerUpLabel.pos = new Vector(
+        this.camera.pos.x - Config.GAME_WIDTH / 2 + 10,
+        this.camera.pos.y - Config.GAME_HEIGHT / 2 + 40,
       );
     }
 

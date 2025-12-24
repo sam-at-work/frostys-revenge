@@ -62,13 +62,13 @@ game/
 - [x] Phase 3: Level Design ✅
 - [x] Phase 4: Enemies ✅
 - [x] Phase 5: Boss Battle ✅
-- [ ] Phase 6: Power-ups & Lives
+- [x] Phase 6: Power-ups & Lives ✅
 - [ ] Phase 7: Polish & Assets
 - [ ] Phase 8: Testing & Refinement
 
 ## Current Status
 
-**Phase 5 Complete!** Santa boss battle is now implemented:
+**Phase 6 Complete!** Power-up system is now fully functional:
 - ✅ Excalibur.js installed and configured
 - ✅ TypeScript configuration
 - ✅ Vite build system
@@ -94,6 +94,10 @@ game/
 - ✅ Decorations follow arc trajectory
 - ✅ Win condition when reaching past Santa
 - ✅ Win scene with replay option
+- ✅ Banana blocks (? blocks) placed throughout level
+- ✅ Running banana power-up mechanic
+- ✅ Invincibility state with visual transformation
+- ✅ Power-up timer UI display
 
 ### What's Working
 - Player can move left/right with Arrow Keys or WASD
@@ -121,12 +125,20 @@ game/
 - Touching decorations causes damage (unless invincible)
 - Reach x=5100 to win the game
 - Win scene displays with option to play again
+- Jump under brown banana blocks to activate them
+- Banana pops out and runs away when block is hit
+- Chase and catch the banana for invincibility
+- Player turns yellow during banana mode
+- Timer shows remaining invincibility time
+- Invincible player defeats elves on contact
+- 4 banana blocks placed throughout the level
 
-### Next Steps (Phase 6)
-- Implement Super Banana power-up
-- Add power-up spawning in level
-- Polish lives system UI
-- Add temporary invincibility visuals
+### Next Steps (Phase 7)
+- Create/source sprite assets for all game elements
+- Add background images (snow-covered pine trees, Santa in sky)
+- Add sound effects (jump, shoot, hit, power-up)
+- Add particle effects and visual polish
+- Optimize performance
 
 ## Technology Stack
 

@@ -123,13 +123,16 @@ game/
 - [x] Create win condition (reach past Santa)
 - [x] Add win scene
 
-#### Phase 6: Power-ups & Lives
-- [ ] Implement Super Banana power-up
-- [ ] Add invincibility state
-- [ ] Add visual transformation (banana form)
-- [ ] Implement lives system
-- [ ] Add UI for lives counter
-- [ ] Implement game over condition
+#### Phase 6: Power-ups & Lives ✅
+- [x] Implement Super Banana power-up
+- [x] Add invincibility state
+- [x] Add visual transformation (banana form)
+- [x] Implement lives system
+- [x] Add UI for lives counter
+- [x] Implement game over condition
+- [x] Add banana blocks (? blocks)
+- [x] Add running banana mechanic
+- [x] Add power-up timer display
 
 #### Phase 7: Polish & Assets
 - [ ] Create/source all sprite assets

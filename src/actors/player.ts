@@ -199,4 +199,8 @@ export class Player extends Actor {
   public isInvincibleState(): boolean {
     return this.isInvincible;
   }
+
+  public getBananaTimeLeft(): number {
+    return this.bananaTimer;
+  }
 }
