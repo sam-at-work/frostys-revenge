@@ -16,7 +16,7 @@ export const Config = {
     WIDTH: 32,
     HEIGHT: 48,
     MOVE_SPEED: 200,
-    JUMP_VELOCITY: -450,
+    JUMP_VELOCITY: -650,
     MAX_LIVES: 3,
     SNOWBALL_COOLDOWN: 300, // milliseconds
   },
