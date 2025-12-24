@@ -169,36 +169,56 @@ game/
 
 1. **Asset Creation**: Should I use placeholder graphics initially (colored rectangles/circles) or would you prefer to provide actual sprite assets before development begins?
 
+Answer: placeholders initially, but later i will ask you to create actual sprite assets
+
 2. **Santa Boss Mechanics**: How should Santa be defeated? Options:
    - Just get past him (run to the right side)
    - Hit him with X number of snowballs
    - Both options available
    - Invulnerable (only avoidance challenge)
+   
+Answer: Just get past him (run to the right side)
 
 3. **Level Length**: How long should the level be? (e.g., 3x screen width, 5x screen width, etc.)
 
+Answer: 5x screen width
+
 4. **Power-up Duration**: How long should the Super Banana invincibility last? (e.g., 10 seconds like Mario's star?)
+
+Answer: 10 seconds
 
 5. **Difficulty**: 
    - How many lives should the player start with?
    - How many elves should be in the level?
    - Should there be pits/holes the player can fall into?
+   
+Answer: Similar to Mario's Difficulty. 3 lives, 12 elves, include pits/holes.
 
 6. **Score System**: Should there be a score system, or just completion-based?
 
+Answer: Completion-based
+
 7. **Build Tool Preference**: Would you prefer Vite, Webpack, or Parcel for the build system? (I recommend Vite for modern dev experience)
 
+Use Vite
+
 8. **Sound/Music**: Should I include background music, or just sound effects?
+
+Include Christmas themed background music
 
 9. **Banana Transformation**: When transformed into a banana, should the player:
    - Just look different but move the same?
    - Have enhanced abilities (faster, higher jump)?
    - Automatically defeat enemies on contact?
+   
+Answer: The same as when you get a super star in mario.
 
 10. **Decoration Projectiles**: Should Santa's decorations:
     - Follow an arc pattern (like Bowser's axes)?
     - Go straight?
     - Be destroyable with snowballs?
+    
+Answer: Exactly like bowser - Follow an arc pattern (like Bowser's axes).
 
 ## Estimated Timeline
 - Phase 1-2: 2-3 hours
