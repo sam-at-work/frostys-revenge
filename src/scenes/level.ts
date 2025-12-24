@@ -54,13 +54,11 @@ export class LevelScene extends Scene {
   }
 
   public onActivate() {
-    // Only create player if it doesn't exist (first time or after game over)
-    if (!this.player || !this.player.active) {
-      if (this.player) {
-        this.player.kill();
-      }
-      this.createPlayer();
+    // Recreate player when scene activates (handles restart after game over)
+    if (this.player) {
+      this.player.kill();
     }
+    this.createPlayer();
   }
 
   private createLevel() {
@@ -242,7 +240,9 @@ export class LevelScene extends Scene {
   }
 
   private createPlayer() {
-    const startPos = new Vector(100, Config.GAME_HEIGHT / 2);
+    // TEMPORARY: Start near Santa for testing boss battle
+    // const startPos = new Vector(100, Config.GAME_HEIGHT / 2);
+    const startPos = new Vector(4600, Config.GAME_HEIGHT / 2);
     this.player = new Player(startPos);
     this.add(this.player);
   }

@@ -11,7 +11,7 @@ export class Decoration extends Actor {
   private maxLifetime: number = 5000; // 5 seconds
   private arcVelocity: Vector;
 
-  constructor(pos: Vector, direction: number) {
+  constructor(pos: Vector, direction: number, variation: number = 0) {
     super({
       pos: pos,
       width: 24,
@@ -20,18 +20,27 @@ export class Decoration extends Actor {
       collisionType: CollisionType.Passive,
     });
 
-    // Arc trajectory like Bowser's axes
-    // Throw upward and in the direction
-    this.arcVelocity = new Vector(
-      Config.SANTA.DECORATION_SPEED * direction,
-      -200, // Initial upward velocity
-    );
+    // Arc trajectory like Bowser's axes with variation for spread
+    // Create parabolic patterns by varying horizontal and vertical velocity
+    const baseHorizontalSpeed = Config.SANTA.DECORATION_SPEED;
+    const baseVerticalSpeed = -250;
+
+    // Variation creates spread: -2, -1, 0, 1, 2
+    const spreadFactor = variation - 2;
+
+    // Vary both horizontal and vertical velocities for parabolic spread
+    const horizontalSpeed = baseHorizontalSpeed + spreadFactor * 40;
+    const verticalSpeed = baseVerticalSpeed + spreadFactor * 60;
+
+    this.arcVelocity = new Vector(horizontalSpeed * direction, verticalSpeed);
   }
 
   public onInitialize(_engine: Engine): void {
-    // Decorations use gravity for arc
-    this.body.useGravity = true;
+    // Set initial velocity for parabolic arc
     this.vel = this.arcVelocity;
+
+    // Disable built-in gravity, we'll apply it manually
+    this.body.useGravity = false;
 
     // Add some rotation for sparkly effect
     this.angularVelocity = 3; // Radians per second
@@ -39,6 +48,10 @@ export class Decoration extends Actor {
 
   public onPreUpdate(_engine: Engine, delta: number): void {
     this.lifetime += delta;
+
+    // Manually apply gravity for parabolic arc (in pixels per second)
+    // Gravity constant from config (1200) divided by 60 fps = ~20 per frame
+    this.vel.y += (Config.GRAVITY * delta) / 1000;
 
     // Sparkle effect - pulse the opacity
     const pulseSpeed = 0.005;
