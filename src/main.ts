@@ -3,11 +3,10 @@
  * A Super Mario-inspired platformer using Excalibur.js
  */
 
-import { Engine, DisplayMode, Color, Loader, Vector } from 'excalibur';
-import { Config } from './config';
-import { LevelScene } from './scenes/level';
-import { GameOverScene } from './scenes/gameover';
-import { Resources } from './resources/resources';
+import { Engine, DisplayMode, Color, Loader, Vector } from "excalibur";
+import { Config } from "./config";
+import { LevelScene } from "./scenes/level";
+import { GameOverScene } from "./scenes/gameover";
 
 class Game extends Engine {
   constructor() {
@@ -26,11 +25,11 @@ class Game extends Engine {
 
   public initialize() {
     // Add scenes
-    this.addScene('level', new LevelScene());
-    this.addScene('gameover', new GameOverScene());
+    this.addScene("level", new LevelScene());
+    this.addScene("gameover", new GameOverScene());
 
     // Start with the level scene
-    this.goToScene('level');
+    this.goToScene("level");
   }
 }
 
@@ -39,15 +38,14 @@ const game = new Game();
 
 // Create loader with all resources
 const loader = new Loader();
-for (const resource of Object.values(Resources)) {
-  loader.addResource(resource);
-}
+// Resources object is currently empty (placeholder graphics being used)
+// We'll add resources in Phase 7 when we add actual assets
 
 // Hide loading text and start the game
 game.start(loader).then(() => {
-  const loadingElement = document.getElementById('loading');
+  const loadingElement = document.getElementById("loading");
   if (loadingElement) {
-    loadingElement.style.display = 'none';
+    loadingElement.style.display = "none";
   }
   game.initialize();
 });

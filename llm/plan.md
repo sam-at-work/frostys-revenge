@@ -90,13 +90,13 @@ game/
 - [x] Set up build system (Vite)
 - [x] Create basic game initialization
 
-#### Phase 2: Player Character
-- [ ] Implement snowman character class
-- [ ] Add movement controls (arrow keys + WASD)
-- [ ] Implement jumping mechanics
-- [ ] Add gravity and collision detection
-- [ ] Implement snowball shooting on spacebar
-- [ ] Add animation states (idle, walk, jump)
+#### Phase 2: Player Character ✅
+- [x] Implement snowman character class
+- [x] Add movement controls (arrow keys + WASD)
+- [x] Implement jumping mechanics
+- [x] Add gravity and collision detection
+- [x] Implement snowball shooting on spacebar
+- [x] Add animation states (idle, walk, jump) - using placeholder rectangles
 
 #### Phase 3: Level Design
 - [ ] Create platform/ground tiles

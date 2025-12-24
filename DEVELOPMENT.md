@@ -58,7 +58,7 @@ game/
 ## Development Phases
 
 - [x] Phase 1: Project Setup ✅
-- [ ] Phase 2: Player Character
+- [x] Phase 2: Player Character ✅
 - [ ] Phase 3: Level Design
 - [ ] Phase 4: Enemies
 - [ ] Phase 5: Boss Battle
@@ -68,24 +68,35 @@ game/
 
 ## Current Status
 
-**Phase 1 Complete!** The project is now set up with:
+**Phase 2 Complete!** The playable character is now fully functional:
 - ✅ Excalibur.js installed and configured
 - ✅ TypeScript configuration
 - ✅ Vite build system
 - ✅ Basic game initialization
 - ✅ Scene structure (Level and Game Over scenes)
 - ✅ Ground platform rendering
+- ✅ Snowman player character with physics
+- ✅ Movement controls (Arrow keys + WASD)
+- ✅ Jumping mechanics
+- ✅ Snowball shooting with spacebar
+- ✅ Lives system
+- ✅ Camera following player
 
 ### What's Working
-- Basic game window renders with sky-blue background
-- Ground platform visible at the bottom
-- Game runs in browser
+- Player can move left/right with Arrow Keys or WASD
+- Player can jump with Up Arrow or W key
+- Player can shoot snowballs with Spacebar
+- Snowballs fly in the direction player is facing
+- Camera follows player as they move through the level
+- Lives counter displays in top-left corner
+- Player respawns after falling off the world
+- Game Over scene triggers when all lives are lost
 
-### Next Steps (Phase 2)
-- Implement snowman player character
-- Add movement controls (Arrow keys + WASD)
-- Implement jumping mechanics
-- Add snowball shooting with spacebar
+### Next Steps (Phase 3)
+- Design level layout with platforms
+- Add decorative elements (pine trees)
+- Create background layers
+- Add more varied terrain
 
 ## Technology Stack
 

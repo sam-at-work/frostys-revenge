@@ -6,7 +6,8 @@
  * Currently using placeholder resources
  */
 
-import { ImageSource } from 'excalibur';
+// ImageSource will be imported when we add actual assets
+// import { ImageSource } from 'excalibur';
 
 // Placeholder: In future phases, we'll add actual image and sound resources
 // For now, we're using colored rectangles in the game objects themselves
