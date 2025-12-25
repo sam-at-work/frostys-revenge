@@ -41,8 +41,9 @@ const game = new Game();
 
 // Create loader with all resources
 const loader = new Loader();
-// Add elf sprite sheet to loader
+// Add sprite sheets to loader
 loader.addResource(Resources.ElfSpriteSheet);
+loader.addResource(Resources.SnowmanSpriteSheet);
 
 // Hide loading text and start the game
 game.start(loader).then(() => {

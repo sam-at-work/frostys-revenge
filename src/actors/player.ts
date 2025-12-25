@@ -12,8 +12,13 @@ import {
   Keys,
   ParticleEmitter,
   EmitterType,
+  SpriteSheet,
+  Animation,
+  AnimationStrategy,
+  range,
 } from "excalibur";
 import { Config } from "../config";
+import { Resources } from "../resources/resources";
 import { Snowball } from "./snowball";
 import { Elf } from "./elf";
 import { Decoration } from "./decoration";
@@ -30,18 +35,49 @@ export class Player extends Actor {
   private invincibilityEmitter?: ParticleEmitter;
   private damageFlashTimer: number = 0;
   private isDamageFlashing: boolean = false;
+  private walkAnim!: Animation;
 
   constructor(pos: Vector) {
     super({
       pos: pos,
       width: Config.PLAYER.WIDTH,
       height: Config.PLAYER.HEIGHT,
-      color: Color.fromHex(Config.COLORS.SNOWMAN),
       collisionType: CollisionType.Active,
     });
   }
 
   public onInitialize(_engine: Engine): void {
+    // Create sprite sheet from the snowman image (7x6 grid, 96x142px sprites)
+    // Image is 672x852, so 672/7 = 96px wide, 852/6 = 142px tall
+    const snowmanSheet = SpriteSheet.fromImageSource({
+      image: Resources.SnowmanSpriteSheet,
+      grid: {
+        rows: 6,
+        columns: 7,
+        spriteWidth: 96,
+        spriteHeight: 142,
+      },
+    });
+
+    // Create walking animation using all 40 sprites (5 full rows + 5 from last row)
+    // Sprites are indexed 0-34 (5 rows * 7 cols) + 35-39 (5 from last row)
+    const allSprites = [...range(0, 34), 35, 36, 37, 38, 39];
+    this.walkAnim = Animation.fromSpriteSheet(
+      snowmanSheet,
+      allSprites,
+      50, // 50ms per frame
+    );
+    this.walkAnim.strategy = AnimationStrategy.Loop;
+
+    // Set initial animation
+    this.graphics.use(this.walkAnim);
+
+    // Set anchor to slightly above bottom so feet are on the ground
+    this.graphics.anchor = new Vector(0.5, 0.9);
+
+    // Move sprite down to align with collision box
+    this.graphics.offset = new Vector(0, 22);
+
     // Enable gravity for the player
     this.body.useGravity = true;
 
@@ -150,12 +186,14 @@ export class Player extends Actor {
     if (keyboard.isHeld(Keys.Left) || keyboard.isHeld(Keys.A)) {
       velocityX = -Config.PLAYER.MOVE_SPEED;
       this.facingDirection = -1;
+      this.graphics.flipHorizontal = false; // Sprites face left by default
     }
 
     // Right movement (Arrow Right or D)
     if (keyboard.isHeld(Keys.Right) || keyboard.isHeld(Keys.D)) {
       velocityX = Config.PLAYER.MOVE_SPEED;
       this.facingDirection = 1;
+      this.graphics.flipHorizontal = true; // Flip to face right
     }
 
     this.vel.x = velocityX;
@@ -198,7 +236,6 @@ export class Player extends Actor {
     this.isBanana = true;
     this.isInvincible = true;
     this.bananaTimer = Config.BANANA.DURATION;
-    this.color = Color.fromHex(Config.COLORS.BANANA);
 
     // Create particle effect for invincibility
     this.createInvincibilityEffect();
@@ -207,7 +244,6 @@ export class Player extends Actor {
   private deactivateBanana(): void {
     this.isBanana = false;
     this.isInvincible = false;
-    this.color = Color.fromHex(Config.COLORS.SNOWMAN);
     this.graphics.opacity = 1; // Reset opacity
 
     // Stop invincibility particle effect
@@ -246,10 +282,6 @@ export class Player extends Actor {
     if (this.isInvincible) {
       return;
     }
-
-    // Flash red briefly before dying
-    this.isDamageFlashing = true;
-    this.damageFlashTimer = 200; // 200ms red flash
 
     this.die();
   }

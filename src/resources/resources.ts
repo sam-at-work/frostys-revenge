@@ -11,6 +11,9 @@ export const Resources = {
   // Elf sprite sheet (480x480, 5x5 grid, 96px sprites)
   ElfSpriteSheet: new ImageSource("/elf/sprite_sheet_96_18px.png"),
 
+  // Snowman sprite sheet (672x852, 7x6 grid, 96x142px sprites, 40 total)
+  SnowmanSpriteSheet: new ImageSource("/snowman/v2_sprite_sheet_96_5px.png"),
+
   // Additional images will be added here in future phases
   // Example structure:
   // Snowman: new ImageSource('./assets/images/snowman.png'),
