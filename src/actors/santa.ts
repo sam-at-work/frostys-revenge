@@ -94,14 +94,8 @@ export class Santa extends Actor {
     this.jumpTimer += delta;
 
     // Check if landed back on ground
-    if (
-      this.isJumping &&
-      Math.abs(this.vel.y) < 10 &&
-      this.pos.y >= this.groundY - 5
-    ) {
+    if (this.isJumping && this.vel.y >= 0 && this.pos.y >= this.groundY - 5) {
       this.isJumping = false;
-      this.pos.y = this.groundY; // Snap to ground
-      this.vel.y = 0;
     }
 
     // Jump periodically like Bowser
