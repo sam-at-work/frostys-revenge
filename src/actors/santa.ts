@@ -3,8 +3,18 @@
  * Frosty's Revenge
  */
 
-import { Actor, Vector, Color, CollisionType, Engine } from "excalibur";
+import {
+  Actor,
+  Vector,
+  CollisionType,
+  Engine,
+  SpriteSheet,
+  Animation,
+  AnimationStrategy,
+  range,
+} from "excalibur";
 import { Config } from "../config";
+import { Resources } from "../resources/resources";
 import { Decoration } from "./decoration";
 
 export class Santa extends Actor {
@@ -14,13 +24,13 @@ export class Santa extends Actor {
   private jumpInterval: number = 3000; // Jump every 3 seconds
   private groundY: number;
   private isJumping: boolean = false;
+  private walkAnim!: Animation;
 
   constructor(pos: Vector) {
     super({
       pos: pos,
       width: Config.SANTA.WIDTH,
       height: Config.SANTA.HEIGHT,
-      color: Color.fromHex(Config.COLORS.SANTA),
       collisionType: CollisionType.Active,
     });
 
@@ -28,6 +38,37 @@ export class Santa extends Actor {
   }
 
   public onInitialize(_engine: Engine): void {
+    // Create sprite sheet from the Santa image (6x6 grid, 128x190px sprites)
+    // Image is 768x1140, so 768/6 = 128px wide, 1140/6 = 190px tall
+    const santaSheet = SpriteSheet.fromImageSource({
+      image: Resources.SantaSpriteSheet,
+      grid: {
+        rows: 6,
+        columns: 6,
+        spriteWidth: 128,
+        spriteHeight: 190,
+      },
+    });
+
+    // Create walking animation using all 34 sprites (5 full rows + 4 from last row)
+    // Sprites are indexed 0-29 (5 rows * 6 cols) + 30-33 (4 from last row)
+    const allSprites = [...range(0, 29), 30, 31, 32, 33];
+    this.walkAnim = Animation.fromSpriteSheet(
+      santaSheet,
+      allSprites,
+      60, // 60ms per frame
+    );
+    this.walkAnim.strategy = AnimationStrategy.Loop;
+
+    // Set initial animation
+    this.graphics.use(this.walkAnim);
+
+    // Set anchor to slightly above bottom so feet are on the ground
+    this.graphics.anchor = new Vector(0.5, 0.9);
+
+    // Move sprite down to align with collision box
+    this.graphics.offset = new Vector(0, 35);
+
     // Santa uses gravity for jumping
     this.body.useGravity = true;
   }

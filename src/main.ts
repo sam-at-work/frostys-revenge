@@ -44,6 +44,8 @@ const loader = new Loader();
 // Add sprite sheets to loader
 loader.addResource(Resources.ElfSpriteSheet);
 loader.addResource(Resources.SnowmanSpriteSheet);
+loader.addResource(Resources.BananaSpriteSheet);
+loader.addResource(Resources.SantaSpriteSheet);
 
 // Hide loading text and start the game
 game.start(loader).then(() => {

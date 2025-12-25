@@ -36,6 +36,7 @@ export class Player extends Actor {
   private damageFlashTimer: number = 0;
   private isDamageFlashing: boolean = false;
   private walkAnim!: Animation;
+  private bananaWalkAnim!: Animation;
 
   constructor(pos: Vector) {
     super({
@@ -69,14 +70,33 @@ export class Player extends Actor {
     );
     this.walkAnim.strategy = AnimationStrategy.Loop;
 
+    // Create banana sprite sheet (same dimensions as snowman)
+    const bananaSheet = SpriteSheet.fromImageSource({
+      image: Resources.BananaSpriteSheet,
+      grid: {
+        rows: 6,
+        columns: 7,
+        spriteWidth: 96,
+        spriteHeight: 142,
+      },
+    });
+
+    // Create banana walking animation
+    this.bananaWalkAnim = Animation.fromSpriteSheet(
+      bananaSheet,
+      allSprites,
+      50, // 50ms per frame
+    );
+    this.bananaWalkAnim.strategy = AnimationStrategy.Loop;
+
     // Set initial animation
     this.graphics.use(this.walkAnim);
 
     // Set anchor to slightly above bottom so feet are on the ground
     this.graphics.anchor = new Vector(0.5, 0.9);
 
-    // Move sprite down to align with collision box
-    this.graphics.offset = new Vector(0, 29);
+    // Move sprite down to align with collision box (will be adjusted for banana mode)
+    this.graphics.offset = new Vector(0, 32);
 
     // Enable gravity for the player
     this.body.useGravity = true;
@@ -113,6 +133,11 @@ export class Player extends Actor {
   }
 
   public onPreUpdate(engine: Engine, delta: number): void {
+    // Adjust offset based on mode (banana needs to be higher)
+    this.graphics.offset = this.isBanana
+      ? new Vector(0, 22)
+      : new Vector(0, 32);
+
     // Simple ground detection: player is grounded if falling/stationary with small downward velocity
     // Must be moving down (or stationary) to prevent jump at peak of arc
     // Velocity check is strict: between 0 and 10 pixels/sec downward
@@ -186,14 +211,16 @@ export class Player extends Actor {
     if (keyboard.isHeld(Keys.Left) || keyboard.isHeld(Keys.A)) {
       velocityX = -Config.PLAYER.MOVE_SPEED;
       this.facingDirection = -1;
-      this.graphics.flipHorizontal = false; // Sprites face left by default
+      // Snowman faces left by default, banana faces right by default
+      this.graphics.flipHorizontal = this.isBanana ? true : false;
     }
 
     // Right movement (Arrow Right or D)
     if (keyboard.isHeld(Keys.Right) || keyboard.isHeld(Keys.D)) {
       velocityX = Config.PLAYER.MOVE_SPEED;
       this.facingDirection = 1;
-      this.graphics.flipHorizontal = true; // Flip to face right
+      // Snowman needs flip to face right, banana doesn't
+      this.graphics.flipHorizontal = this.isBanana ? false : true;
     }
 
     this.vel.x = velocityX;
@@ -238,6 +265,9 @@ export class Player extends Actor {
     this.isInvincible = true;
     this.bananaTimer = Config.BANANA.DURATION;
 
+    // Switch to banana animation
+    this.graphics.use(this.bananaWalkAnim);
+
     // Create particle effect for invincibility
     this.createInvincibilityEffect();
   }
@@ -246,6 +276,9 @@ export class Player extends Actor {
     this.isBanana = false;
     this.isInvincible = false;
     this.graphics.opacity = 1; // Reset opacity
+
+    // Switch back to snowman animation
+    this.graphics.use(this.walkAnim);
 
     // Stop invincibility particle effect
     if (this.invincibilityEmitter) {
