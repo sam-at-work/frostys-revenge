@@ -3,7 +3,16 @@
  * Frosty's Revenge
  */
 
-import { Actor, Vector, CollisionType, Engine, SpriteSheet } from "excalibur";
+import {
+  Actor,
+  Vector,
+  CollisionType,
+  Engine,
+  SpriteSheet,
+  Animation,
+  AnimationStrategy,
+  range,
+} from "excalibur";
 import { Config } from "../config";
 import { Resources } from "../resources/resources";
 import { Decoration } from "./decoration";
@@ -15,7 +24,13 @@ export class Santa extends Actor {
   private jumpInterval: number = 3000; // Jump every 3 seconds
   private groundY: number;
   private isJumping: boolean = false;
-  private idleSprite!: any;
+  private walkAnim!: Animation;
+  private startX: number;
+  private patrolDistance: number = 200;
+  private movingRight: boolean = false; // Start moving left
+  private facingLeft: boolean = true;
+  private platformLeft: number = 4800; // Left edge of platform
+  private platformRight: number = 5000; // Right edge of platform
 
   constructor(pos: Vector) {
     super({
@@ -26,6 +41,7 @@ export class Santa extends Actor {
     });
 
     this.groundY = pos.y;
+    this.startX = pos.x;
   }
 
   public onInitialize(_engine: Engine): void {
@@ -41,23 +57,36 @@ export class Santa extends Actor {
       },
     });
 
-    // Create idle sprite (first sprite)
-    this.idleSprite = santaSheet.getSprite(5, 0);
+    // Create walking animation using all 34 sprites (5 full rows + 4 from last row)
+    // Sprites are indexed 0-29 (5 rows * 6 cols) + 30-33 (4 from last row)
+    const allSprites = [...range(0, 29), 30, 31, 32, 33];
+    this.walkAnim = Animation.fromSpriteSheet(
+      santaSheet,
+      allSprites,
+      60, // 60ms per frame
+    );
+    this.walkAnim.strategy = AnimationStrategy.Loop;
 
-    // Set initial sprite
-    this.graphics.use(this.idleSprite);
+    // Set initial animation
+    this.graphics.use(this.walkAnim);
 
     // Set anchor to slightly above bottom so feet are on the ground
     this.graphics.anchor = new Vector(0.5, 0.9);
 
     // Move sprite down to align with collision box
-    this.graphics.offset = new Vector(0, 16);
+    this.graphics.offset = new Vector(0, 30);
 
     // Santa uses gravity for jumping
     this.body.useGravity = true;
+
+    // Start moving left
+    this.vel.x = -Config.SANTA.MOVE_SPEED;
   }
 
   public onPreUpdate(engine: Engine, delta: number): void {
+    // Patrol back and forth
+    this.patrol();
+
     // Update throw timer
     this.throwTimer += delta;
 
@@ -81,10 +110,40 @@ export class Santa extends Actor {
       this.jumpTimer = 0;
     }
 
-    // Throw decorations periodically
-    if (this.throwTimer >= Config.SANTA.THROW_INTERVAL) {
+    // Throw decorations periodically - only when facing left
+    if (this.throwTimer >= Config.SANTA.THROW_INTERVAL && this.facingLeft) {
       this.throwDecorations(engine);
       this.throwTimer = 0;
+    }
+  }
+
+  private patrol(): void {
+    // Check if we've reached the platform edge or patrol boundary
+    const halfWidth = Config.SANTA.WIDTH / 2;
+    const edgeBuffer = 10; // Stay 10px from edge
+
+    if (this.movingRight) {
+      // Turn around if reaching right edge of platform or patrol boundary
+      if (
+        this.pos.x + halfWidth >= this.platformRight - edgeBuffer ||
+        this.pos.x >= this.startX + this.patrolDistance
+      ) {
+        this.movingRight = false;
+        this.facingLeft = true;
+        this.vel.x = -Config.SANTA.MOVE_SPEED;
+        this.graphics.flipHorizontal = false; // Santa faces left by default
+      }
+    } else {
+      // Turn around if reaching left edge of platform or patrol boundary
+      if (
+        this.pos.x - halfWidth <= this.platformLeft + edgeBuffer ||
+        this.pos.x <= this.startX - this.patrolDistance
+      ) {
+        this.movingRight = true;
+        this.facingLeft = false;
+        this.vel.x = Config.SANTA.MOVE_SPEED;
+        this.graphics.flipHorizontal = true; // Flip to face right
+      }
     }
   }
 

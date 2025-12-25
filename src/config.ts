@@ -41,6 +41,7 @@ export const Config = {
   SANTA: {
     WIDTH: 64,
     HEIGHT: 64,
+    MOVE_SPEED: 60,
     THROW_INTERVAL: 2000, // milliseconds
     DECORATION_SPEED: 250,
   },
