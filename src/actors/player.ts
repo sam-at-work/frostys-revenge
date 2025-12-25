@@ -76,7 +76,7 @@ export class Player extends Actor {
     this.graphics.anchor = new Vector(0.5, 0.9);
 
     // Move sprite down to align with collision box
-    this.graphics.offset = new Vector(0, 22);
+    this.graphics.offset = new Vector(0, 29);
 
     // Enable gravity for the player
     this.body.useGravity = true;
