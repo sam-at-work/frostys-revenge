@@ -3,16 +3,7 @@
  * Frosty's Revenge
  */
 
-import {
-  Actor,
-  Vector,
-  CollisionType,
-  Engine,
-  SpriteSheet,
-  Animation,
-  AnimationStrategy,
-  range,
-} from "excalibur";
+import { Actor, Vector, CollisionType, Engine, SpriteSheet } from "excalibur";
 import { Config } from "../config";
 import { Resources } from "../resources/resources";
 import { Decoration } from "./decoration";
@@ -24,7 +15,7 @@ export class Santa extends Actor {
   private jumpInterval: number = 3000; // Jump every 3 seconds
   private groundY: number;
   private isJumping: boolean = false;
-  private walkAnim!: Animation;
+  private idleSprite!: any;
 
   constructor(pos: Vector) {
     super({
@@ -50,24 +41,17 @@ export class Santa extends Actor {
       },
     });
 
-    // Create walking animation using all 34 sprites (5 full rows + 4 from last row)
-    // Sprites are indexed 0-29 (5 rows * 6 cols) + 30-33 (4 from last row)
-    const allSprites = [...range(0, 29), 30, 31, 32, 33];
-    this.walkAnim = Animation.fromSpriteSheet(
-      santaSheet,
-      allSprites,
-      60, // 60ms per frame
-    );
-    this.walkAnim.strategy = AnimationStrategy.Loop;
+    // Create idle sprite (first sprite)
+    this.idleSprite = santaSheet.getSprite(5, 0);
 
-    // Set initial animation
-    this.graphics.use(this.walkAnim);
+    // Set initial sprite
+    this.graphics.use(this.idleSprite);
 
     // Set anchor to slightly above bottom so feet are on the ground
     this.graphics.anchor = new Vector(0.5, 0.9);
 
     // Move sprite down to align with collision box
-    this.graphics.offset = new Vector(0, 35);
+    this.graphics.offset = new Vector(0, 16);
 
     // Santa uses gravity for jumping
     this.body.useGravity = true;

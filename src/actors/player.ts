@@ -35,6 +35,8 @@ export class Player extends Actor {
   private invincibilityEmitter?: ParticleEmitter;
   private damageFlashTimer: number = 0;
   private isDamageFlashing: boolean = false;
+  private idleSprite!: any;
+  private bananaIdleSprite!: any;
   private walkAnim!: Animation;
   private bananaWalkAnim!: Animation;
 
@@ -60,6 +62,9 @@ export class Player extends Actor {
       },
     });
 
+    // Create idle sprite (first sprite)
+    this.idleSprite = snowmanSheet.getSprite(0, 0);
+
     // Create walking animation using all 40 sprites (5 full rows + 5 from last row)
     // Sprites are indexed 0-34 (5 rows * 7 cols) + 35-39 (5 from last row)
     const allSprites = [...range(0, 34), 35, 36, 37, 38, 39];
@@ -81,6 +86,9 @@ export class Player extends Actor {
       },
     });
 
+    // Create banana idle sprite (first sprite)
+    this.bananaIdleSprite = bananaSheet.getSprite(0, 0);
+
     // Create banana walking animation
     this.bananaWalkAnim = Animation.fromSpriteSheet(
       bananaSheet,
@@ -89,14 +97,14 @@ export class Player extends Actor {
     );
     this.bananaWalkAnim.strategy = AnimationStrategy.Loop;
 
-    // Set initial animation
-    this.graphics.use(this.walkAnim);
+    // Set initial sprite
+    this.graphics.use(this.idleSprite);
 
     // Set anchor to slightly above bottom so feet are on the ground
     this.graphics.anchor = new Vector(0.5, 0.9);
 
     // Move sprite down to align with collision box (will be adjusted for banana mode)
-    this.graphics.offset = new Vector(0, 32);
+    this.graphics.offset = new Vector(0, 28);
 
     // Enable gravity for the player
     this.body.useGravity = true;
@@ -136,7 +144,18 @@ export class Player extends Actor {
     // Adjust offset based on mode (banana needs to be higher)
     this.graphics.offset = this.isBanana
       ? new Vector(0, 22)
-      : new Vector(0, 32);
+      : new Vector(0, 28);
+
+    // Switch between idle and walking animation based on velocity
+    if (this.vel.x !== 0) {
+      // Walking
+      const anim = this.isBanana ? this.bananaWalkAnim : this.walkAnim;
+      this.graphics.use(anim);
+    } else {
+      // Idle
+      const idle = this.isBanana ? this.bananaIdleSprite : this.idleSprite;
+      this.graphics.use(idle);
+    }
 
     // Simple ground detection: player is grounded if falling/stationary with small downward velocity
     // Must be moving down (or stationary) to prevent jump at peak of arc
@@ -265,8 +284,8 @@ export class Player extends Actor {
     this.isInvincible = true;
     this.bananaTimer = Config.BANANA.DURATION;
 
-    // Switch to banana animation
-    this.graphics.use(this.bananaWalkAnim);
+    // Switch to banana sprite (idle or walk will be set in onPreUpdate)
+    this.graphics.use(this.bananaIdleSprite);
 
     // Create particle effect for invincibility
     this.createInvincibilityEffect();
@@ -277,8 +296,8 @@ export class Player extends Actor {
     this.isInvincible = false;
     this.graphics.opacity = 1; // Reset opacity
 
-    // Switch back to snowman animation
-    this.graphics.use(this.walkAnim);
+    // Switch back to snowman sprite (idle or walk will be set in onPreUpdate)
+    this.graphics.use(this.idleSprite);
 
     // Stop invincibility particle effect
     if (this.invincibilityEmitter) {
