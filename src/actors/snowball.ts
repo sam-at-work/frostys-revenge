@@ -11,6 +11,7 @@ import {
   Engine,
   ParticleEmitter,
   EmitterType,
+  Canvas,
 } from "excalibur";
 import { Config } from "../config";
 import { Elf } from "./elf";
@@ -23,7 +24,6 @@ export class Snowball extends Actor {
       pos: pos,
       width: Config.SNOWBALL.WIDTH,
       height: Config.SNOWBALL.HEIGHT,
-      color: Color.fromHex(Config.COLORS.SNOWBALL),
       collisionType: CollisionType.Passive,
     });
 
@@ -31,6 +31,43 @@ export class Snowball extends Actor {
   }
 
   public onInitialize(_engine: Engine): void {
+    // Create pixel art snowball graphic
+    const canvas = new Canvas({
+      width: Config.SNOWBALL.WIDTH,
+      height: Config.SNOWBALL.HEIGHT,
+      draw: (ctx) => {
+        const centerX = Config.SNOWBALL.WIDTH / 2;
+        const centerY = Config.SNOWBALL.HEIGHT / 2;
+        const radius = Config.SNOWBALL.WIDTH / 2;
+
+        // Main white circle
+        ctx.fillStyle = "#FFFFFF";
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Light blue highlight (top-left)
+        ctx.fillStyle = "rgba(200, 230, 255, 0.7)";
+        ctx.beginPath();
+        ctx.arc(centerX - 2, centerY - 2, radius * 0.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Slight shadow/texture (bottom-right)
+        ctx.fillStyle = "rgba(180, 200, 220, 0.3)";
+        ctx.beginPath();
+        ctx.arc(centerX + 1, centerY + 1, radius * 0.6, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Add a few small texture dots
+        ctx.fillStyle = "rgba(230, 240, 255, 0.8)";
+        ctx.fillRect(centerX - 3, centerY, 1, 1);
+        ctx.fillRect(centerX + 2, centerY - 2, 1, 1);
+        ctx.fillRect(centerX, centerY + 3, 1, 1);
+      },
+    });
+
+    this.graphics.use(canvas);
+
     // Snowball doesn't have gravity
     this.body.useGravity = false;
 

@@ -8,6 +8,7 @@ import { Config } from "./config";
 import { LevelScene } from "./scenes/level";
 import { GameOverScene } from "./scenes/gameover";
 import { WinScene } from "./scenes/win";
+import { Resources } from "./resources/resources";
 
 class Game extends Engine {
   constructor() {
@@ -40,8 +41,8 @@ const game = new Game();
 
 // Create loader with all resources
 const loader = new Loader();
-// Resources object is currently empty (placeholder graphics being used)
-// We'll add resources in Phase 7 when we add actual assets
+// Add elf sprite sheet to loader
+loader.addResource(Resources.ElfSpriteSheet);
 
 // Hide loading text and start the game
 game.start(loader).then(() => {

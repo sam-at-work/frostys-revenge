@@ -11,13 +11,20 @@ import {
   Engine,
   ParticleEmitter,
   EmitterType,
+  SpriteSheet,
+  Animation,
+  AnimationStrategy,
+  range,
 } from "excalibur";
 import { Config } from "../config";
+import { Resources } from "../resources/resources";
 
 export class Elf extends Actor {
   private startX: number;
   private patrolDistance: number;
   private movingRight: boolean = true;
+  private walkAnim!: Animation;
+  private idleSprite!: any;
 
   constructor(
     pos: Vector,
@@ -27,7 +34,6 @@ export class Elf extends Actor {
       pos: pos,
       width: Config.ELF.WIDTH,
       height: Config.ELF.HEIGHT,
-      color: Color.fromHex(Config.COLORS.ELF),
       collisionType: CollisionType.Active,
     });
 
@@ -36,6 +42,38 @@ export class Elf extends Actor {
   }
 
   public onInitialize(_engine: Engine): void {
+    // Create sprite sheet from the elf image (5x5 grid, 96px sprites)
+    // Image is 480x480, so 480/5 = 96px per sprite
+    const elfSheet = SpriteSheet.fromImageSource({
+      image: Resources.ElfSpriteSheet,
+      grid: {
+        rows: 5,
+        columns: 5,
+        spriteWidth: 96,
+        spriteHeight: 96,
+      },
+    });
+
+    // Create idle sprite (first sprite of the walk animation)
+    this.idleSprite = elfSheet.getSprite(0, 0);
+
+    // Create walking animation (using first row of sprites - walking right)
+    this.walkAnim = Animation.fromSpriteSheet(
+      elfSheet,
+      range(0, 4), // sprites 0-4 (first row)
+      100, // 100ms per frame
+    );
+    this.walkAnim.strategy = AnimationStrategy.Loop;
+
+    // Set initial animation
+    this.graphics.use(this.walkAnim);
+
+    // Set anchor to slightly above bottom so feet are on the ground
+    this.graphics.anchor = new Vector(0.5, 0.86);
+
+    // Move sprite down 32px to align with collision box
+    this.graphics.offset = new Vector(0, 36);
+
     // Elves use gravity
     this.body.useGravity = true;
 
@@ -46,6 +84,13 @@ export class Elf extends Actor {
   public onPreUpdate(_engine: Engine, _delta: number): void {
     // Patrol back and forth
     this.patrol();
+
+    // Switch between idle and walking animation
+    if (this.vel.x === 0) {
+      this.graphics.use(this.idleSprite);
+    } else {
+      this.graphics.use(this.walkAnim);
+    }
   }
 
   private patrol(): void {
@@ -54,11 +99,13 @@ export class Elf extends Actor {
       if (this.pos.x >= this.startX + this.patrolDistance) {
         this.movingRight = false;
         this.vel.x = -Config.ELF.MOVE_SPEED;
+        this.graphics.flipHorizontal = true;
       }
     } else {
       if (this.pos.x <= this.startX - this.patrolDistance) {
         this.movingRight = true;
         this.vel.x = Config.ELF.MOVE_SPEED;
+        this.graphics.flipHorizontal = false;
       }
     }
   }
