@@ -63,7 +63,7 @@ export class Player extends Actor {
     });
 
     // Create idle sprite (first sprite)
-    this.idleSprite = snowmanSheet.getSprite(0, 0);
+    this.idleSprite = snowmanSheet.getSprite(2, 2);
 
     // Create walking animation using all 40 sprites (5 full rows + 5 from last row)
     // Sprites are indexed 0-34 (5 rows * 7 cols) + 35-39 (5 from last row)
