@@ -74,7 +74,7 @@ export class Santa extends Actor {
     this.graphics.anchor = new Vector(0.5, 0.9);
 
     // Move sprite down to align with collision box
-    this.graphics.offset = new Vector(0, 30);
+    this.graphics.offset = new Vector(0, 20);
 
     // Santa uses gravity for jumping
     this.body.useGravity = true;
