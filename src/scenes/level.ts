@@ -36,6 +36,7 @@ export class LevelScene extends Scene {
   private bossAreaStartX: number = 4300; // X position where boss area begins
   private maxCameraX: number = Config.GAME_WIDTH / 2; // Track max camera position for one-way scrolling
   public snowStarted: boolean = false; // Track if snow has started for boss area
+  private justReset: boolean = false; // Flag to force camera reset on first frame
 
   public onInitialize() {
     // Create gradient sky background
@@ -75,13 +76,24 @@ export class LevelScene extends Scene {
     Resources.BananaSong.stop();
 
     // Clear all actors from the scene to prevent duplicates
-    this.clear();
+    // Manually remove all actors since clear() doesn't work
+    const actorsToRemove = [...this.actors];
+    actorsToRemove.forEach((actor) => {
+      this.remove(actor);
+    });
+    // Also clear the snow emitter if it exists
+    if (this.snowEmitter) {
+      this.snowEmitter = undefined;
+    }
 
     // Reset boss music flag
     this.isBossMusicPlaying = false;
 
     // Reset max camera position
     this.maxCameraX = Config.GAME_WIDTH / 2;
+
+    // Set flag to force camera reset on first frame
+    this.justReset = true;
 
     // Reset snow flag
     this.snowStarted = false;
@@ -96,6 +108,10 @@ export class LevelScene extends Scene {
     this.createPowerUps();
     this.createPlayer();
     this.createUI();
+
+    // Reset camera to start position AFTER player is created
+    // This ensures the player's first update doesn't override it
+    this.camera.pos = new Vector(Config.GAME_WIDTH / 2, Config.GAME_HEIGHT / 2);
 
     // Snow will be initialized during boss fight
 
@@ -566,6 +582,16 @@ export class LevelScene extends Scene {
   }
 
   public onPreUpdate(engine: Engine, delta: number) {
+    // Force camera to start position on first frame after reset
+    if (this.justReset) {
+      this.camera.pos = new Vector(
+        Config.GAME_WIDTH / 2,
+        Config.GAME_HEIGHT / 2,
+      );
+      this.maxCameraX = Config.GAME_WIDTH / 2;
+      this.justReset = false;
+    }
+
     // Update parallax backgrounds
     const camera = this.camera;
     this.actors.forEach((actor) => {
@@ -653,6 +679,10 @@ export class LevelScene extends Scene {
   }
 
   public getPlayerRespawnPosition(): Vector {
+    // If scene was just reset (game over), always respawn at level start
+    if (this.justReset) {
+      return new Vector(100, Config.GAME_HEIGHT / 2);
+    }
     // If player is in boss area, respawn at start of boss area
     if (this.player && this.player.pos.x >= this.bossAreaStartX) {
       return new Vector(this.bossAreaStartX + 100, Config.GAME_HEIGHT / 2);
@@ -662,6 +692,10 @@ export class LevelScene extends Scene {
   }
 
   public getRespawnCameraX(): number {
+    // If scene was just reset (game over), always use level start camera
+    if (this.justReset) {
+      return Config.GAME_WIDTH / 2;
+    }
     // If player is in boss area, align camera left edge with boss area start
     if (this.player && this.player.pos.x >= this.bossAreaStartX) {
       return this.bossAreaStartX + Config.GAME_WIDTH / 2;

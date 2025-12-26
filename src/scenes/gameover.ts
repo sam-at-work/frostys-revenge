@@ -5,6 +5,7 @@
 
 import { Scene, Color, Label, Vector, Font, FontUnit, Input } from "excalibur";
 import { Config } from "../config";
+import { LevelScene } from "./level";
 
 export class GameOverScene extends Scene {
   private keyHandler?: (evt: any) => void;
@@ -49,6 +50,13 @@ export class GameOverScene extends Scene {
     // Create new listener
     this.keyHandler = (evt) => {
       if (evt.key === Input.Keys.Space) {
+        // Remove the old level scene and create a new one to ensure clean restart
+        const oldLevelScene = this.engine.scenes["level"];
+        if (oldLevelScene) {
+          this.engine.removeScene("level");
+        }
+        // Create a new level scene
+        this.engine.addScene("level", new LevelScene());
         this.engine.goToScene("level");
       }
     };

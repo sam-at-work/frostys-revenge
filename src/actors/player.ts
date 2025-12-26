@@ -236,6 +236,12 @@ export class Player extends Actor {
     // Camera only moves forward, never backward (one-way scrolling)
     if (!this.isDying) {
       const levelScene = engine.currentScene as any;
+
+      // Don't update camera if scene was just reset - let it stay at start
+      if (levelScene.justReset) {
+        return;
+      }
+
       const desiredCameraX = Math.max(
         Config.GAME_WIDTH / 2,
         Math.min(this.pos.x, Config.LEVEL.LENGTH - Config.GAME_WIDTH / 2),
