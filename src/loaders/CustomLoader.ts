@@ -10,6 +10,7 @@ export class CustomLoader extends DefaultLoader {
   private backgroundImage: HTMLImageElement | null = null;
   private imageLoaded = false;
   private playButtonElement: HTMLButtonElement | null = null;
+  private fontLoaded = false;
 
   constructor() {
     super();
@@ -20,6 +21,21 @@ export class CustomLoader extends DefaultLoader {
       this.imageLoaded = true;
     };
     this.backgroundImage.src = "/homescreen/image.jpg";
+
+    // Load the custom font
+    this.loadFont();
+  }
+
+  private async loadFont(): Promise<void> {
+    try {
+      await document.fonts.load('96px "Jacquard 12"');
+      if (document.fonts.check('96px "Jacquard 12"')) {
+        this.fontLoaded = true;
+      }
+    } catch (err) {
+      console.warn("Failed to load Jacquard 12 font, using fallback", err);
+      this.fontLoaded = true; // Use fallback
+    }
   }
 
   override async onUserAction(): Promise<void> {
@@ -33,10 +49,13 @@ export class CustomLoader extends DefaultLoader {
       this.playButtonElement.style.left = "50%";
       this.playButtonElement.style.transform = "translate(-50%, -50%)";
       this.playButtonElement.style.padding = "20px 40px";
-      this.playButtonElement.style.fontSize = "24px";
-      this.playButtonElement.style.fontWeight = "bold";
+      this.playButtonElement.style.fontSize = "48px";
+      this.playButtonElement.style.fontFamily = '"Jacquard 12", system-ui';
+      this.playButtonElement.style.fontWeight = "400";
       this.playButtonElement.style.backgroundColor = "#ADD8E6";
       this.playButtonElement.style.color = "white";
+      this.playButtonElement.style.textShadow =
+        "2px 0 0 black, -2px 0 0 black, 0 2px 0 black, 0 -2px 0 black, 1px 1px 0 black, -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black";
       this.playButtonElement.style.border = "none";
       this.playButtonElement.style.borderRadius = "10px";
       this.playButtonElement.style.cursor = "pointer";
@@ -122,15 +141,17 @@ export class CustomLoader extends DefaultLoader {
     }
 
     // Draw game title (higher up)
-    ctx.font = "48px Arial, sans-serif";
+    ctx.font = this.fontLoaded
+      ? '96px "Jacquard 12", system-ui'
+      : "96px Arial, sans-serif";
     ctx.fillStyle = "white";
     ctx.strokeStyle = "black";
     ctx.lineWidth = 4;
     ctx.textAlign = "center";
 
     const titleText = "Frosty's Revenge";
-    ctx.strokeText(titleText, canvasWidth / 2, 100);
-    ctx.fillText(titleText, canvasWidth / 2, 100);
+    ctx.strokeText(titleText, canvasWidth / 2, 140);
+    ctx.fillText(titleText, canvasWidth / 2, 140);
 
     // Draw progress bar background (bottom of screen)
     const barWidth = 400;
@@ -157,7 +178,9 @@ export class CustomLoader extends DefaultLoader {
 
     // Draw percentage text
     const percentText = `${Math.round(progress * 100)}%`;
-    ctx.font = "24px Arial, sans-serif";
+    ctx.font = this.fontLoaded
+      ? '48px "Jacquard 12", system-ui'
+      : "48px Arial, sans-serif";
     ctx.fillStyle = "white";
     ctx.strokeStyle = "black";
     ctx.lineWidth = 2;
