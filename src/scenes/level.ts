@@ -27,13 +27,14 @@ export class LevelScene extends Scene {
   private player!: Player;
   private livesLabel!: Label;
   private powerUpLabel!: Label;
-  private snowEmitter!: SnowEmitter;
+  private snowEmitter?: SnowEmitter;
   private santa!: Santa;
   private winZoneX: number = 5100; // X position to reach to win
   private isBossMusicPlaying: boolean = false;
   private bossProximityDistance: number = 800; // Distance from boss to trigger boss music
   private bossAreaStartX: number = 4300; // X position where boss area begins
   private maxCameraX: number = Config.GAME_WIDTH / 2; // Track max camera position for one-way scrolling
+  private snowStarted: boolean = false; // Track if snow has started for boss area
 
   public onInitialize() {
     // Create gradient sky background
@@ -60,9 +61,7 @@ export class LevelScene extends Scene {
     // Create UI
     this.createUI();
 
-    // Initialize snow effect
-    this.snowEmitter = new SnowEmitter();
-    this.snowEmitter.initialize(this.engine);
+    // Snow will be initialized during boss fight
   }
 
   public onActivate() {
@@ -80,6 +79,9 @@ export class LevelScene extends Scene {
     // Reset max camera position
     this.maxCameraX = Config.GAME_WIDTH / 2;
 
+    // Reset snow flag
+    this.snowStarted = false;
+
     // Reinitialize the entire scene
     this.createSkyBackground();
     this.createLevel();
@@ -90,9 +92,7 @@ export class LevelScene extends Scene {
     this.createPlayer();
     this.createUI();
 
-    // Reinitialize snow effect
-    this.snowEmitter = new SnowEmitter();
-    this.snowEmitter.initialize(this.engine);
+    // Snow will be initialized during boss fight
 
     // Configure and start background music
     Resources.BackgroundMusic.loop = true;
@@ -493,9 +493,20 @@ export class LevelScene extends Scene {
       );
     }
 
-    // Update snow effect
+    // Update snow effect (only during boss fight)
     if (this.snowEmitter) {
       this.snowEmitter.update(engine, delta, this.camera.pos.x);
+    }
+
+    // Start snow when player reaches boss area (past final pit)
+    if (
+      this.player &&
+      this.player.pos.x >= this.bossAreaStartX &&
+      !this.snowStarted
+    ) {
+      this.snowStarted = true;
+      this.snowEmitter = new SnowEmitter();
+      this.snowEmitter.initialize(engine);
     }
 
     // Check proximity to boss for music switching
@@ -535,6 +546,6 @@ export class LevelScene extends Scene {
       return new Vector(this.bossAreaStartX, Config.GAME_HEIGHT / 2);
     }
     // Otherwise respawn at level start
-    return new Vector(100, Config.GAME_HEIGHT / 2);
+    return new Vector(3500, Config.GAME_HEIGHT / 2);
   }
 }

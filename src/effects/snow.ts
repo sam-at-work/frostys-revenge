@@ -28,7 +28,7 @@ export class SnowParticle extends Actor {
     // Random drift and fall speeds for variety
     this.driftSpeed = (Math.random() - 0.5) * 20;
     this.fallSpeed = Math.random() * 30 + 20; // 20-50 pixels per second
-    this.maxLifetime = 10000 + Math.random() * 5000; // 10-15 seconds
+    this.maxLifetime = 15000 + Math.random() * 5000; // 15-20 seconds
   }
 
   public onInitialize(_engine: Engine): void {
@@ -37,13 +37,6 @@ export class SnowParticle extends Actor {
 
   public onPreUpdate(_engine: Engine, delta: number): void {
     this.lifetime += delta;
-
-    // Fade out near the end of lifetime
-    if (this.lifetime > this.maxLifetime * 0.8) {
-      const fadeProgress =
-        (this.lifetime - this.maxLifetime * 0.8) / (this.maxLifetime * 0.2);
-      this.graphics.opacity = 1 - fadeProgress;
-    }
 
     // Remove when lifetime expires or off screen
     if (
@@ -57,26 +50,10 @@ export class SnowParticle extends Actor {
 
 export class SnowEmitter {
   private emitTimer: number = 0;
-  private emitRate: number = 80; // milliseconds between particles
-  private isInitialized: boolean = false;
+  private emitRate: number = 80; // Boss fight snow - heavier snowfall
 
   public initialize(engine: Engine): void {
-    // Pre-spawn snow particles only in visible area + buffer
-    const numParticles = 200; // Reduced for better performance
-    const cameraX = engine.currentScene.camera.pos.x;
-    const spawnWidth = Config.GAME_WIDTH * 2; // 2 screens wide
-
-    for (let i = 0; i < numParticles; i++) {
-      // Spawn near camera position, not entire level
-      const x = cameraX - Config.GAME_WIDTH + Math.random() * spawnWidth;
-      // Spawn at random heights across the screen
-      const y = Math.random() * Config.GAME_HEIGHT;
-
-      const particle = new SnowParticle(x, y);
-      engine.currentScene.add(particle);
-    }
-
-    this.isInitialized = true;
+    // No pre-spawning - snow will start falling from top naturally
   }
 
   public update(engine: Engine, delta: number, cameraX: number): void {
@@ -85,13 +62,14 @@ export class SnowEmitter {
     if (this.emitTimer >= this.emitRate) {
       this.emitTimer = 0;
 
-      // Emit particles across visible screen + 1 screen ahead
-      const particlesPerEmit = Math.floor(Math.random() * 3) + 2; // 2-4 particles
+      // Heavier snowfall for boss fight - 2-4 particles
+      const particlesPerEmit = Math.floor(Math.random() * 3) + 2;
 
       for (let i = 0; i < particlesPerEmit; i++) {
-        // Emit across visible screen plus 1.5 screens ahead
-        const emitWidth = Config.GAME_WIDTH * 2.5;
-        const x = cameraX - Config.GAME_WIDTH / 2 + Math.random() * emitWidth;
+        // Emit across entire boss area (4300 to end of level) for consistent snow
+        const bossAreaStart = 4300;
+        const bossAreaWidth = Config.LEVEL.LENGTH - bossAreaStart;
+        const x = bossAreaStart + Math.random() * bossAreaWidth;
         const y = -10; // Start above screen
 
         const particle = new SnowParticle(x, y);
@@ -99,11 +77,10 @@ export class SnowEmitter {
       }
     }
 
-    // Cull particles that are behind the camera (one-way scrolling, no need to keep them)
-    const cullX = cameraX - Config.GAME_WIDTH / 2 - 50; // Slightly behind left edge
+    // Cull particles that fall below the screen or are before boss area
     engine.currentScene.actors.forEach((actor) => {
       if (actor instanceof SnowParticle) {
-        if (actor.pos.x < cullX) {
+        if (actor.pos.y > Config.GAME_HEIGHT + 50 || actor.pos.x < 4300) {
           actor.kill();
         }
       }
