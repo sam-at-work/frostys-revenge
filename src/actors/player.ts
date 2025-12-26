@@ -511,23 +511,8 @@ export class Player extends Actor {
     // Disable collision to prevent enemies from hitting invisible player
     this.body.collisionType = CollisionType.PreventCollision;
 
-    // Remove all snow particles
-    const engine = this.scene?.engine;
-    if (engine) {
-      engine.currentScene.actors.forEach((actor) => {
-        if (actor instanceof SnowParticle) {
-          actor.kill();
-        }
-      });
-
-      // Reset snow flag in level scene so it can restart if in boss area
-      const levelScene = engine.currentScene as LevelScene;
-      if (levelScene.snowStarted !== undefined) {
-        levelScene.snowStarted = false;
-      }
-    }
-
     // Always deactivate banana mode on death
+    const engine = this.scene?.engine;
     if (this.isBanana) {
       this.deactivateBanana();
 
