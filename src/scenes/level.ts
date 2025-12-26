@@ -94,6 +94,7 @@ export class LevelScene extends Scene {
   private createLevel() {
     // Main ground - continuous sections with small gaps
     // Player is ~100px tall, jump height ~200px
+    // Elves are 64px tall - platforms must clear elf height (160px+ above ground)
 
     // Starting area - long safe ground
     this.createPlatform(0, Config.GAME_HEIGHT - 32, 800, 64);
@@ -114,28 +115,30 @@ export class LevelScene extends Scene {
     this.createPlatform(4300, Config.GAME_HEIGHT - 32, 900, 64);
 
     // Elevated platforms - with stepping stones to reach them
+    // All platforms at 170px+ above ground to clear elf height (64px) with margin
+
     // First elevated area - stairs to get up
-    this.createPlatform(350, Config.GAME_HEIGHT - 100, 150, 32); // Step 1
-    this.createPlatform(480, Config.GAME_HEIGHT - 170, 150, 32); // Step 2
-    this.createPlatform(610, Config.GAME_HEIGHT - 240, 200, 32); // Top platform
+    this.createPlatform(350, Config.GAME_HEIGHT - 170, 150, 32); // Step 1 - safe clearance
+    this.createPlatform(480, Config.GAME_HEIGHT - 250, 150, 32); // Step 2 - 80px above step 1
+    this.createPlatform(610, Config.GAME_HEIGHT - 330, 200, 32); // Top platform - 80px above step 2
 
     // Second elevated area - after first gap
-    this.createPlatform(1100, Config.GAME_HEIGHT - 100, 150, 32); // Step 1
-    this.createPlatform(1230, Config.GAME_HEIGHT - 170, 200, 32); // Top platform
+    this.createPlatform(1100, Config.GAME_HEIGHT - 170, 150, 32); // Step 1 - safe clearance
+    this.createPlatform(1230, Config.GAME_HEIGHT - 250, 200, 32); // Top platform - 80px above step 1
 
     // Third elevated area - mid level
-    this.createPlatform(1900, Config.GAME_HEIGHT - 100, 150, 32); // Step 1
-    this.createPlatform(2030, Config.GAME_HEIGHT - 170, 150, 32); // Step 2
-    this.createPlatform(2160, Config.GAME_HEIGHT - 240, 200, 32); // Top platform
+    this.createPlatform(1900, Config.GAME_HEIGHT - 170, 150, 32); // Step 1 - safe clearance
+    this.createPlatform(2030, Config.GAME_HEIGHT - 250, 150, 32); // Step 2 - 80px above step 1
+    this.createPlatform(2160, Config.GAME_HEIGHT - 330, 200, 32); // Top platform - 80px above step 2
 
     // Fourth elevated area - later level
-    this.createPlatform(2700, Config.GAME_HEIGHT - 100, 150, 32); // Step 1
-    this.createPlatform(2830, Config.GAME_HEIGHT - 170, 200, 32); // Top platform
+    this.createPlatform(2700, Config.GAME_HEIGHT - 170, 150, 32); // Step 1 - safe clearance
+    this.createPlatform(2830, Config.GAME_HEIGHT - 250, 200, 32); // Top platform - 80px above step 1
 
     // Fifth elevated area - near end
-    this.createPlatform(3500, Config.GAME_HEIGHT - 100, 150, 32); // Step 1
-    this.createPlatform(3630, Config.GAME_HEIGHT - 170, 150, 32); // Step 2
-    this.createPlatform(3760, Config.GAME_HEIGHT - 240, 200, 32); // Top platform
+    this.createPlatform(3500, Config.GAME_HEIGHT - 170, 150, 32); // Step 1 - safe clearance
+    this.createPlatform(3630, Config.GAME_HEIGHT - 250, 150, 32); // Step 2 - 80px above step 1
+    this.createPlatform(3760, Config.GAME_HEIGHT - 330, 200, 32); // Top platform - 80px above step 2
   }
 
   private createPlatform(x: number, y: number, width: number, height: number) {
@@ -238,28 +241,28 @@ export class LevelScene extends Scene {
 
   private createEnemies() {
     // Early section - on ground and platforms
-    this.createElf(500, Config.GAME_HEIGHT - 96);
-    this.createElf(650, Config.GAME_HEIGHT - 272, 80); // On top platform
+    this.createElf(600, Config.GAME_HEIGHT - 96, 80); // Ground level - platforms now clear overhead
+    this.createElf(690, Config.GAME_HEIGHT - 362, 80); // On top platform (610-810), patrol 610-770
 
     // After first gap
-    this.createElf(1000, Config.GAME_HEIGHT - 96);
-    this.createElf(1280, Config.GAME_HEIGHT - 202, 80); // On elevated platform
+    this.createElf(1050, Config.GAME_HEIGHT - 96, 80); // Ground level
+    this.createElf(1310, Config.GAME_HEIGHT - 282, 70); // On elevated platform (1230-1430), patrol 1240-1380
 
     // Mid section
-    this.createElf(1900, Config.GAME_HEIGHT - 96);
-    this.createElf(2200, Config.GAME_HEIGHT - 272, 80); // On top platform
+    this.createElf(2000, Config.GAME_HEIGHT - 96, 80); // Ground level - platforms clear overhead
+    this.createElf(2240, Config.GAME_HEIGHT - 362, 80); // On top platform (2160-2360), patrol 2160-2320
 
     // Later section
-    this.createElf(2700, Config.GAME_HEIGHT - 96);
-    this.createElf(2880, Config.GAME_HEIGHT - 202, 80); // On elevated platform
+    this.createElf(2600, Config.GAME_HEIGHT - 96, 80); // Ground level
+    this.createElf(2910, Config.GAME_HEIGHT - 282, 70); // On elevated platform (2830-3030), patrol 2840-2980
 
     // Near end
-    this.createElf(3600, Config.GAME_HEIGHT - 96);
-    this.createElf(3800, Config.GAME_HEIGHT - 272, 80); // On top platform
+    this.createElf(3450, Config.GAME_HEIGHT - 96, 80); // Ground level - platforms clear overhead
+    this.createElf(3840, Config.GAME_HEIGHT - 362, 80); // On top platform (3760-3960), patrol 3760-3920
 
     // Just before boss
-    this.createElf(4100, Config.GAME_HEIGHT - 96);
-    this.createElf(4500, Config.GAME_HEIGHT - 96);
+    this.createElf(4100, Config.GAME_HEIGHT - 96, 80); // Safe patrol (4020-4180)
+    this.createElf(4500, Config.GAME_HEIGHT - 96, 80); // Safe patrol (4420-4580)
   }
 
   private createElf(x: number, y: number, patrolDistance?: number) {

@@ -15,6 +15,8 @@ import {
   Animation,
   AnimationStrategy,
   range,
+  CollisionStartEvent,
+  Side,
 } from "excalibur";
 import { Config } from "../config";
 import { Resources } from "../resources/resources";
@@ -24,9 +26,6 @@ export class Elf extends Actor {
   private patrolDistance: number;
   private movingRight: boolean = true;
   private walkAnim!: Animation;
-  private idleSprite!: any;
-  private isOnGround: boolean = false;
-  private lastGroundY: number = 0;
 
   constructor(
     pos: Vector,
@@ -41,6 +40,11 @@ export class Elf extends Actor {
 
     this.startX = pos.x;
     this.patrolDistance = patrolDistance;
+
+    // Listen for collisions to detect walls/obstacles
+    this.on("collisionstart", (evt: CollisionStartEvent) =>
+      this.onCollision(evt),
+    );
   }
 
   public onInitialize(_engine: Engine): void {
@@ -55,9 +59,6 @@ export class Elf extends Actor {
         spriteHeight: 96,
       },
     });
-
-    // Create idle sprite (first sprite)
-    this.idleSprite = elfSheet.getSprite(0, 0);
 
     // Create walking animation using all 25 sprites
     this.walkAnim = Animation.fromSpriteSheet(
@@ -81,75 +82,42 @@ export class Elf extends Actor {
 
     // Start moving
     this.vel.x = Config.ELF.MOVE_SPEED;
-    this.lastGroundY = this.pos.y;
+  }
 
-    // Listen for collisions
-    this.on("precollision", (evt) => {
-      const side = evt.side;
+  private onCollision(evt: CollisionStartEvent): void {
+    // If we hit a wall/platform on the side we're moving, turn around
+    const side = evt.side;
 
-      // Track if we're on ground
-      if (side === "Bottom") {
-        this.isOnGround = true;
-        this.lastGroundY = this.pos.y;
-      }
-
-      // If we hit a wall on the side we're moving, turn around
-      if (side === "Left" && !this.movingRight) {
-        this.movingRight = true;
-        this.vel.x = Config.ELF.MOVE_SPEED;
-        this.graphics.flipHorizontal = false;
-      } else if (side === "Right" && this.movingRight) {
-        this.movingRight = false;
-        this.vel.x = -Config.ELF.MOVE_SPEED;
-        this.graphics.flipHorizontal = true;
-      }
-    });
-
-    this.on("postcollision", () => {
-      this.isOnGround = false;
-    });
+    // Hit wall on the right while moving right - turn left
+    if (side === Side.Right && this.movingRight) {
+      this.movingRight = false;
+      this.vel.x = -Config.ELF.MOVE_SPEED;
+      this.graphics.flipHorizontal = true;
+    }
+    // Hit wall on the left while moving left - turn right
+    else if (side === Side.Left && !this.movingRight) {
+      this.movingRight = true;
+      this.vel.x = Config.ELF.MOVE_SPEED;
+      this.graphics.flipHorizontal = false;
+    }
   }
 
   public onPreUpdate(_engine: Engine, _delta: number): void {
-    // Simple edge detection - if we're falling and not on ground, we walked off edge
-    if (!this.isOnGround && this.pos.y > this.lastGroundY + 10) {
-      // We've walked off a platform, turn around
-      if (this.movingRight) {
-        this.movingRight = false;
-        this.vel.x = -Config.ELF.MOVE_SPEED;
-        this.graphics.flipHorizontal = true;
-      } else {
-        this.movingRight = true;
-        this.vel.x = Config.ELF.MOVE_SPEED;
-        this.graphics.flipHorizontal = false;
-      }
-    }
+    // Always use walking animation
+    this.graphics.use(this.walkAnim);
 
-    // Patrol back and forth
-    this.patrol();
-
-    // Use walking animation when moving, idle when stopped
-    if (this.vel.x === 0) {
-      this.graphics.use(this.idleSprite);
-    } else {
-      this.graphics.use(this.walkAnim);
-    }
-  }
-
-  private patrol(): void {
-    // Check if we've reached the patrol boundary from starting position
-    if (this.movingRight) {
-      if (this.pos.x >= this.startX + this.patrolDistance) {
-        this.movingRight = false;
-        this.vel.x = -Config.ELF.MOVE_SPEED;
-        this.graphics.flipHorizontal = true;
-      }
-    } else {
-      if (this.pos.x <= this.startX - this.patrolDistance) {
-        this.movingRight = true;
-        this.vel.x = Config.ELF.MOVE_SPEED;
-        this.graphics.flipHorizontal = false;
-      }
+    // Simple patrol - just check boundaries
+    if (this.movingRight && this.pos.x >= this.startX + this.patrolDistance) {
+      this.movingRight = false;
+      this.vel.x = -Config.ELF.MOVE_SPEED;
+      this.graphics.flipHorizontal = true;
+    } else if (
+      !this.movingRight &&
+      this.pos.x <= this.startX - this.patrolDistance
+    ) {
+      this.movingRight = true;
+      this.vel.x = Config.ELF.MOVE_SPEED;
+      this.graphics.flipHorizontal = false;
     }
   }
 
