@@ -92,33 +92,50 @@ export class LevelScene extends Scene {
   }
 
   private createLevel() {
-    // Main ground - spans most of the level with some gaps
-    // Player is ~100px tall, so need 150+ clearance under platforms
-    this.createPlatform(0, Config.GAME_HEIGHT - 32, 1000, 64);
+    // Main ground - continuous sections with small gaps
+    // Player is ~100px tall, jump height ~200px
 
-    // Gap 1 - narrower and no platform above to allow jumping
-    this.createPlatform(1150, Config.GAME_HEIGHT - 32, 900, 64);
+    // Starting area - long safe ground
+    this.createPlatform(0, Config.GAME_HEIGHT - 32, 800, 64);
 
-    // Gap 2
-    this.createPlatform(2200, Config.GAME_HEIGHT - 32, 1000, 64);
+    // Small gap 1 - easily jumpable (100px)
+    this.createPlatform(900, Config.GAME_HEIGHT - 32, 700, 64);
 
-    // Gap 3 - approach to boss area
-    this.createPlatform(3400, Config.GAME_HEIGHT - 32, 1200, 64);
+    // Small gap 2 - easily jumpable (100px)
+    this.createPlatform(1700, Config.GAME_HEIGHT - 32, 700, 64);
 
-    // Elevated platforms - much higher clearance (200px+) for player to walk under
-    // First platform - lower and easier to reach
-    this.createPlatform(400, Config.GAME_HEIGHT - 200, 200, 32);
+    // Small gap 3 - easily jumpable (100px)
+    this.createPlatform(2500, Config.GAME_HEIGHT - 32, 700, 64);
 
-    // Mid-level platforms - far from gaps so they don't block jumps
-    this.createPlatform(1600, Config.GAME_HEIGHT - 300, 300, 32);
+    // Small gap 4 - easily jumpable (100px)
+    this.createPlatform(3300, Config.GAME_HEIGHT - 32, 900, 64);
 
-    this.createPlatform(2600, Config.GAME_HEIGHT - 320, 250, 32);
+    // Boss area - wide platform
+    this.createPlatform(4300, Config.GAME_HEIGHT - 32, 900, 64);
 
-    this.createPlatform(3200, Config.GAME_HEIGHT - 280, 200, 32);
+    // Elevated platforms - with stepping stones to reach them
+    // First elevated area - stairs to get up
+    this.createPlatform(350, Config.GAME_HEIGHT - 100, 150, 32); // Step 1
+    this.createPlatform(480, Config.GAME_HEIGHT - 170, 150, 32); // Step 2
+    this.createPlatform(610, Config.GAME_HEIGHT - 240, 200, 32); // Top platform
 
-    // Boss area - flat ground with plenty of vertical space for Santa
-    // Santa is 172px tall, needs at least 250px clearance above
-    this.createPlatform(4700, Config.GAME_HEIGHT - 32, 500, 64);
+    // Second elevated area - after first gap
+    this.createPlatform(1100, Config.GAME_HEIGHT - 100, 150, 32); // Step 1
+    this.createPlatform(1230, Config.GAME_HEIGHT - 170, 200, 32); // Top platform
+
+    // Third elevated area - mid level
+    this.createPlatform(1900, Config.GAME_HEIGHT - 100, 150, 32); // Step 1
+    this.createPlatform(2030, Config.GAME_HEIGHT - 170, 150, 32); // Step 2
+    this.createPlatform(2160, Config.GAME_HEIGHT - 240, 200, 32); // Top platform
+
+    // Fourth elevated area - later level
+    this.createPlatform(2700, Config.GAME_HEIGHT - 100, 150, 32); // Step 1
+    this.createPlatform(2830, Config.GAME_HEIGHT - 170, 200, 32); // Top platform
+
+    // Fifth elevated area - near end
+    this.createPlatform(3500, Config.GAME_HEIGHT - 100, 150, 32); // Step 1
+    this.createPlatform(3630, Config.GAME_HEIGHT - 170, 150, 32); // Step 2
+    this.createPlatform(3760, Config.GAME_HEIGHT - 240, 200, 32); // Top platform
   }
 
   private createPlatform(x: number, y: number, width: number, height: number) {
@@ -220,25 +237,29 @@ export class LevelScene extends Scene {
   }
 
   private createEnemies() {
-    // Early section - on ground
-    this.createElf(300, Config.GAME_HEIGHT - 96);
-    this.createElf(450, Config.GAME_HEIGHT - 232, 80); // On first elevated platform
+    // Early section - on ground and platforms
+    this.createElf(500, Config.GAME_HEIGHT - 96);
+    this.createElf(650, Config.GAME_HEIGHT - 272, 80); // On top platform
 
-    // After first gap - on ground
-    this.createElf(1300, Config.GAME_HEIGHT - 96);
-    this.createElf(1750, Config.GAME_HEIGHT - 332, 120); // On elevated platform
+    // After first gap
+    this.createElf(1000, Config.GAME_HEIGHT - 96);
+    this.createElf(1280, Config.GAME_HEIGHT - 202, 80); // On elevated platform
 
-    // Mid section - on ground
-    this.createElf(2400, Config.GAME_HEIGHT - 96);
-    this.createElf(2700, Config.GAME_HEIGHT - 352, 100); // On elevated platform
+    // Mid section
+    this.createElf(1900, Config.GAME_HEIGHT - 96);
+    this.createElf(2200, Config.GAME_HEIGHT - 272, 80); // On top platform
 
-    // Later section - on ground
+    // Later section
+    this.createElf(2700, Config.GAME_HEIGHT - 96);
+    this.createElf(2880, Config.GAME_HEIGHT - 202, 80); // On elevated platform
+
+    // Near end
     this.createElf(3600, Config.GAME_HEIGHT - 96);
-    this.createElf(3900, Config.GAME_HEIGHT - 96);
-    this.createElf(3250, Config.GAME_HEIGHT - 312, 80); // On elevated platform
+    this.createElf(3800, Config.GAME_HEIGHT - 272, 80); // On top platform
 
     // Just before boss
-    this.createElf(4300, Config.GAME_HEIGHT - 96);
+    this.createElf(4100, Config.GAME_HEIGHT - 96);
+    this.createElf(4500, Config.GAME_HEIGHT - 96);
   }
 
   private createElf(x: number, y: number, patrolDistance?: number) {
@@ -248,23 +269,29 @@ export class LevelScene extends Scene {
 
   private createBoss() {
     // Place Santa at the end of the level on boss platform
-    this.santa = new Santa(new Vector(4900, Config.GAME_HEIGHT - 204));
+    this.santa = new Santa(new Vector(4700, Config.GAME_HEIGHT - 204));
     this.add(this.santa);
   }
 
   private createPowerUps() {
     // Place banana blocks throughout the level (like ? blocks in Mario)
     // Early game - floating above ground
-    this.createBananaBlock(200, Config.GAME_HEIGHT - 220);
+    this.createBananaBlock(250, Config.GAME_HEIGHT - 200);
 
-    // Mid section - floating above ground
-    this.createBananaBlock(1800, Config.GAME_HEIGHT - 220);
+    // On first elevated platform area
+    this.createBananaBlock(550, Config.GAME_HEIGHT - 300);
 
-    // Later section - floating above ground
-    this.createBananaBlock(2800, Config.GAME_HEIGHT - 220);
+    // Mid section
+    this.createBananaBlock(1500, Config.GAME_HEIGHT - 200);
+
+    // On elevated platform
+    this.createBananaBlock(2100, Config.GAME_HEIGHT - 300);
+
+    // Later section
+    this.createBananaBlock(3000, Config.GAME_HEIGHT - 200);
 
     // Near end - before boss
-    this.createBananaBlock(4100, Config.GAME_HEIGHT - 220);
+    this.createBananaBlock(4000, Config.GAME_HEIGHT - 200);
   }
 
   private createBananaBlock(x: number, y: number) {
