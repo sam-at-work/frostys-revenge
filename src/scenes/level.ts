@@ -365,22 +365,31 @@ export class LevelScene extends Scene {
     // Pine trees in the background (darker green, no collision)
     const treeColor = Color.fromRGB(34, 139, 34, 0.6); // Semi-transparent green
 
-    // Trees along the ground
+    // Trees along the ground - positioned on actual platforms
+    // Platform 1 (x: 0-800)
     this.createPineTree(150, Config.GAME_HEIGHT - 32, treeColor);
-    this.createPineTree(350, Config.GAME_HEIGHT - 32, treeColor);
-    this.createPineTree(550, Config.GAME_HEIGHT - 32, treeColor);
+    this.createPineTree(400, Config.GAME_HEIGHT - 32, treeColor);
+    this.createPineTree(650, Config.GAME_HEIGHT - 32, treeColor);
 
-    this.createPineTree(1100, Config.GAME_HEIGHT - 32, treeColor);
+    // Platform 2 (x: 900-1600)
+    this.createPineTree(1000, Config.GAME_HEIGHT - 32, treeColor);
     this.createPineTree(1300, Config.GAME_HEIGHT - 32, treeColor);
-    this.createPineTree(1600, Config.GAME_HEIGHT - 32, treeColor);
 
-    this.createPineTree(2200, Config.GAME_HEIGHT - 32, treeColor);
-    this.createPineTree(2500, Config.GAME_HEIGHT - 32, treeColor);
-    this.createPineTree(2800, Config.GAME_HEIGHT - 32, treeColor);
+    // Platform 3 (x: 1700-2400)
+    this.createPineTree(1850, Config.GAME_HEIGHT - 32, treeColor);
+    this.createPineTree(2150, Config.GAME_HEIGHT - 32, treeColor);
 
+    // Platform 4 (x: 2500-3200)
+    this.createPineTree(2650, Config.GAME_HEIGHT - 32, treeColor);
+    this.createPineTree(2950, Config.GAME_HEIGHT - 32, treeColor);
+
+    // Platform 5 (x: 3300-4200)
     this.createPineTree(3500, Config.GAME_HEIGHT - 32, treeColor);
-    this.createPineTree(3800, Config.GAME_HEIGHT - 32, treeColor);
-    this.createPineTree(4100, Config.GAME_HEIGHT - 32, treeColor);
+    this.createPineTree(3900, Config.GAME_HEIGHT - 32, treeColor);
+
+    // Platform 6 / Boss area (x: 4300-5200)
+    this.createPineTree(4500, Config.GAME_HEIGHT - 32, treeColor);
+    this.createPineTree(4900, Config.GAME_HEIGHT - 32, treeColor);
 
     // Background trees (higher up, smaller, more transparent)
     const bgTreeColor = Color.fromRGB(34, 139, 34, 0.3);
