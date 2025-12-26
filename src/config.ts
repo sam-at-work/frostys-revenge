@@ -5,7 +5,7 @@
 
 export const Config = {
   // Game settings
-  DISABLE_BANANA_SONG: true, // If true, normal music continues during banana mode
+  DISABLE_BANANA_SONG: false, // If true, normal music continues during banana mode
 
   // Game window settings
   GAME_WIDTH: 800,

@@ -369,7 +369,7 @@ export class Player extends Actor {
 
         // Play Banana Song starting at 28 seconds
         Resources.BananaSong.seek(28);
-        Resources.BananaSong.volume = 0.5;
+        Resources.BananaSong.volume = 0.2;
         Resources.BananaSong.play();
       }
 
