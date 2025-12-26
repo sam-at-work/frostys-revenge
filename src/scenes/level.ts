@@ -391,14 +391,14 @@ export class LevelScene extends Scene {
     this.createPineTree(4500, Config.GAME_HEIGHT - 32, treeColor);
     this.createPineTree(4900, Config.GAME_HEIGHT - 32, treeColor);
 
-    // Background trees (higher up, smaller, more transparent)
+    // Background trees (smaller, more transparent) - also on ground platforms
     const bgTreeColor = Color.fromRGB(34, 139, 34, 0.3);
-    this.createPineTree(250, Config.GAME_HEIGHT - 150, bgTreeColor, 0.7);
-    this.createPineTree(700, Config.GAME_HEIGHT - 170, bgTreeColor, 0.7);
-    this.createPineTree(1500, Config.GAME_HEIGHT - 160, bgTreeColor, 0.7);
-    this.createPineTree(2300, Config.GAME_HEIGHT - 155, bgTreeColor, 0.7);
-    this.createPineTree(3000, Config.GAME_HEIGHT - 165, bgTreeColor, 0.7);
-    this.createPineTree(3700, Config.GAME_HEIGHT - 150, bgTreeColor, 0.7);
+    this.createPineTree(250, Config.GAME_HEIGHT - 32, bgTreeColor, 0.7);
+    this.createPineTree(700, Config.GAME_HEIGHT - 32, bgTreeColor, 0.7);
+    this.createPineTree(1150, Config.GAME_HEIGHT - 32, bgTreeColor, 0.7);
+    this.createPineTree(2000, Config.GAME_HEIGHT - 32, bgTreeColor, 0.7);
+    this.createPineTree(2750, Config.GAME_HEIGHT - 32, bgTreeColor, 0.7);
+    this.createPineTree(3700, Config.GAME_HEIGHT - 32, bgTreeColor, 0.7);
   }
 
   private createPineTree(
