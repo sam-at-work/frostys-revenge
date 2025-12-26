@@ -75,14 +75,27 @@ export class CustomLoader extends DefaultLoader {
         }
       };
 
-      // Handle click
-      this.playButtonElement.onclick = () => {
+      // Cleanup function
+      const cleanup = () => {
         if (this.playButtonElement) {
           this.playButtonElement.remove();
           this.playButtonElement = null;
         }
+        document.removeEventListener("keydown", keyHandler);
         resolve();
       };
+
+      // Handle click
+      this.playButtonElement.onclick = cleanup;
+
+      // Handle spacebar press
+      const keyHandler = (evt: KeyboardEvent) => {
+        if (evt.key === " " || evt.code === "Space") {
+          evt.preventDefault();
+          cleanup();
+        }
+      };
+      document.addEventListener("keydown", keyHandler);
 
       // Add to document
       document.body.appendChild(this.playButtonElement);
