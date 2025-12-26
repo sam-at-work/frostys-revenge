@@ -88,6 +88,7 @@ export class Player extends Actor {
 
     // Create banana idle sprite (first sprite)
     this.bananaIdleSprite = bananaSheet.getSprite(0, 0);
+    this.bananaIdleSprite.scale = new Vector(0.88, 0.88);
 
     // Create banana walking animation
     this.bananaWalkAnim = Animation.fromSpriteSheet(
@@ -96,6 +97,7 @@ export class Player extends Actor {
       50, // 50ms per frame
     );
     this.bananaWalkAnim.strategy = AnimationStrategy.Loop;
+    this.bananaWalkAnim.scale = new Vector(0.88, 0.88);
 
     // Set initial sprite
     this.graphics.use(this.idleSprite);
