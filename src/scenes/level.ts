@@ -143,13 +143,14 @@ export class LevelScene extends Scene {
   private createMountainBackgrounds() {
     // Create mountain background layers from the pixel art images
     // Mountains are positioned at the bottom of the canvas with transparent backgrounds
+    // Using parallax scrolling - farther mountains (lower z) scroll slower
 
     const mountains = [
-      { resource: Resources.Mountain1, z: -90, x: 500 },
-      { resource: Resources.Mountain2, z: -85, x: 1500 },
-      { resource: Resources.Mountain3, z: -80, x: 2800 },
-      { resource: Resources.Mountain1, z: -90, x: 3800 },
-      { resource: Resources.Mountain2, z: -85, x: 4500 },
+      { resource: Resources.Mountain1, z: -90, x: 500, parallax: 0.9 },
+      { resource: Resources.Mountain2, z: -85, x: 1500, parallax: 0.95 },
+      { resource: Resources.Mountain3, z: -80, x: 2800, parallax: 0.85 },
+      { resource: Resources.Mountain1, z: -90, x: 3800, parallax: 0.93 },
+      { resource: Resources.Mountain2, z: -85, x: 4500, parallax: 0.91 },
     ];
 
     mountains.forEach((mountain) => {
@@ -158,12 +159,19 @@ export class LevelScene extends Scene {
       const mountainActor = new Actor({
         pos: new Vector(mountain.x, Config.GAME_HEIGHT),
         z: mountain.z,
+        coordPlane: "world" as any, // Ensure it uses world coordinates for parallax
       });
 
       // Set anchor to bottom-center so mountains align with bottom of canvas
       mountainActor.graphics.anchor = new Vector(0.5, 1);
 
+      // Apply parallax effect - farther mountains move slower
+      mountainActor.vel = new Vector(0, 0);
       mountainActor.body.collisionType = CollisionType.PreventCollision;
+
+      // Set parallax scroll factor (lower value = slower scroll, appears farther away)
+      (mountainActor as any).parallaxFactor = mountain.parallax;
+
       mountainActor.graphics.use(sprite);
       this.add(mountainActor);
     });
@@ -500,6 +508,18 @@ export class LevelScene extends Scene {
   }
 
   public onPreUpdate(engine: Engine, delta: number) {
+    // Update parallax backgrounds
+    const camera = this.camera;
+    this.actors.forEach((actor) => {
+      if ((actor as any).parallaxFactor !== undefined) {
+        // Apply parallax by offsetting position based on camera position
+        const parallaxOffset =
+          (camera.pos.x - Config.GAME_WIDTH / 2) *
+          (1 - (actor as any).parallaxFactor);
+        actor.graphics.offset = new Vector(-parallaxOffset, 0);
+      }
+    });
+
     // Update lives display
     if (this.player && this.livesLabel) {
       this.livesLabel.text = `Lives: ${this.player.getLives()}`;
