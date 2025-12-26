@@ -526,7 +526,7 @@ export class LevelScene extends Scene {
   public getPlayerRespawnPosition(): Vector {
     // If player is in boss area, respawn at start of boss area
     if (this.player && this.player.pos.x >= this.bossAreaStartX) {
-      return new Vector(this.bossAreaStartX + 100, Config.GAME_HEIGHT / 2);
+      return new Vector(this.bossAreaStartX, Config.GAME_HEIGHT / 2);
     }
     // Otherwise respawn at level start
     return new Vector(100, Config.GAME_HEIGHT / 2);
