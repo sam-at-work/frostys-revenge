@@ -24,7 +24,6 @@ export class Elf extends Actor {
   private patrolDistance: number;
   private movingRight: boolean = true;
   private walkAnim!: Animation;
-  private idleSprite!: any;
 
   constructor(
     pos: Vector,
@@ -54,9 +53,6 @@ export class Elf extends Actor {
       },
     });
 
-    // Create idle sprite (first sprite of the walk animation)
-    this.idleSprite = elfSheet.getSprite(0, 0);
-
     // Create walking animation (using first row of sprites - walking right)
     this.walkAnim = Animation.fromSpriteSheet(
       elfSheet,
@@ -82,15 +78,21 @@ export class Elf extends Actor {
   }
 
   public onPreUpdate(_engine: Engine, _delta: number): void {
+    // Check if elf stopped moving (hit wall/edge) - if so, turn around
+    if (this.vel.x === 0) {
+      // Turn around
+      this.movingRight = !this.movingRight;
+      this.vel.x = this.movingRight
+        ? Config.ELF.MOVE_SPEED
+        : -Config.ELF.MOVE_SPEED;
+      this.graphics.flipHorizontal = !this.movingRight;
+    }
+
     // Patrol back and forth
     this.patrol();
 
-    // Switch between idle and walking animation
-    if (this.vel.x === 0) {
-      this.graphics.use(this.idleSprite);
-    } else {
-      this.graphics.use(this.walkAnim);
-    }
+    // Always use walking animation (they should always be moving)
+    this.graphics.use(this.walkAnim);
   }
 
   private patrol(): void {

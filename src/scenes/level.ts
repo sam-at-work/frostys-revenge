@@ -276,19 +276,10 @@ export class LevelScene extends Scene {
   private createPowerUps() {
     // Place banana blocks throughout the level (like ? blocks in Mario)
     // Early game - floating above ground
-    this.createBananaBlock(250, Config.GAME_HEIGHT - 200);
-
-    // On first elevated platform area
     this.createBananaBlock(550, Config.GAME_HEIGHT - 300);
 
-    // Mid section
-    this.createBananaBlock(1500, Config.GAME_HEIGHT - 200);
-
-    // On elevated platform
+    // Mid section - on elevated platform
     this.createBananaBlock(2100, Config.GAME_HEIGHT - 300);
-
-    // Later section
-    this.createBananaBlock(3000, Config.GAME_HEIGHT - 200);
 
     // Near end - before boss
     this.createBananaBlock(4000, Config.GAME_HEIGHT - 200);
