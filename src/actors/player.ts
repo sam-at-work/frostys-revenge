@@ -255,6 +255,8 @@ export class Player extends Actor {
       this.isOnGround
     ) {
       this.vel.y = Config.PLAYER.JUMP_VELOCITY;
+      // Play jump sound
+      Resources.JumpSound.play(0.5);
     }
   }
 
@@ -265,6 +267,8 @@ export class Player extends Actor {
     if (keyboard.wasPressed(Keys.Space) && this.snowballCooldown <= 0) {
       this.shootSnowball(engine);
       this.snowballCooldown = Config.PLAYER.SNOWBALL_COOLDOWN;
+      // Play snowball throw sound
+      Resources.SnowballThrowSound.play(0.4);
     }
   }
 
@@ -292,6 +296,18 @@ export class Player extends Actor {
     // Banana faces right by default, so flip if facing left
     this.graphics.flipHorizontal = this.facingDirection === -1;
 
+    // Play power-up sound
+    Resources.PowerUpSound.play(0.6);
+
+    // Stop background and boss music while banana song plays
+    Resources.BackgroundMusic.pause();
+    Resources.BossMusic.pause();
+
+    // Play Banana Song starting at 45 seconds
+    Resources.BananaSong.seek(27);
+    Resources.BananaSong.volume = 0.5;
+    Resources.BananaSong.play();
+
     // Create particle effect for invincibility
     this.createInvincibilityEffect();
   }
@@ -308,12 +324,49 @@ export class Player extends Actor {
     // Snowman faces left by default, so flip if facing right
     this.graphics.flipHorizontal = this.facingDirection === 1;
 
+    // Fade out and stop Banana Song
+    this.fadeBananaSong();
+
     // Stop invincibility particle effect
     if (this.invincibilityEmitter) {
       this.invincibilityEmitter.isEmitting = false;
       setTimeout(() => this.invincibilityEmitter?.kill(), 500);
       this.invincibilityEmitter = undefined;
     }
+  }
+
+  private fadeBananaSong(): void {
+    // Fade out over 1 second
+    const fadeSteps = 20;
+    const fadeInterval = 50; // 50ms per step = 1 second total
+    const volumeDecrement = Resources.BananaSong.volume / fadeSteps;
+
+    let step = 0;
+    const fadeTimer = setInterval(() => {
+      step++;
+      Resources.BananaSong.volume = Math.max(
+        0,
+        Resources.BananaSong.volume - volumeDecrement,
+      );
+
+      if (step >= fadeSteps) {
+        clearInterval(fadeTimer);
+        Resources.BananaSong.stop();
+        Resources.BananaSong.volume = 0.5; // Reset for next time
+
+        // Resume background or boss music after banana song ends
+        // Check which music was playing before (assume background for now)
+        if (
+          Resources.BackgroundMusic.isPlaying() ||
+          Resources.BossMusic.isPlaying()
+        ) {
+          // Already playing, do nothing
+        } else {
+          // Resume background music (scene will handle boss music switching)
+          Resources.BackgroundMusic.play();
+        }
+      }
+    }, fadeInterval);
   }
 
   private createInvincibilityEffect(): void {
@@ -344,6 +397,9 @@ export class Player extends Actor {
     if (this.isInvincible) {
       return;
     }
+
+    // Play hurt sound
+    Resources.PlayerHurtSound.play(0.5);
 
     this.die();
   }

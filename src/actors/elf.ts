@@ -125,6 +125,9 @@ export class Elf extends Actor {
     // Create particle effect for defeat
     this.createDefeatParticles();
 
+    // Play defeat sound
+    Resources.EnemyDefeatSound.play(0.5);
+
     // Remove elf from scene
     this.kill();
   }

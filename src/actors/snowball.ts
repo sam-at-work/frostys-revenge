@@ -14,6 +14,7 @@ import {
   Canvas,
 } from "excalibur";
 import { Config } from "../config";
+import { Resources } from "../resources/resources";
 import { Elf } from "./elf";
 
 export class Snowball extends Actor {
@@ -83,15 +84,17 @@ export class Snowball extends Actor {
       if (other instanceof Elf && !other.isDefeated()) {
         // Defeat the elf
         other.defeat();
-        // Create impact particles
+        // Create impact particles and play sound
         this.createImpactParticles();
+        Resources.SnowballHitSound.play(0.5);
         // Remove the snowball
         this.kill();
       }
       // Check collision with platforms (Fixed collision type)
       else if (other.body.collisionType === CollisionType.Fixed) {
-        // Create snow puff on impact with platform
+        // Create snow puff on impact with platform and play sound
         this.createImpactParticles();
+        Resources.SnowballHitSound.play(0.5);
         // Remove the snowball
         this.kill();
       }

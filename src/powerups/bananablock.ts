@@ -13,6 +13,7 @@ import {
   EmitterType,
 } from "excalibur";
 import { Config } from "../config";
+import { Resources } from "../resources/resources";
 import { Banana } from "./banana";
 import { Player } from "../actors/player";
 
@@ -49,6 +50,8 @@ export class BananaBlock extends Actor {
           // Player hit from below!
           this.spawnBanana();
           this.bump();
+          // Play block hit sound
+          Resources.BlockHitSound.play(0.5);
         }
       }
     });

@@ -54,6 +54,20 @@ loader.addResource(Resources.SnowmanSpriteSheet);
 loader.addResource(Resources.BananaSpriteSheet);
 loader.addResource(Resources.SantaSpriteSheet);
 
+// Add sound effects to loader
+loader.addResource(Resources.JumpSound);
+loader.addResource(Resources.SnowballThrowSound);
+loader.addResource(Resources.SnowballHitSound);
+loader.addResource(Resources.EnemyDefeatSound);
+loader.addResource(Resources.PowerUpSound);
+loader.addResource(Resources.PlayerHurtSound);
+loader.addResource(Resources.BlockHitSound);
+
+// Add music to loader (currently using placeholder sounds)
+loader.addResource(Resources.BackgroundMusic);
+loader.addResource(Resources.BossMusic);
+loader.addResource(Resources.BananaSong);
+
 // Hide loading text and start the game
 game.start(loader).then(() => {
   const loadingElement = document.getElementById("loading");

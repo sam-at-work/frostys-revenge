@@ -1,20 +1,21 @@
 /**
- * Level Scene - Main gameplay scene
+ * Level Scene - Main Gameplay
  * Frosty's Revenge
  */
 
 import {
   Scene,
-  Color,
+  Engine,
   Actor,
   Vector,
+  Color,
   Label,
   Font,
   FontUnit,
   CollisionType,
-  Engine,
 } from "excalibur";
 import { Config } from "../config";
+import { Resources } from "../resources/resources";
 import { Player } from "../actors/player";
 import { Elf } from "../actors/elf";
 import { Santa } from "../actors/santa";
@@ -28,6 +29,8 @@ export class LevelScene extends Scene {
   private snowEmitter!: SnowEmitter;
   private santa!: Santa;
   private winZoneX: number = 5100; // X position to reach to win
+  private isBossMusicPlaying: boolean = false;
+  private bossProximityDistance: number = 800; // Distance from boss to trigger boss music
 
   public onInitialize() {
     // Create gradient sky background
@@ -64,6 +67,21 @@ export class LevelScene extends Scene {
       this.player.kill();
     }
     this.createPlayer();
+
+    // Configure and start background music
+    Resources.BackgroundMusic.loop = true;
+    Resources.BackgroundMusic.volume = 0.3;
+    Resources.BackgroundMusic.play();
+
+    // Configure boss music (don't play yet)
+    Resources.BossMusic.loop = true;
+    Resources.BossMusic.volume = 0.4;
+  }
+
+  public onDeactivate() {
+    // Stop all music when leaving the scene
+    Resources.BackgroundMusic.stop();
+    Resources.BossMusic.stop();
   }
 
   private createSkyBackground() {
@@ -367,6 +385,31 @@ export class LevelScene extends Scene {
     // Update snow effect
     if (this.snowEmitter) {
       this.snowEmitter.update(engine, delta, this.camera.pos.x);
+    }
+
+    // Check proximity to boss for music switching
+    // But don't switch music if banana song is playing
+    if (this.player && this.santa && !Resources.BananaSong.isPlaying()) {
+      const distanceToBoss = Math.abs(this.player.pos.x - this.santa.pos.x);
+
+      // Switch to boss music when close to Santa
+      if (
+        distanceToBoss < this.bossProximityDistance &&
+        !this.isBossMusicPlaying
+      ) {
+        Resources.BackgroundMusic.stop();
+        Resources.BossMusic.play();
+        this.isBossMusicPlaying = true;
+      }
+      // Switch back to normal music if moving away
+      else if (
+        distanceToBoss >= this.bossProximityDistance &&
+        this.isBossMusicPlaying
+      ) {
+        Resources.BossMusic.stop();
+        Resources.BackgroundMusic.play();
+        this.isBossMusicPlaying = false;
+      }
     }
 
     // Check win condition
