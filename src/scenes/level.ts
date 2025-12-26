@@ -34,7 +34,7 @@ export class LevelScene extends Scene {
   private bossProximityDistance: number = 800; // Distance from boss to trigger boss music
   private bossAreaStartX: number = 4300; // X position where boss area begins
   private maxCameraX: number = Config.GAME_WIDTH / 2; // Track max camera position for one-way scrolling
-  private snowStarted: boolean = false; // Track if snow has started for boss area
+  public snowStarted: boolean = false; // Track if snow has started for boss area
 
   public onInitialize() {
     // Create gradient sky background
@@ -543,9 +543,18 @@ export class LevelScene extends Scene {
   public getPlayerRespawnPosition(): Vector {
     // If player is in boss area, respawn at start of boss area
     if (this.player && this.player.pos.x >= this.bossAreaStartX) {
-      return new Vector(this.bossAreaStartX, Config.GAME_HEIGHT / 2);
+      return new Vector(this.bossAreaStartX + 100, Config.GAME_HEIGHT / 2);
     }
     // Otherwise respawn at level start
-    return new Vector(3500, Config.GAME_HEIGHT / 2);
+    return new Vector(100, Config.GAME_HEIGHT / 2);
+  }
+
+  public getRespawnCameraX(): number {
+    // If player is in boss area, align camera left edge with boss area start
+    if (this.player && this.player.pos.x >= this.bossAreaStartX) {
+      return this.bossAreaStartX + Config.GAME_WIDTH / 2;
+    }
+    // Otherwise normal camera position
+    return Config.GAME_WIDTH / 2;
   }
 }

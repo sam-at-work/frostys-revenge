@@ -23,6 +23,7 @@ import { Snowball } from "./snowball";
 import { Elf } from "./elf";
 import { Decoration } from "./decoration";
 import type { LevelScene } from "../scenes/level";
+import { SnowParticle } from "../effects/snow";
 
 export class Player extends Actor {
   private lives: number = Config.PLAYER.MAX_LIVES;
@@ -267,8 +268,16 @@ export class Player extends Actor {
     const keyboard = engine.input.keyboard;
     let velocityX = 0;
 
-    // Left movement (Arrow Left or A)
-    if (keyboard.isHeld(Keys.Left) || keyboard.isHeld(Keys.A)) {
+    // Check if player is at left boundary
+    const cameraLeftEdge =
+      engine.currentScene.camera.pos.x - Config.GAME_WIDTH / 2;
+    const atLeftBoundary = this.pos.x <= cameraLeftEdge + this.width / 2;
+
+    // Left movement (Arrow Left or A) - disabled if at left boundary
+    if (
+      (keyboard.isHeld(Keys.Left) || keyboard.isHeld(Keys.A)) &&
+      !atLeftBoundary
+    ) {
       velocityX = -Config.PLAYER.MOVE_SPEED;
       this.facingDirection = -1;
       // Snowman faces left by default, banana faces right by default
@@ -279,7 +288,7 @@ export class Player extends Actor {
     if (keyboard.isHeld(Keys.Right) || keyboard.isHeld(Keys.D)) {
       velocityX = Config.PLAYER.MOVE_SPEED;
       this.facingDirection = 1;
-      // Snowman needs flip to face right, banana doesn't
+      // Snowman faces left by default, banana faces right by default
       this.graphics.flipHorizontal = this.isBanana ? false : true;
     }
 
@@ -502,6 +511,22 @@ export class Player extends Actor {
     // Disable collision to prevent enemies from hitting invisible player
     this.body.collisionType = CollisionType.PreventCollision;
 
+    // Remove all snow particles
+    const engine = this.scene?.engine;
+    if (engine) {
+      engine.currentScene.actors.forEach((actor) => {
+        if (actor instanceof SnowParticle) {
+          actor.kill();
+        }
+      });
+
+      // Reset snow flag in level scene so it can restart if in boss area
+      const levelScene = engine.currentScene as LevelScene;
+      if (levelScene.snowStarted !== undefined) {
+        levelScene.snowStarted = false;
+      }
+    }
+
     // Always deactivate banana mode on death
     if (this.isBanana) {
       this.deactivateBanana();
@@ -515,7 +540,6 @@ export class Player extends Actor {
 
     // Pause player movement during respawn
     this.vel = Vector.Zero;
-    const engine = this.scene?.engine;
 
     if (!engine) {
       // Fallback if no engine
@@ -537,9 +561,13 @@ export class Player extends Actor {
         ? levelScene.getPlayerRespawnPosition()
         : new Vector(100, Config.GAME_HEIGHT / 2);
 
+      // Get respawn camera position (for boss area, aligns left edge with boss start)
+      const targetCameraX = levelScene.getRespawnCameraX
+        ? levelScene.getRespawnCameraX()
+        : Math.max(respawnPos.x, Config.GAME_WIDTH / 2);
+
       // Scroll camera back to respawn position (duration in milliseconds)
       const scrollDuration = 1500;
-      const targetCameraX = Math.max(respawnPos.x, Config.GAME_WIDTH / 2);
       const currentCameraX = engine.currentScene.camera.pos.x;
       const startTime = Date.now();
 
@@ -558,6 +586,11 @@ export class Player extends Actor {
           newCameraX,
           Config.GAME_HEIGHT / 2,
         );
+
+        // Update maxCameraX to allow backward scrolling during death
+        if (levelScene.maxCameraX !== undefined) {
+          levelScene.maxCameraX = newCameraX;
+        }
 
         if (progress >= 1) {
           this.cleanupDeathTimers();

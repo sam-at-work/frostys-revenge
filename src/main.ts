@@ -30,7 +30,7 @@ class Game extends Engine {
     });
 
     // Show debug information including collision boxes
-    this.showDebug(true);
+    this.showDebug(false);
   }
 
   public initialize() {
