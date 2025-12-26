@@ -366,21 +366,21 @@ export class LevelScene extends Scene {
     const treeColor = Color.fromRGB(34, 139, 34, 0.6); // Semi-transparent green
 
     // Trees along the ground
-    this.createPineTree(150, Config.GAME_HEIGHT - 96, treeColor);
-    this.createPineTree(350, Config.GAME_HEIGHT - 96, treeColor);
-    this.createPineTree(550, Config.GAME_HEIGHT - 96, treeColor);
+    this.createPineTree(150, Config.GAME_HEIGHT - 32, treeColor);
+    this.createPineTree(350, Config.GAME_HEIGHT - 32, treeColor);
+    this.createPineTree(550, Config.GAME_HEIGHT - 32, treeColor);
 
-    this.createPineTree(1100, Config.GAME_HEIGHT - 96, treeColor);
-    this.createPineTree(1300, Config.GAME_HEIGHT - 96, treeColor);
-    this.createPineTree(1600, Config.GAME_HEIGHT - 96, treeColor);
+    this.createPineTree(1100, Config.GAME_HEIGHT - 32, treeColor);
+    this.createPineTree(1300, Config.GAME_HEIGHT - 32, treeColor);
+    this.createPineTree(1600, Config.GAME_HEIGHT - 32, treeColor);
 
-    this.createPineTree(2200, Config.GAME_HEIGHT - 96, treeColor);
-    this.createPineTree(2500, Config.GAME_HEIGHT - 96, treeColor);
-    this.createPineTree(2800, Config.GAME_HEIGHT - 96, treeColor);
+    this.createPineTree(2200, Config.GAME_HEIGHT - 32, treeColor);
+    this.createPineTree(2500, Config.GAME_HEIGHT - 32, treeColor);
+    this.createPineTree(2800, Config.GAME_HEIGHT - 32, treeColor);
 
-    this.createPineTree(3500, Config.GAME_HEIGHT - 96, treeColor);
-    this.createPineTree(3800, Config.GAME_HEIGHT - 96, treeColor);
-    this.createPineTree(4100, Config.GAME_HEIGHT - 96, treeColor);
+    this.createPineTree(3500, Config.GAME_HEIGHT - 32, treeColor);
+    this.createPineTree(3800, Config.GAME_HEIGHT - 32, treeColor);
+    this.createPineTree(4100, Config.GAME_HEIGHT - 32, treeColor);
 
     // Background trees (higher up, smaller, more transparent)
     const bgTreeColor = Color.fromRGB(34, 139, 34, 0.3);
@@ -402,10 +402,12 @@ export class LevelScene extends Scene {
     const treeWidth = 40 * scale;
 
     // Tree trunk (brown rectangle)
+    // Position trunk so its bottom is at y (ground level)
+    const trunkHeight = 20 * scale;
     const trunk = new Actor({
-      pos: new Vector(x, y + treeHeight / 2),
+      pos: new Vector(x, y - trunkHeight / 2),
       width: 8 * scale,
-      height: 20 * scale,
+      height: trunkHeight,
       color: Color.fromRGB(101, 67, 33, color.a),
       z: -10, // Behind everything
     });
@@ -413,9 +415,9 @@ export class LevelScene extends Scene {
     this.add(trunk);
 
     // Tree foliage (green triangles represented as diamonds for now)
-    // Bottom layer
+    // Bottom layer - sits on top of trunk
     const foliage1 = new Actor({
-      pos: new Vector(x, y + 10 * scale),
+      pos: new Vector(x, y - trunkHeight - 15 * scale),
       width: treeWidth,
       height: 30 * scale,
       color: color,
@@ -426,7 +428,7 @@ export class LevelScene extends Scene {
 
     // Middle layer
     const foliage2 = new Actor({
-      pos: new Vector(x, y - 10 * scale),
+      pos: new Vector(x, y - trunkHeight - 35 * scale),
       width: treeWidth * 0.7,
       height: 25 * scale,
       color: color,
@@ -437,7 +439,7 @@ export class LevelScene extends Scene {
 
     // Top layer
     const foliage3 = new Actor({
-      pos: new Vector(x, y - 28 * scale),
+      pos: new Vector(x, y - trunkHeight - 55 * scale),
       width: treeWidth * 0.4,
       height: 20 * scale,
       color: color,
