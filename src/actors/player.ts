@@ -29,7 +29,7 @@ export class Player extends Actor {
   private isBanana: boolean = false;
   private bananaTimer: number = 0;
   private snowballCooldown: number = 0;
-  private facingDirection: number = 1; // 1 = right, -1 = left
+  private facingDirection: number = -1; // 1 = right, -1 = left (start facing left)
   private isOnGround: boolean = false;
   private flashTimer: number = 0;
   private invincibilityEmitter?: ParticleEmitter;
