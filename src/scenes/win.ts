@@ -3,7 +3,16 @@
  * Frosty's Revenge
  */
 
-import { Scene, Color, Label, Vector, Font, FontUnit, Input } from "excalibur";
+import {
+  Scene,
+  Color,
+  Label,
+  Vector,
+  Font,
+  FontUnit,
+  Input,
+  TextAlign,
+} from "excalibur";
 import { Config } from "../config";
 import { LevelScene } from "./level";
 
@@ -20,6 +29,7 @@ export class WinScene extends Scene {
       pos: new Vector(Config.GAME_WIDTH / 2, Config.GAME_HEIGHT / 2 - 80),
       font: new Font({
         family: '"Jacquard 12", system-ui',
+        textAlign: TextAlign.Center,
         size: 72,
         unit: FontUnit.Px,
         color: Color.fromHex("#FFD700"), // Gold
@@ -33,6 +43,7 @@ export class WinScene extends Scene {
       pos: new Vector(Config.GAME_WIDTH / 2, Config.GAME_HEIGHT / 2 - 20),
       font: new Font({
         family: '"Jacquard 12", system-ui',
+        textAlign: TextAlign.Center,
         size: 36,
         unit: FontUnit.Px,
         color: Color.White,
@@ -46,6 +57,7 @@ export class WinScene extends Scene {
       pos: new Vector(Config.GAME_WIDTH / 2, Config.GAME_HEIGHT / 2 + 60),
       font: new Font({
         family: '"Jacquard 12", system-ui',
+        textAlign: TextAlign.Center,
         size: 32,
         unit: FontUnit.Px,
         color: Color.White,
