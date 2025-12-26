@@ -180,11 +180,8 @@ export class Player extends Actor {
     if (this.isBanana) {
       this.bananaTimer -= delta;
 
-      // Update flash effect for invincibility
-      this.flashTimer += delta;
-      const flashSpeed = 0.01;
-      this.graphics.opacity =
-        0.7 + Math.sin(this.flashTimer * flashSpeed) * 0.3;
+      // Keep opacity at 1 (no flashing in banana mode)
+      this.graphics.opacity = 1;
 
       // Update particle emitter position
       if (this.invincibilityEmitter) {
