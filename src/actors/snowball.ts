@@ -24,10 +24,12 @@ export class Snowball extends Actor {
       pos: pos,
       width: Config.SNOWBALL.WIDTH,
       height: Config.SNOWBALL.HEIGHT,
-      collisionType: CollisionType.Passive,
+      collisionType: CollisionType.Active,
     });
 
-    this.vel = new Vector(Config.SNOWBALL.SPEED * direction, 0);
+    // Set velocity for arc trajectory - upward angle to peak after 0.8 seconds
+    // Custom gravity of 220 px/s² gives low arc (peak ~70px) that peaks at 0.8s
+    this.vel = new Vector(Config.SNOWBALL.SPEED * direction, -176);
   }
 
   public onInitialize(_engine: Engine): void {
@@ -68,8 +70,10 @@ export class Snowball extends Actor {
 
     this.graphics.use(canvas);
 
-    // Snowball doesn't have gravity
+    // Use custom gravity (220 px/s²) instead of global gravity for a low arc
+    // This gives a peak height of ~70px (just above snowman's head) at 0.8s
     this.body.useGravity = false;
+    this.acc.y = 220; // Custom gravity acceleration
 
     // Set up collision handling with enemies and platforms
     this.on("precollision", (evt) => {
