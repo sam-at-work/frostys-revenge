@@ -205,6 +205,153 @@ export enum TileType {
 }
 
 /**
+ * Create a banana block tile (32x32)
+ * Question block with pixel art banana
+ */
+export function createBananaBlockTile(size: number = 32): Canvas {
+  return new Canvas({
+    width: size,
+    height: size,
+    cache: true,
+    draw: (ctx) => {
+      // Base golden yellow block
+      ctx.fillStyle = "#FFD700";
+      ctx.fillRect(0, 0, size, size);
+
+      // Lighter yellow for highlights (top-left)
+      ctx.fillStyle = "#FFED4E";
+      ctx.fillRect(2, 2, size - 4, 3);
+      ctx.fillRect(2, 2, 3, size - 4);
+
+      // Darker yellow for shadows (bottom-right)
+      ctx.fillStyle = "#DAA520";
+      ctx.fillRect(size - 5, 2, 3, size - 4);
+      ctx.fillRect(2, size - 5, size - 4, 3);
+
+      // Orange border
+      ctx.fillStyle = "#FF8C00";
+      ctx.strokeStyle = "#FF8C00";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(0, 0, size, size);
+
+      // Draw pixel art banana in center
+      const pixelSize = 2;
+      const startX = size / 2 - 5;
+      const startY = size / 2 - 6;
+
+      // Banana yellow
+      ctx.fillStyle = "#FFE135";
+
+      // Banana shape (curved)
+      // Top curve
+      ctx.fillRect(startX + pixelSize * 1, startY, pixelSize, pixelSize);
+      ctx.fillRect(startX + pixelSize * 2, startY, pixelSize, pixelSize);
+      ctx.fillRect(startX + pixelSize * 3, startY, pixelSize, pixelSize);
+
+      // Upper middle
+      ctx.fillRect(startX, startY + pixelSize, pixelSize, pixelSize);
+      ctx.fillRect(
+        startX + pixelSize * 4,
+        startY + pixelSize,
+        pixelSize,
+        pixelSize,
+      );
+
+      // Middle
+      ctx.fillRect(startX, startY + pixelSize * 2, pixelSize, pixelSize);
+      ctx.fillRect(
+        startX + pixelSize * 4,
+        startY + pixelSize * 2,
+        pixelSize,
+        pixelSize,
+      );
+
+      // Lower middle
+      ctx.fillRect(
+        startX + pixelSize,
+        startY + pixelSize * 3,
+        pixelSize,
+        pixelSize,
+      );
+      ctx.fillRect(
+        startX + pixelSize * 3,
+        startY + pixelSize * 3,
+        pixelSize,
+        pixelSize,
+      );
+
+      // Bottom curve
+      ctx.fillRect(
+        startX + pixelSize * 2,
+        startY + pixelSize * 4,
+        pixelSize,
+        pixelSize,
+      );
+      ctx.fillRect(
+        startX + pixelSize * 3,
+        startY + pixelSize * 4,
+        pixelSize,
+        pixelSize,
+      );
+
+      // Banana highlights (lighter yellow)
+      ctx.fillStyle = "#FFF8A0";
+      ctx.fillRect(
+        startX + pixelSize,
+        startY + pixelSize,
+        pixelSize,
+        pixelSize,
+      );
+      ctx.fillRect(
+        startX + pixelSize * 2,
+        startY + pixelSize,
+        pixelSize,
+        pixelSize,
+      );
+
+      // Banana stem (brown)
+      ctx.fillStyle = "#8B4513";
+      ctx.fillRect(
+        startX + pixelSize * 2,
+        startY - pixelSize,
+        pixelSize,
+        pixelSize,
+      );
+    },
+  });
+}
+
+/**
+ * Create a used banana block tile (32x32)
+ * Brown/gray empty block after banana is collected
+ */
+export function createUsedBananaBlockTile(size: number = 32): Canvas {
+  return new Canvas({
+    width: size,
+    height: size,
+    cache: true,
+    draw: (ctx) => {
+      // Used block - brown/gray
+      ctx.fillStyle = "#8B7355";
+      ctx.fillRect(0, 0, size, size);
+
+      // Darker shade for depth
+      ctx.fillStyle = "#6B5345";
+      ctx.fillRect(2, 2, size - 4, size - 4);
+
+      // Empty square in middle to show it's used
+      ctx.fillStyle = "#5B4335";
+      ctx.fillRect(size / 4, size / 4, size / 2, size / 2);
+
+      // Dark border
+      ctx.strokeStyle = "#4B3325";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(0, 0, size, size);
+    },
+  });
+}
+
+/**
  * Factory function to create tiles by type
  */
 export function createTile(type: TileType, size: number = 32): Canvas {

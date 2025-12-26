@@ -16,6 +16,10 @@ import { Config } from "../config";
 import { Resources } from "../resources/resources";
 import { Banana } from "./banana";
 import { Player } from "../actors/player";
+import {
+  createBananaBlockTile,
+  createUsedBananaBlockTile,
+} from "../graphics/tiles";
 
 export class BananaBlock extends Actor {
   private hasBeenHit: boolean = false;
@@ -30,7 +34,6 @@ export class BananaBlock extends Actor {
       pos: pos,
       width: Config.LEVEL.TILE_SIZE,
       height: Config.LEVEL.TILE_SIZE,
-      color: Color.fromHex("#CD853F"), // Brown/tan color for block
       collisionType: CollisionType.Fixed,
     });
 
@@ -38,6 +41,10 @@ export class BananaBlock extends Actor {
   }
 
   public onInitialize(_engine: Engine): void {
+    // Apply banana block tile graphic
+    const blockTile = createBananaBlockTile(Config.LEVEL.TILE_SIZE);
+    this.graphics.use(blockTile);
+
     // Set up collision handling
     this.on("precollision", (evt) => {
       const other = evt.other;
@@ -129,9 +136,10 @@ export class BananaBlock extends Actor {
       setTimeout(() => this.sparkleEmitter?.kill(), 500);
     }
 
-    // Change color to indicate it's been used (darker)
-    this.color = Color.fromHex("#8B7355");
+    // Change to darker "used" block appearance
     this.graphics.opacity = 1; // Reset opacity
+    const usedBlockTile = createUsedBananaBlockTile(Config.LEVEL.TILE_SIZE);
+    this.graphics.use(usedBlockTile);
 
     // Spawn banana above the block
     const bananaPos = new Vector(
