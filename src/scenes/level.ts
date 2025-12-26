@@ -63,11 +63,24 @@ export class LevelScene extends Scene {
   }
 
   public onActivate() {
-    // Recreate player when scene activates (handles restart after game over)
-    if (this.player) {
-      this.player.kill();
-    }
+    // Clear all actors from the scene to prevent duplicates
+    this.clear();
+
+    // Reset boss music flag
+    this.isBossMusicPlaying = false;
+
+    // Reinitialize the entire scene
+    this.createSkyBackground();
+    this.createLevel();
+    this.createDecorations();
+    this.createEnemies();
+    this.createBoss();
+    this.createPowerUps();
     this.createPlayer();
+    this.createUI();
+
+    // Reinitialize snow effect
+    this.snowEmitter = new SnowEmitter();
 
     // Configure and start background music
     Resources.BackgroundMusic.loop = true;
