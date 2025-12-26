@@ -1,0 +1,194 @@
+/**
+ * CustomLoader - Custom loading screen for Frosty's Revenge
+ *
+ * Displays a background image that fills the screen with a progress bar
+ */
+
+import { DefaultLoader, type Engine } from "excalibur";
+
+export class CustomLoader extends DefaultLoader {
+  private backgroundImage: HTMLImageElement | null = null;
+  private imageLoaded = false;
+  private playButtonElement: HTMLButtonElement | null = null;
+
+  constructor() {
+    super();
+
+    // Preload the background image
+    this.backgroundImage = new Image();
+    this.backgroundImage.onload = () => {
+      this.imageLoaded = true;
+    };
+    this.backgroundImage.src = "/homescreen/image.jpg";
+  }
+
+  override async onUserAction(): Promise<void> {
+    // Create a play button overlay to unlock audio
+    return new Promise<void>((resolve) => {
+      // Create button
+      this.playButtonElement = document.createElement("button");
+      this.playButtonElement.textContent = "Click to Start";
+      this.playButtonElement.style.position = "absolute";
+      this.playButtonElement.style.top = "50%";
+      this.playButtonElement.style.left = "50%";
+      this.playButtonElement.style.transform = "translate(-50%, -50%)";
+      this.playButtonElement.style.padding = "20px 40px";
+      this.playButtonElement.style.fontSize = "24px";
+      this.playButtonElement.style.fontWeight = "bold";
+      this.playButtonElement.style.backgroundColor = "#4CAF50";
+      this.playButtonElement.style.color = "white";
+      this.playButtonElement.style.border = "none";
+      this.playButtonElement.style.borderRadius = "10px";
+      this.playButtonElement.style.cursor = "pointer";
+      this.playButtonElement.style.zIndex = "10000";
+      this.playButtonElement.style.boxShadow = "0 4px 6px rgba(0,0,0,0.3)";
+
+      // Add hover effect
+      this.playButtonElement.onmouseenter = () => {
+        if (this.playButtonElement) {
+          this.playButtonElement.style.backgroundColor = "#45a049";
+        }
+      };
+      this.playButtonElement.onmouseleave = () => {
+        if (this.playButtonElement) {
+          this.playButtonElement.style.backgroundColor = "#4CAF50";
+        }
+      };
+
+      // Handle click
+      this.playButtonElement.onclick = () => {
+        if (this.playButtonElement) {
+          this.playButtonElement.remove();
+          this.playButtonElement = null;
+        }
+        resolve();
+      };
+
+      // Add to document
+      document.body.appendChild(this.playButtonElement);
+    });
+  }
+
+  override onDraw(ctx: CanvasRenderingContext2D): void {
+    const canvas = ctx.canvas;
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
+
+    // Clear the canvas
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+    // Draw background image if loaded
+    if (this.imageLoaded && this.backgroundImage) {
+      // Calculate dimensions to cover the entire canvas while maintaining aspect ratio
+      const imgAspect =
+        this.backgroundImage.width / this.backgroundImage.height;
+      const canvasAspect = canvasWidth / canvasHeight;
+
+      let drawWidth: number,
+        drawHeight: number,
+        offsetX: number,
+        offsetY: number;
+
+      if (imgAspect > canvasAspect) {
+        // Image is wider than canvas - fit to height
+        drawHeight = canvasHeight;
+        drawWidth = drawHeight * imgAspect;
+        offsetX = (canvasWidth - drawWidth) / 2;
+        offsetY = 0;
+      } else {
+        // Image is taller than canvas - fit to width
+        drawWidth = canvasWidth;
+        drawHeight = drawWidth / imgAspect;
+        offsetX = 0;
+        offsetY = (canvasHeight - drawHeight) / 2;
+      }
+
+      ctx.drawImage(
+        this.backgroundImage,
+        offsetX,
+        offsetY,
+        drawWidth,
+        drawHeight,
+      );
+
+      // Add a semi-transparent overlay to make the progress bar more visible
+      ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    } else {
+      // Fallback to a simple background color if image hasn't loaded yet
+      ctx.fillStyle = "#87CEEB"; // Sky blue
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    }
+
+    // Draw loading text
+    ctx.font = "32px Arial, sans-serif";
+    ctx.fillStyle = "white";
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 3;
+    ctx.textAlign = "center";
+
+    const loadingText = "Loading Frosty's Revenge...";
+    ctx.strokeText(loadingText, canvasWidth / 2, canvasHeight / 2 - 80);
+    ctx.fillText(loadingText, canvasWidth / 2, canvasHeight / 2 - 80);
+
+    // Draw progress bar background
+    const barWidth = 400;
+    const barHeight = 40;
+    const barX = (canvasWidth - barWidth) / 2;
+    const barY = canvasHeight / 2 - 20;
+
+    // Progress bar border
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 3;
+    ctx.strokeRect(barX, barY, barWidth, barHeight);
+
+    // Progress bar background
+    ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+    ctx.fillRect(barX, barY, barWidth, barHeight);
+
+    // Progress bar fill
+    const progress = this.progress; // Value between 0 and 1
+    const progressWidth = barWidth * progress;
+
+    // Gradient for progress bar
+    const gradient = ctx.createLinearGradient(
+      barX,
+      barY,
+      barX + barWidth,
+      barY,
+    );
+    gradient.addColorStop(0, "#4CAF50");
+    gradient.addColorStop(1, "#8BC34A");
+
+    ctx.fillStyle = gradient;
+    ctx.fillRect(barX, barY, progressWidth, barHeight);
+
+    // Draw percentage text
+    const percentText = `${Math.round(progress * 100)}%`;
+    ctx.font = "24px Arial, sans-serif";
+    ctx.fillStyle = "white";
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 2;
+    ctx.strokeText(percentText, canvasWidth / 2, barY + barHeight / 2 + 8);
+    ctx.fillText(percentText, canvasWidth / 2, barY + barHeight / 2 + 8);
+  }
+
+  override onUpdate(_engine: Engine, _elapsedMilliseconds: number): void {
+    // Optional: You can add any animation or update logic here
+    // For example, you could animate elements or track elapsed time
+  }
+
+  override async onBeforeLoad(): Promise<void> {
+    // Called before loading starts
+    // Can be used to prepare the screen or viewport
+  }
+
+  override async onAfterLoad(): Promise<void> {
+    // Called after loading completes
+    // Clean up the play button if it still exists
+    if (this.playButtonElement) {
+      this.playButtonElement.remove();
+      this.playButtonElement = null;
+    }
+  }
+}

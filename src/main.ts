@@ -3,12 +3,13 @@
  * A Super Mario-inspired platformer using Excalibur.js
  */
 
-import { Engine, DisplayMode, Color, Loader, Vector } from "excalibur";
+import { Engine, DisplayMode, Color, Vector } from "excalibur";
 import { Config } from "./config";
 import { LevelScene } from "./scenes/level";
 import { GameOverScene } from "./scenes/gameover";
 import { WinScene } from "./scenes/win";
 import { Resources } from "./resources/resources";
+import { CustomLoader } from "./loaders/CustomLoader";
 
 class Game extends Engine {
   constructor() {
@@ -46,8 +47,8 @@ class Game extends Engine {
 // Create the game instance
 const game = new Game();
 
-// Create loader with all resources
-const loader = new Loader();
+// Create custom loader with all resources
+const loader = new CustomLoader();
 // Add sprite sheets to loader
 loader.addResource(Resources.ElfSpriteSheet);
 loader.addResource(Resources.SnowmanSpriteSheet);
