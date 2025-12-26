@@ -21,6 +21,7 @@ import { Elf } from "../actors/elf";
 import { Santa } from "../actors/santa";
 import { SnowEmitter } from "../effects/snow";
 import { BananaBlock } from "../powerups/bananablock";
+import { TileType, createTile } from "../graphics/tiles";
 
 export class LevelScene extends Scene {
   private player!: Player;
@@ -114,61 +115,154 @@ export class LevelScene extends Scene {
     // Player is ~100px tall, jump height ~200px
     // Elves are 64px tall - platforms must clear elf height (160px+ above ground)
 
-    // Starting area - long safe ground
-    this.createPlatform(0, Config.GAME_HEIGHT - 32, 800, 64);
+    // Starting area - long safe ground (snow theme)
+    this.createPlatform(
+      0,
+      Config.GAME_HEIGHT - 32,
+      800,
+      64,
+      TileType.SNOW_PLATFORM,
+    );
 
-    // Small gap 1 - easily jumpable (100px)
-    this.createPlatform(900, Config.GAME_HEIGHT - 32, 700, 64);
+    // Small gap 1 - easily jumpable (100px) - stone theme
+    this.createPlatform(
+      900,
+      Config.GAME_HEIGHT - 32,
+      700,
+      64,
+      TileType.WINTER_STONE,
+    );
 
-    // Small gap 2 - easily jumpable (100px)
-    this.createPlatform(1700, Config.GAME_HEIGHT - 32, 700, 64);
+    // Small gap 2 - easily jumpable (100px) - snow theme
+    this.createPlatform(
+      1700,
+      Config.GAME_HEIGHT - 32,
+      700,
+      64,
+      TileType.SNOW_PLATFORM,
+    );
 
-    // Small gap 3 - easily jumpable (100px)
-    this.createPlatform(2500, Config.GAME_HEIGHT - 32, 700, 64);
+    // Small gap 3 - easily jumpable (100px) - ice theme
+    this.createPlatform(2500, Config.GAME_HEIGHT - 32, 700, 64, TileType.ICE);
 
-    // Small gap 4 - easily jumpable (100px)
-    this.createPlatform(3300, Config.GAME_HEIGHT - 32, 900, 64);
+    // Small gap 4 - easily jumpable (100px) - stone theme
+    this.createPlatform(
+      3300,
+      Config.GAME_HEIGHT - 32,
+      900,
+      64,
+      TileType.WINTER_STONE,
+    );
 
-    // Boss area - wide platform
-    this.createPlatform(4300, Config.GAME_HEIGHT - 32, 900, 64);
+    // Boss area - wide platform (candy cane for festive final battle)
+    this.createPlatform(
+      4300,
+      Config.GAME_HEIGHT - 32,
+      900,
+      64,
+      TileType.CANDY_CANE,
+    );
 
     // Elevated platforms - with stepping stones to reach them
     // All platforms at 170px+ above ground to clear elf height (64px) with margin
 
-    // First elevated area - stairs to get up
-    this.createPlatform(350, Config.GAME_HEIGHT - 170, 150, 32); // Step 1 - safe clearance
-    this.createPlatform(480, Config.GAME_HEIGHT - 250, 150, 32); // Step 2 - 80px above step 1
-    this.createPlatform(610, Config.GAME_HEIGHT - 330, 200, 32); // Top platform - 80px above step 2
+    // First elevated area - stairs to get up (ice platforms)
+    this.createPlatform(350, Config.GAME_HEIGHT - 170, 150, 32, TileType.ICE); // Step 1 - safe clearance
+    this.createPlatform(480, Config.GAME_HEIGHT - 250, 150, 32, TileType.ICE); // Step 2 - 80px above step 1
+    this.createPlatform(610, Config.GAME_HEIGHT - 330, 200, 32, TileType.ICE); // Top platform - 80px above step 2
 
-    // Second elevated area - after first gap
-    this.createPlatform(1100, Config.GAME_HEIGHT - 170, 150, 32); // Step 1 - safe clearance
-    this.createPlatform(1230, Config.GAME_HEIGHT - 250, 200, 32); // Top platform - 80px above step 1
+    // Second elevated area - after first gap (brick platforms)
+    this.createPlatform(
+      1100,
+      Config.GAME_HEIGHT - 170,
+      150,
+      32,
+      TileType.BRICK,
+    ); // Step 1 - safe clearance
+    this.createPlatform(
+      1230,
+      Config.GAME_HEIGHT - 250,
+      200,
+      32,
+      TileType.BRICK,
+    ); // Top platform - 80px above step 1
 
-    // Third elevated area - mid level
-    this.createPlatform(1900, Config.GAME_HEIGHT - 170, 150, 32); // Step 1 - safe clearance
-    this.createPlatform(2030, Config.GAME_HEIGHT - 250, 150, 32); // Step 2 - 80px above step 1
-    this.createPlatform(2160, Config.GAME_HEIGHT - 330, 200, 32); // Top platform - 80px above step 2
+    // Third elevated area - mid level (stone platforms)
+    this.createPlatform(
+      1900,
+      Config.GAME_HEIGHT - 170,
+      150,
+      32,
+      TileType.WINTER_STONE,
+    ); // Step 1 - safe clearance
+    this.createPlatform(
+      2030,
+      Config.GAME_HEIGHT - 250,
+      150,
+      32,
+      TileType.WINTER_STONE,
+    ); // Step 2 - 80px above step 1
+    this.createPlatform(
+      2160,
+      Config.GAME_HEIGHT - 330,
+      200,
+      32,
+      TileType.WINTER_STONE,
+    ); // Top platform - 80px above step 2
 
-    // Fourth elevated area - later level
-    this.createPlatform(2700, Config.GAME_HEIGHT - 170, 150, 32); // Step 1 - safe clearance
-    this.createPlatform(2830, Config.GAME_HEIGHT - 250, 200, 32); // Top platform - 80px above step 1
+    // Fourth elevated area - later level (candy cane platforms)
+    this.createPlatform(
+      2700,
+      Config.GAME_HEIGHT - 170,
+      150,
+      32,
+      TileType.CANDY_CANE,
+    ); // Step 1 - safe clearance
+    this.createPlatform(
+      2830,
+      Config.GAME_HEIGHT - 250,
+      200,
+      32,
+      TileType.CANDY_CANE,
+    ); // Top platform - 80px above step 1
 
-    // Fifth elevated area - near end
-    this.createPlatform(3500, Config.GAME_HEIGHT - 170, 150, 32); // Step 1 - safe clearance
-    this.createPlatform(3630, Config.GAME_HEIGHT - 250, 150, 32); // Step 2 - 80px above step 1
-    this.createPlatform(3760, Config.GAME_HEIGHT - 330, 200, 32); // Top platform - 80px above step 2
+    // Fifth elevated area - near end (ice platforms for challenge)
+    this.createPlatform(3500, Config.GAME_HEIGHT - 170, 150, 32, TileType.ICE); // Step 1 - safe clearance
+    this.createPlatform(3630, Config.GAME_HEIGHT - 250, 150, 32, TileType.ICE); // Step 2 - 80px above step 1
+    this.createPlatform(3760, Config.GAME_HEIGHT - 330, 200, 32, TileType.ICE); // Top platform - 80px above step 2
   }
 
-  private createPlatform(x: number, y: number, width: number, height: number) {
-    const platform = new Actor({
-      pos: new Vector(x + width / 2, y + height / 2),
-      width: width,
-      height: height,
-      color: Color.fromHex(Config.COLORS.GROUND),
-    });
+  private createPlatform(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    tileType: TileType = TileType.SNOW_PLATFORM,
+  ) {
+    const tileSize = 32;
+    const tilesWide = Math.ceil(width / tileSize);
+    const tilesHigh = Math.ceil(height / tileSize);
 
-    platform.body.collisionType = CollisionType.Fixed;
-    this.add(platform);
+    // Create individual tiles to fill the platform area
+    for (let row = 0; row < tilesHigh; row++) {
+      for (let col = 0; col < tilesWide; col++) {
+        const tileX = x + col * tileSize;
+        const tileY = y + row * tileSize;
+
+        const tile = new Actor({
+          pos: new Vector(tileX + tileSize / 2, tileY + tileSize / 2),
+          width: tileSize,
+          height: tileSize,
+        });
+
+        // Apply the tile graphic
+        const tileGraphic = createTile(tileType, tileSize);
+        tile.graphics.use(tileGraphic);
+
+        tile.body.collisionType = CollisionType.Fixed;
+        this.add(tile);
+      }
+    }
   }
 
   private createDecorations() {
