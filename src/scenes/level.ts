@@ -32,6 +32,7 @@ export class LevelScene extends Scene {
   private winZoneX: number = 5100; // X position to reach to win
   private isBossMusicPlaying: boolean = false;
   private bossProximityDistance: number = 800; // Distance from boss to trigger boss music
+  private bossAreaStartX: number = 4300; // X position where boss area begins
 
   public onInitialize() {
     // Create gradient sky background
@@ -510,5 +511,14 @@ export class LevelScene extends Scene {
     if (this.player && this.player.pos.x >= this.winZoneX) {
       engine.goToScene("win");
     }
+  }
+
+  public getPlayerRespawnPosition(): Vector {
+    // If player is in boss area, respawn at start of boss area
+    if (this.player && this.player.pos.x >= this.bossAreaStartX) {
+      return new Vector(this.bossAreaStartX + 100, Config.GAME_HEIGHT / 2);
+    }
+    // Otherwise respawn at level start
+    return new Vector(100, Config.GAME_HEIGHT / 2);
   }
 }

@@ -22,6 +22,7 @@ import { Resources } from "../resources/resources";
 import { Snowball } from "./snowball";
 import { Elf } from "./elf";
 import { Decoration } from "./decoration";
+import type { LevelScene } from "../scenes/level";
 
 export class Player extends Actor {
   private lives: number = Config.PLAYER.MAX_LIVES;
@@ -501,9 +502,15 @@ export class Player extends Actor {
       // Play respawn sound when starting scroll
       Resources.RespawnSound.play(0.5);
 
-      // Scroll camera back to start (duration in milliseconds)
+      // Get respawn position from scene (boss area or level start)
+      const levelScene = engine.currentScene as LevelScene;
+      const respawnPos = levelScene.getPlayerRespawnPosition
+        ? levelScene.getPlayerRespawnPosition()
+        : new Vector(100, Config.GAME_HEIGHT / 2);
+
+      // Scroll camera back to respawn position (duration in milliseconds)
       const scrollDuration = 1500;
-      const startCameraX = Config.GAME_WIDTH / 2;
+      const targetCameraX = Math.max(respawnPos.x, Config.GAME_WIDTH / 2);
       const currentCameraX = engine.currentScene.camera.pos.x;
       const startTime = Date.now();
 
@@ -517,7 +524,7 @@ export class Player extends Actor {
 
         // Interpolate camera position
         const newCameraX =
-          currentCameraX + (startCameraX - currentCameraX) * easeProgress;
+          currentCameraX + (targetCameraX - currentCameraX) * easeProgress;
         engine.currentScene.camera.pos = new Vector(
           newCameraX,
           Config.GAME_HEIGHT / 2,
@@ -526,8 +533,8 @@ export class Player extends Actor {
         if (progress >= 1) {
           this.cleanupDeathTimers();
 
-          // Respawn player at start after scroll completes
-          this.pos = new Vector(100, Config.GAME_HEIGHT / 2);
+          // Respawn player at respawn position after scroll completes
+          this.pos = respawnPos.clone();
           this.vel = Vector.Zero;
           this.isDying = false;
           this.isRespawning = false;
@@ -582,10 +589,9 @@ export class Player extends Actor {
     }
   }
 
-  public onKill(): void {
+  public onPreKill(): void {
     // Clean up all timers when actor is killed
     this.cleanupDeathTimers();
-    super.onKill();
   }
 
   public getLives(): number {
