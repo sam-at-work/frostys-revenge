@@ -49,6 +49,11 @@ export class Banana extends Actor {
 
       // Check if player caught the banana
       if (other instanceof Player) {
+        // Cancel collision to prevent affecting player velocity
+        const contact = evt.contact;
+        if (contact) {
+          contact.cancel();
+        }
         other.activateBanana();
         this.kill();
       }
