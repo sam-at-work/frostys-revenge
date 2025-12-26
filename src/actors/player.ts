@@ -292,32 +292,45 @@ export class Player extends Actor {
   }
 
   public activateBanana(): void {
-    this.isBanana = true;
-    this.isInvincible = true;
-    this.bananaTimer = Config.BANANA.DURATION;
-    this.bananaSongFading = false;
+    // Check if already in banana mode
+    const wasAlreadyBanana = this.isBanana;
 
-    // Switch to banana sprite (idle or walk will be set in onPreUpdate)
-    this.graphics.use(this.bananaIdleSprite);
+    if (wasAlreadyBanana) {
+      // Already in banana mode - just add 10 seconds to timer
+      this.bananaTimer += 10000;
+      this.bananaSongFading = false; // Cancel any fading if we were near the end
 
-    // Preserve facing direction when switching sprites
-    // Banana faces right by default, so flip if facing left
-    this.graphics.flipHorizontal = this.facingDirection === -1;
+      // Play power-up sound to acknowledge collection
+      Resources.PowerUpSound.play(0.6);
+    } else {
+      // First time activating banana mode
+      this.isBanana = true;
+      this.isInvincible = true;
+      this.bananaTimer = Config.BANANA.DURATION;
+      this.bananaSongFading = false;
 
-    // Play power-up sound
-    Resources.PowerUpSound.play(0.6);
+      // Switch to banana sprite (idle or walk will be set in onPreUpdate)
+      this.graphics.use(this.bananaIdleSprite);
 
-    // Stop background and boss music while banana song plays
-    Resources.BackgroundMusic.pause();
-    Resources.BossMusic.pause();
+      // Preserve facing direction when switching sprites
+      // Banana faces right by default, so flip if facing left
+      this.graphics.flipHorizontal = this.facingDirection === -1;
 
-    // Play Banana Song starting at 28 seconds
-    Resources.BananaSong.seek(28);
-    Resources.BananaSong.volume = 0.5;
-    Resources.BananaSong.play();
+      // Play power-up sound
+      Resources.PowerUpSound.play(0.6);
 
-    // Create particle effect for invincibility
-    this.createInvincibilityEffect();
+      // Stop background and boss music while banana song plays
+      Resources.BackgroundMusic.pause();
+      Resources.BossMusic.pause();
+
+      // Play Banana Song starting at 28 seconds
+      Resources.BananaSong.seek(28);
+      Resources.BananaSong.volume = 0.5;
+      Resources.BananaSong.play();
+
+      // Create particle effect for invincibility
+      this.createInvincibilityEffect();
+    }
   }
 
   private deactivateBanana(): void {
