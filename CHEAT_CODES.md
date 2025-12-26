@@ -21,4 +21,8 @@ This is useful for testing the boss fight without having to play through the ent
 
 ## Notes
 - Cheat codes work at any time during gameplay (except when dying/respawning)
+- You can also use the cheat code from the intro/backstory screen
 - Multiple cheat codes may be added in the future
+
+## Game Flow
+The game now starts with an intro/backstory screen explaining Frosty's revenge quest. Press SPACE or click to skip to the game.
