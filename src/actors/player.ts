@@ -101,10 +101,10 @@ export class Player extends Actor {
     this.graphics.use(this.idleSprite);
 
     // Set anchor to slightly above bottom so feet are on the ground
-    this.graphics.anchor = new Vector(0.5, 0.9);
+    this.graphics.anchor = new Vector(0.5, 0.5);
 
     // Move sprite down to align with collision box (will be adjusted for banana mode)
-    this.graphics.offset = new Vector(0, 28);
+    this.graphics.offset = new Vector(0, 0);
 
     // Enable gravity for the player
     this.body.useGravity = true;
@@ -142,9 +142,7 @@ export class Player extends Actor {
 
   public onPreUpdate(engine: Engine, delta: number): void {
     // Adjust offset based on mode (banana needs to be higher)
-    this.graphics.offset = this.isBanana
-      ? new Vector(0, 22)
-      : new Vector(0, 28);
+    this.graphics.offset = this.isBanana ? new Vector(0, 0) : new Vector(0, 0);
 
     // Switch between idle and walking animation based on velocity
     if (this.vel.x !== 0) {

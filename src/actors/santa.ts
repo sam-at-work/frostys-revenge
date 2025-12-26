@@ -71,10 +71,10 @@ export class Santa extends Actor {
     this.graphics.use(this.walkAnim);
 
     // Set anchor to slightly above bottom so feet are on the ground
-    this.graphics.anchor = new Vector(0.5, 0.9);
+    this.graphics.anchor = new Vector(0.5, 0.5);
 
     // Move sprite down to align with collision box
-    this.graphics.offset = new Vector(0, 20);
+    this.graphics.offset = new Vector(0, 0);
 
     // Santa uses gravity for jumping
     this.body.useGravity = true;

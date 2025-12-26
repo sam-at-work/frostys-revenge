@@ -13,8 +13,8 @@ export const Config = {
 
   // Player settings
   PLAYER: {
-    WIDTH: 32,
-    HEIGHT: 48,
+    WIDTH: 50,
+    HEIGHT: 100,
     MOVE_SPEED: 200,
     JUMP_VELOCITY: -650,
     MAX_LIVES: 3,
@@ -39,8 +39,8 @@ export const Config = {
 
   // Santa boss settings
   SANTA: {
-    WIDTH: 64,
-    HEIGHT: 64,
+    WIDTH: 80,
+    HEIGHT: 172,
     MOVE_SPEED: 60,
     THROW_INTERVAL: 2000, // milliseconds
     DECORATION_SPEED: 250,

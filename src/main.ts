@@ -22,7 +22,14 @@ class Game extends Engine {
       physics: {
         gravity: new Vector(0, Config.GRAVITY),
       },
+      // Enable debug mode to show collision boxes
+      configurePerformanceCanvas2DFallback: {
+        allow: true,
+      },
     });
+
+    // Show debug information including collision boxes
+    this.showDebug(true);
   }
 
   public initialize() {
