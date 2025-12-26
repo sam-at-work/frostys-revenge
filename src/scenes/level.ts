@@ -278,14 +278,18 @@ export class LevelScene extends Scene {
 
   private createPowerUps() {
     // Place banana blocks throughout the level (like ? blocks in Mario)
-    // Early game - floating above ground
-    this.createBananaBlock(550, Config.GAME_HEIGHT - 300);
+    // Player is 100px tall - blocks need clearance (200px+ above ground minimum)
+    // Positioned so player can walk under and jump to hit from below
+    // MUST NOT overlap with any platforms
 
-    // Mid section - on elevated platform
-    this.createBananaBlock(2100, Config.GAME_HEIGHT - 300);
+    // Early game - between first platform cluster (ends ~810) and gap
+    this.createBananaBlock(850, Config.GAME_HEIGHT - 220);
 
-    // Near end - before boss
-    this.createBananaBlock(4000, Config.GAME_HEIGHT - 200);
+    // Mid section - between second (ends ~1430) and third (starts ~1900) platform clusters
+    this.createBananaBlock(1650, Config.GAME_HEIGHT - 220);
+
+    // Near end - clear area before boss, no platform overlaps
+    this.createBananaBlock(4150, Config.GAME_HEIGHT - 220);
   }
 
   private createBananaBlock(x: number, y: number) {
