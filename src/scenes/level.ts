@@ -33,6 +33,7 @@ export class LevelScene extends Scene {
   private isBossMusicPlaying: boolean = false;
   private bossProximityDistance: number = 800; // Distance from boss to trigger boss music
   private bossAreaStartX: number = 4300; // X position where boss area begins
+  private maxCameraX: number = Config.GAME_WIDTH / 2; // Track max camera position for one-way scrolling
 
   public onInitialize() {
     // Create gradient sky background
@@ -61,6 +62,7 @@ export class LevelScene extends Scene {
 
     // Initialize snow effect
     this.snowEmitter = new SnowEmitter();
+    this.snowEmitter.initialize(this.engine);
   }
 
   public onActivate() {
@@ -75,6 +77,9 @@ export class LevelScene extends Scene {
     // Reset boss music flag
     this.isBossMusicPlaying = false;
 
+    // Reset max camera position
+    this.maxCameraX = Config.GAME_WIDTH / 2;
+
     // Reinitialize the entire scene
     this.createSkyBackground();
     this.createLevel();
@@ -87,6 +92,7 @@ export class LevelScene extends Scene {
 
     // Reinitialize snow effect
     this.snowEmitter = new SnowEmitter();
+    this.snowEmitter.initialize(this.engine);
 
     // Configure and start background music
     Resources.BackgroundMusic.loop = true;

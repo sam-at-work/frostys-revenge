@@ -226,14 +226,28 @@ export class Player extends Actor {
     }
 
     // Update camera to follow player (unless dying - camera scroll handles it)
+    // Camera only moves forward, never backward (one-way scrolling)
     if (!this.isDying) {
-      engine.currentScene.camera.pos = new Vector(
-        Math.max(
-          Config.GAME_WIDTH / 2,
-          Math.min(this.pos.x, Config.LEVEL.LENGTH - Config.GAME_WIDTH / 2),
-        ),
-        Config.GAME_HEIGHT / 2,
+      const levelScene = engine.currentScene as any;
+      const desiredCameraX = Math.max(
+        Config.GAME_WIDTH / 2,
+        Math.min(this.pos.x, Config.LEVEL.LENGTH - Config.GAME_WIDTH / 2),
       );
+
+      // Only update camera if moving forward
+      if (levelScene.maxCameraX !== undefined) {
+        levelScene.maxCameraX = Math.max(levelScene.maxCameraX, desiredCameraX);
+        engine.currentScene.camera.pos = new Vector(
+          levelScene.maxCameraX,
+          Config.GAME_HEIGHT / 2,
+        );
+      } else {
+        // Fallback if maxCameraX doesn't exist
+        engine.currentScene.camera.pos = new Vector(
+          desiredCameraX,
+          Config.GAME_HEIGHT / 2,
+        );
+      }
     }
 
     // Check if player fell off the world

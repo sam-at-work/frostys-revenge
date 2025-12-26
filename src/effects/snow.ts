@@ -57,7 +57,27 @@ export class SnowParticle extends Actor {
 
 export class SnowEmitter {
   private emitTimer: number = 0;
-  private emitRate: number = 100; // milliseconds between particles
+  private emitRate: number = 80; // milliseconds between particles
+  private isInitialized: boolean = false;
+
+  public initialize(engine: Engine): void {
+    // Pre-spawn snow particles only in visible area + buffer
+    const numParticles = 200; // Reduced for better performance
+    const cameraX = engine.currentScene.camera.pos.x;
+    const spawnWidth = Config.GAME_WIDTH * 2; // 2 screens wide
+
+    for (let i = 0; i < numParticles; i++) {
+      // Spawn near camera position, not entire level
+      const x = cameraX - Config.GAME_WIDTH + Math.random() * spawnWidth;
+      // Spawn at random heights across the screen
+      const y = Math.random() * Config.GAME_HEIGHT;
+
+      const particle = new SnowParticle(x, y);
+      engine.currentScene.add(particle);
+    }
+
+    this.isInitialized = true;
+  }
 
   public update(engine: Engine, delta: number, cameraX: number): void {
     this.emitTimer += delta;
@@ -65,19 +85,28 @@ export class SnowEmitter {
     if (this.emitTimer >= this.emitRate) {
       this.emitTimer = 0;
 
-      // Emit particles across the visible screen
-      const particlesPerEmit = Math.floor(Math.random() * 2) + 1; // 1-2 particles
+      // Emit particles across visible screen + 1 screen ahead
+      const particlesPerEmit = Math.floor(Math.random() * 3) + 2; // 2-4 particles
 
       for (let i = 0; i < particlesPerEmit; i++) {
-        const x =
-          cameraX -
-          Config.GAME_WIDTH / 2 +
-          Math.random() * Config.GAME_WIDTH;
+        // Emit across visible screen plus 1.5 screens ahead
+        const emitWidth = Config.GAME_WIDTH * 2.5;
+        const x = cameraX - Config.GAME_WIDTH / 2 + Math.random() * emitWidth;
         const y = -10; // Start above screen
 
         const particle = new SnowParticle(x, y);
         engine.currentScene.add(particle);
       }
     }
+
+    // Cull particles that are behind the camera (one-way scrolling, no need to keep them)
+    const cullX = cameraX - Config.GAME_WIDTH / 2 - 50; // Slightly behind left edge
+    engine.currentScene.actors.forEach((actor) => {
+      if (actor instanceof SnowParticle) {
+        if (actor.pos.x < cullX) {
+          actor.kill();
+        }
+      }
+    });
   }
 }
