@@ -18,8 +18,8 @@ export class WinScene extends Scene {
       text: "YOU WIN!",
       pos: new Vector(Config.GAME_WIDTH / 2, Config.GAME_HEIGHT / 2 - 80),
       font: new Font({
-        family: "Arial",
-        size: 56,
+        family: '"Jacquard 12", system-ui',
+        size: 72,
         unit: FontUnit.Px,
         color: Color.fromHex("#FFD700"), // Gold
       }),
@@ -31,8 +31,8 @@ export class WinScene extends Scene {
       text: "You got past Santa!",
       pos: new Vector(Config.GAME_WIDTH / 2, Config.GAME_HEIGHT / 2 - 20),
       font: new Font({
-        family: "Arial",
-        size: 28,
+        family: '"Jacquard 12", system-ui',
+        size: 36,
         unit: FontUnit.Px,
         color: Color.White,
       }),
@@ -44,8 +44,8 @@ export class WinScene extends Scene {
       text: "Press SPACE to play again",
       pos: new Vector(Config.GAME_WIDTH / 2, Config.GAME_HEIGHT / 2 + 60),
       font: new Font({
-        family: "Arial",
-        size: 24,
+        family: '"Jacquard 12", system-ui',
+        size: 32,
         unit: FontUnit.Px,
         color: Color.White,
       }),

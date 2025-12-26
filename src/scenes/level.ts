@@ -423,10 +423,15 @@ export class LevelScene extends Scene {
       text: "Lives: 3",
       pos: new Vector(10, 10),
       font: new Font({
-        family: "Arial",
-        size: 20,
+        family: '"Jacquard 12", system-ui',
+        size: 32,
         unit: FontUnit.Px,
         color: Color.White,
+        shadow: {
+          blur: 0,
+          offset: new Vector(2, 2),
+          color: Color.Black,
+        },
       }),
     });
 
@@ -437,12 +442,17 @@ export class LevelScene extends Scene {
     // Power-up timer display
     this.powerUpLabel = new Label({
       text: "",
-      pos: new Vector(10, 40),
+      pos: new Vector(10, 50),
       font: new Font({
-        family: "Arial",
-        size: 18,
+        family: '"Jacquard 12", system-ui',
+        size: 32,
         unit: FontUnit.Px,
         color: Color.fromHex(Config.COLORS.BANANA),
+        shadow: {
+          blur: 0,
+          offset: new Vector(2, 2),
+          color: Color.Black,
+        },
       }),
     });
     this.powerUpLabel.z = 100;
@@ -465,7 +475,7 @@ export class LevelScene extends Scene {
     if (this.player && this.powerUpLabel) {
       if (this.player.isInvincibleState()) {
         const timeLeft = this.player.getBananaTimeLeft();
-        this.powerUpLabel.text = `BANANA MODE: ${Math.ceil(timeLeft / 1000)}s`;
+        this.powerUpLabel.text = `Banana Mode: ${Math.ceil(timeLeft / 1000)}`;
       } else {
         this.powerUpLabel.text = "";
       }

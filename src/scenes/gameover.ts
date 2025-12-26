@@ -18,8 +18,8 @@ export class GameOverScene extends Scene {
       text: "GAME OVER",
       pos: new Vector(Config.GAME_WIDTH / 2, Config.GAME_HEIGHT / 2 - 50),
       font: new Font({
-        family: "Arial",
-        size: 48,
+        family: '"Jacquard 12", system-ui',
+        size: 64,
         unit: FontUnit.Px,
         color: Color.White,
       }),
@@ -31,8 +31,8 @@ export class GameOverScene extends Scene {
       text: "Press SPACE to restart",
       pos: new Vector(Config.GAME_WIDTH / 2, Config.GAME_HEIGHT / 2 + 50),
       font: new Font({
-        family: "Arial",
-        size: 24,
+        family: '"Jacquard 12", system-ui',
+        size: 32,
         unit: FontUnit.Px,
         color: Color.White,
       }),
