@@ -13,9 +13,14 @@ The source code for Excalibur is located inside a folder called Excalibur and th
 Game controls.
 You will control the main character using the arrow keys and you can also use the WASD keys as an alternative space will make you shoot the snowballs note that you don't need a power up to be able to shoot snowballs. You're always able to shoot them lives work the same as in Mario once you've lost all your lives it's game over start and you will restart at the start of the level.
 
-Full excalibur codebase is located locally at:
-`Users/sam/projects/2025.12/frostys-revenge/Excalibur`
 
-Links to excalibur:
+Notes for AI:
+- Full excalibur codebase/github repo code is located locally in:
+`./Excalibur`
+
+- Please dont add summary documents
+
+
+- Links to excalibur:
 - [Excalibur GitHub Repository](https://github.com/excaliburjs/Excalibur)
 - [Excalibur Documentation](https://excaliburjs.com/docs/)
