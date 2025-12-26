@@ -272,7 +272,7 @@ export class Player extends Actor {
     const offsetX =
       (Config.PLAYER.WIDTH / 2 + Config.SNOWBALL.WIDTH / 2 + 5) *
       this.facingDirection;
-    const offsetY = -20; // Shoot from higher up (chest level)
+    const offsetY = 10; // Shoot from mid-body level
     const snowballPos = new Vector(this.pos.x + offsetX, this.pos.y + offsetY);
 
     const snowball = new Snowball(snowballPos, this.facingDirection);
