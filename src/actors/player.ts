@@ -475,6 +475,9 @@ export class Player extends Actor {
     this.isDying = true;
     this.isRespawning = true;
 
+    // Disable collision to prevent enemies from hitting invisible player
+    this.body.collisionType = CollisionType.PreventCollision;
+
     // Always deactivate banana mode on death
     if (this.isBanana) {
       this.deactivateBanana();
@@ -539,6 +542,7 @@ export class Player extends Actor {
           this.isDying = false;
           this.isRespawning = false;
           this.graphics.visible = true; // Make player visible again
+          this.body.collisionType = CollisionType.Active; // Re-enable collision
 
           // Resume appropriate music
           if (
