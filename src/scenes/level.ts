@@ -154,14 +154,8 @@ export class LevelScene extends Scene {
       TileType.WINTER_STONE,
     );
 
-    // Boss area - wide platform (candy cane for festive final battle)
-    this.createPlatform(
-      4300,
-      Config.GAME_HEIGHT - 32,
-      900,
-      64,
-      TileType.CANDY_CANE,
-    );
+    // Boss area - wide platform (ice for final battle)
+    this.createPlatform(4300, Config.GAME_HEIGHT - 32, 900, 64, TileType.ICE);
 
     // Elevated platforms - with stepping stones to reach them
     // All platforms at 170px+ above ground to clear elf height (64px) with margin
@@ -210,21 +204,9 @@ export class LevelScene extends Scene {
       TileType.WINTER_STONE,
     ); // Top platform - 80px above step 2
 
-    // Fourth elevated area - later level (candy cane platforms)
-    this.createPlatform(
-      2700,
-      Config.GAME_HEIGHT - 170,
-      150,
-      32,
-      TileType.CANDY_CANE,
-    ); // Step 1 - safe clearance
-    this.createPlatform(
-      2830,
-      Config.GAME_HEIGHT - 250,
-      200,
-      32,
-      TileType.CANDY_CANE,
-    ); // Top platform - 80px above step 1
+    // Fourth elevated area - later level (ice platforms)
+    this.createPlatform(2700, Config.GAME_HEIGHT - 170, 150, 32, TileType.ICE); // Step 1 - safe clearance
+    this.createPlatform(2830, Config.GAME_HEIGHT - 250, 200, 32, TileType.ICE); // Top platform - 80px above step 1
 
     // Fifth elevated area - near end (ice platforms for challenge)
     this.createPlatform(3500, Config.GAME_HEIGHT - 170, 150, 32, TileType.ICE); // Step 1 - safe clearance
