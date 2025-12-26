@@ -7,6 +7,8 @@ import { Scene, Color, Label, Vector, Font, FontUnit, Input } from "excalibur";
 import { Config } from "../config";
 
 export class WinScene extends Scene {
+  private keyHandler?: (evt: any) => void;
+
   public onInitialize() {
     // Set background color
     this.backgroundColor = Color.fromHex("#1a4d2e"); // Dark green for Christmas
@@ -52,11 +54,27 @@ export class WinScene extends Scene {
   }
 
   public onActivate() {
-    // Listen for space key to restart
-    this.engine.input.keyboard.on("press", (evt) => {
+    // Remove old listener if it exists
+    if (this.keyHandler) {
+      this.engine.input.keyboard.off("press", this.keyHandler);
+    }
+
+    // Create new listener
+    this.keyHandler = (evt) => {
       if (evt.key === Input.Keys.Space) {
         this.engine.goToScene("level");
       }
-    });
+    };
+
+    // Listen for space key to restart
+    this.engine.input.keyboard.on("press", this.keyHandler);
+  }
+
+  public onDeactivate() {
+    // Clean up listener when leaving scene
+    if (this.keyHandler) {
+      this.engine.input.keyboard.off("press", this.keyHandler);
+      this.keyHandler = undefined;
+    }
   }
 }

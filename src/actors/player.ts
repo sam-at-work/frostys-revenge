@@ -42,6 +42,8 @@ export class Player extends Actor {
   private walkAnim!: Animation;
   private bananaWalkAnim!: Animation;
   private bananaSongFading: boolean = false;
+  private deathFlashTimer?: number;
+  private deathScrollTimer?: number;
 
   constructor(pos: Vector) {
     super({
@@ -466,6 +468,9 @@ export class Player extends Actor {
   }
 
   private die(shouldFlash: boolean = false): void {
+    // Clean up any existing death timers
+    this.cleanupDeathTimers();
+
     this.isDying = true;
     this.isRespawning = true;
 
@@ -503,7 +508,7 @@ export class Player extends Actor {
       const startTime = Date.now();
 
       // Animate camera scroll
-      const scrollInterval = setInterval(() => {
+      this.deathScrollTimer = window.setInterval(() => {
         const elapsed = Date.now() - startTime;
         const progress = Math.min(elapsed / scrollDuration, 1);
 
@@ -519,7 +524,7 @@ export class Player extends Actor {
         );
 
         if (progress >= 1) {
-          clearInterval(scrollInterval);
+          this.cleanupDeathTimers();
 
           // Respawn player at start after scroll completes
           this.pos = new Vector(100, Config.GAME_HEIGHT / 2);
@@ -546,12 +551,15 @@ export class Player extends Actor {
       let flashCount = 0;
       const maxFlashes = flashDuration / flashInterval;
 
-      const flashTimer = setInterval(() => {
+      this.deathFlashTimer = window.setInterval(() => {
         this.graphics.visible = !this.graphics.visible;
         flashCount++;
 
         if (flashCount >= maxFlashes) {
-          clearInterval(flashTimer);
+          if (this.deathFlashTimer !== undefined) {
+            clearInterval(this.deathFlashTimer);
+            this.deathFlashTimer = undefined;
+          }
           this.graphics.visible = false; // Hide before scroll
           startRespawnScroll();
         }
@@ -561,6 +569,23 @@ export class Player extends Actor {
       this.graphics.visible = false;
       startRespawnScroll();
     }
+  }
+
+  private cleanupDeathTimers(): void {
+    if (this.deathFlashTimer !== undefined) {
+      clearInterval(this.deathFlashTimer);
+      this.deathFlashTimer = undefined;
+    }
+    if (this.deathScrollTimer !== undefined) {
+      clearInterval(this.deathScrollTimer);
+      this.deathScrollTimer = undefined;
+    }
+  }
+
+  public onKill(): void {
+    // Clean up all timers when actor is killed
+    this.cleanupDeathTimers();
+    super.onKill();
   }
 
   public getLives(): number {
