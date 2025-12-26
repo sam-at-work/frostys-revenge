@@ -14,6 +14,7 @@ import {
 } from "excalibur";
 import { Config } from "../config";
 import { Player } from "../actors/player";
+import { createCandyBallGraphic } from "../graphics/tiles";
 
 export class Banana extends Actor {
   private moveSpeed: number = 150;
@@ -27,12 +28,15 @@ export class Banana extends Actor {
       pos: pos,
       width: Config.BANANA.WIDTH,
       height: Config.BANANA.HEIGHT,
-      color: Color.fromHex(Config.COLORS.BANANA),
       collisionType: CollisionType.Active,
     });
   }
 
   public onInitialize(_engine: Engine): void {
+    // Apply candy ball graphic
+    const candyGraphic = createCandyBallGraphic(Config.BANANA.WIDTH);
+    this.graphics.use(candyGraphic);
+
     // Banana uses gravity
     this.body.useGravity = true;
 

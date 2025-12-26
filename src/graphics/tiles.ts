@@ -352,6 +352,78 @@ export function createUsedBananaBlockTile(size: number = 32): Canvas {
 }
 
 /**
+ * Create a candy ball graphic (for banana powerup)
+ * Simple round candy ball with shine effect
+ */
+export function createCandyBallGraphic(size: number = 24): Canvas {
+  return new Canvas({
+    width: size,
+    height: size,
+    cache: true,
+    draw: (ctx) => {
+      const centerX = size / 2;
+      const centerY = size / 2;
+      const radius = size / 2 - 2;
+
+      // Outer glow/shadow
+      ctx.fillStyle = "rgba(255, 215, 0, 0.3)";
+      ctx.beginPath();
+      ctx.arc(centerX, centerY + 1, radius + 2, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Main candy ball - yellow/gold gradient
+      const gradient = ctx.createRadialGradient(
+        centerX - radius / 3,
+        centerY - radius / 3,
+        0,
+        centerX,
+        centerY,
+        radius,
+      );
+      gradient.addColorStop(0, "#FFE135");
+      gradient.addColorStop(0.6, "#FFD700");
+      gradient.addColorStop(1, "#DAA520");
+
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Highlight shine (top-left)
+      ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+      ctx.beginPath();
+      ctx.arc(
+        centerX - radius / 3,
+        centerY - radius / 3,
+        radius / 3,
+        0,
+        Math.PI * 2,
+      );
+      ctx.fill();
+
+      // Smaller bright shine
+      ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+      ctx.beginPath();
+      ctx.arc(
+        centerX - radius / 2.5,
+        centerY - radius / 2.5,
+        radius / 6,
+        0,
+        Math.PI * 2,
+      );
+      ctx.fill();
+
+      // Subtle outline for definition
+      ctx.strokeStyle = "rgba(218, 165, 32, 0.8)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+      ctx.stroke();
+    },
+  });
+}
+
+/**
  * Factory function to create tiles by type
  */
 export function createTile(type: TileType, size: number = 32): Canvas {
