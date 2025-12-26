@@ -63,6 +63,7 @@ loader.addResource(Resources.EnemyDefeatSound);
 loader.addResource(Resources.PowerUpSound);
 loader.addResource(Resources.PlayerHurtSound);
 loader.addResource(Resources.BlockHitSound);
+loader.addResource(Resources.RespawnSound);
 
 // Add music to loader (currently using placeholder sounds)
 loader.addResource(Resources.BackgroundMusic);

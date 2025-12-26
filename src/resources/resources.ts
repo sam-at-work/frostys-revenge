@@ -60,4 +60,7 @@ export const Resources = {
 
   // Banana mode music - "I'm A Banana" song, starts at 45 seconds
   BananaSong: new Sound("/music/Banana Song (I'm A Banana).mp3"),
+
+  // Respawn sound - plays when scrolling back to start after death
+  RespawnSound: new Sound("/sounds/phaserUp3.ogg"),
 } as const;

@@ -440,8 +440,8 @@ export class Player extends Actor {
       // Game over
       this.scene?.engine.goToScene("gameover");
     } else {
-      // Trigger respawn
-      this.die();
+      // Trigger collision death (with flash animation)
+      this.die(true);
     }
   }
 
@@ -460,17 +460,14 @@ export class Player extends Actor {
       // Game over
       this.scene?.engine.goToScene("gameover");
     } else {
-      // Trigger respawn
-      this.die();
+      // Trigger fall death (no flash animation, just scroll)
+      this.die(false);
     }
   }
 
-  private die(): void {
+  private die(shouldFlash: boolean = false): void {
     this.isDying = true;
     this.isRespawning = true;
-
-    // Make player invisible during death animation
-    this.graphics.visible = false;
 
     // Always deactivate banana mode on death
     if (this.isBanana) {
@@ -485,7 +482,20 @@ export class Player extends Actor {
     this.vel = Vector.Zero;
     const engine = this.scene?.engine;
 
-    if (engine) {
+    if (!engine) {
+      // Fallback if no engine
+      this.pos = new Vector(100, Config.GAME_HEIGHT / 2);
+      this.vel = Vector.Zero;
+      this.isDying = false;
+      this.isRespawning = false;
+      this.graphics.visible = true;
+      return;
+    }
+
+    const startRespawnScroll = () => {
+      // Play respawn sound when starting scroll
+      Resources.RespawnSound.play(0.5);
+
       // Scroll camera back to start (duration in milliseconds)
       const scrollDuration = 1500;
       const startCameraX = Config.GAME_WIDTH / 2;
@@ -527,13 +537,29 @@ export class Player extends Actor {
           }
         }
       }, 16); // ~60 FPS
+    };
+
+    if (shouldFlash) {
+      // Flash animation before scrolling (for collision deaths)
+      const flashDuration = 800; // Total flash duration
+      const flashInterval = 100; // Flash every 100ms
+      let flashCount = 0;
+      const maxFlashes = flashDuration / flashInterval;
+
+      const flashTimer = setInterval(() => {
+        this.graphics.visible = !this.graphics.visible;
+        flashCount++;
+
+        if (flashCount >= maxFlashes) {
+          clearInterval(flashTimer);
+          this.graphics.visible = false; // Hide before scroll
+          startRespawnScroll();
+        }
+      }, flashInterval);
     } else {
-      // Fallback if no engine
-      this.pos = new Vector(100, Config.GAME_HEIGHT / 2);
-      this.vel = Vector.Zero;
-      this.isDying = false;
-      this.isRespawning = false;
-      this.graphics.visible = true; // Make player visible again
+      // No flash animation (for fall deaths)
+      this.graphics.visible = false;
+      startRespawnScroll();
     }
   }
 
