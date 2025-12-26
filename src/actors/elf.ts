@@ -15,6 +15,7 @@ import {
   Animation,
   AnimationStrategy,
   range,
+  Ray,
 } from "excalibur";
 import { Config } from "../config";
 import { Resources } from "../resources/resources";
@@ -24,6 +25,7 @@ export class Elf extends Actor {
   private patrolDistance: number;
   private movingRight: boolean = true;
   private walkAnim!: Animation;
+  private idleSprite!: any;
 
   constructor(
     pos: Vector,
@@ -53,10 +55,13 @@ export class Elf extends Actor {
       },
     });
 
-    // Create walking animation (using first row of sprites - walking right)
+    // Create idle sprite (first sprite)
+    this.idleSprite = elfSheet.getSprite(0, 0);
+
+    // Create walking animation using all 25 sprites
     this.walkAnim = Animation.fromSpriteSheet(
       elfSheet,
-      range(0, 4), // sprites 0-4 (first row)
+      range(0, 24), // sprites 0-24 (all 5 rows)
       100, // 100ms per frame
     );
     this.walkAnim.strategy = AnimationStrategy.Loop;
@@ -77,26 +82,56 @@ export class Elf extends Actor {
     this.vel.x = Config.ELF.MOVE_SPEED;
   }
 
-  public onPreUpdate(_engine: Engine, _delta: number): void {
-    // Check if elf stopped moving (hit wall/edge) - if so, turn around
-    if (this.vel.x === 0) {
-      // Turn around
-      this.movingRight = !this.movingRight;
-      this.vel.x = this.movingRight
-        ? Config.ELF.MOVE_SPEED
-        : -Config.ELF.MOVE_SPEED;
-      this.graphics.flipHorizontal = !this.movingRight;
-    }
+  public onPreUpdate(engine: Engine, _delta: number): void {
+    // Check for platform edges
+    this.checkPlatformEdge(engine);
 
     // Patrol back and forth
     this.patrol();
 
-    // Always use walking animation (they should always be moving)
-    this.graphics.use(this.walkAnim);
+    // Use walking animation when moving, idle when stopped
+    if (this.vel.x === 0) {
+      this.graphics.use(this.idleSprite);
+    } else {
+      this.graphics.use(this.walkAnim);
+    }
+  }
+
+  private checkPlatformEdge(engine: Engine): void {
+    // Cast a ray downward from the front of the elf to detect platform edges
+    const rayDistance = 20; // How far ahead to check
+    const downDistance = Config.ELF.HEIGHT; // Check down from elf position
+
+    // Check in the direction we're moving
+    const checkX = this.movingRight
+      ? this.pos.x + Config.ELF.WIDTH / 2 + rayDistance
+      : this.pos.x - Config.ELF.WIDTH / 2 - rayDistance;
+
+    const rayStart = new Vector(checkX, this.pos.y);
+    const rayEnd = new Vector(checkX, this.pos.y + downDistance);
+    const ray = new Ray(rayStart, rayEnd.sub(rayStart));
+
+    const hits = engine.currentScene.physics.rayCast(ray, {
+      maxDistance: downDistance,
+      searchAllColliders: false,
+    });
+
+    // If no ground detected ahead, turn around
+    if (hits.length === 0) {
+      if (this.movingRight) {
+        this.movingRight = false;
+        this.vel.x = -Config.ELF.MOVE_SPEED;
+        this.graphics.flipHorizontal = true;
+      } else {
+        this.movingRight = true;
+        this.vel.x = Config.ELF.MOVE_SPEED;
+        this.graphics.flipHorizontal = false;
+      }
+    }
   }
 
   private patrol(): void {
-    // Check if we've reached the patrol boundary
+    // Check if we've reached the patrol boundary from starting position
     if (this.movingRight) {
       if (this.pos.x >= this.startX + this.patrolDistance) {
         this.movingRight = false;
