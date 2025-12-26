@@ -31,7 +31,7 @@ export const Config = {
 
   // Elf enemy settings
   ELF: {
-    WIDTH: 32,
+    WIDTH: 38,
     HEIGHT: 64,
     MOVE_SPEED: 80,
     PATROL_DISTANCE: 150,

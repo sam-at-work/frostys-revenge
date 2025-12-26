@@ -15,7 +15,6 @@ import {
   Animation,
   AnimationStrategy,
   range,
-  Ray,
 } from "excalibur";
 import { Config } from "../config";
 import { Resources } from "../resources/resources";
@@ -26,6 +25,8 @@ export class Elf extends Actor {
   private movingRight: boolean = true;
   private walkAnim!: Animation;
   private idleSprite!: any;
+  private isOnGround: boolean = false;
+  private lastGroundY: number = 0;
 
   constructor(
     pos: Vector,
@@ -80,44 +81,39 @@ export class Elf extends Actor {
 
     // Start moving
     this.vel.x = Config.ELF.MOVE_SPEED;
-  }
+    this.lastGroundY = this.pos.y;
 
-  public onPreUpdate(engine: Engine, _delta: number): void {
-    // Check for platform edges
-    this.checkPlatformEdge(engine);
+    // Listen for collisions
+    this.on("precollision", (evt) => {
+      const side = evt.side;
 
-    // Patrol back and forth
-    this.patrol();
+      // Track if we're on ground
+      if (side === "Bottom") {
+        this.isOnGround = true;
+        this.lastGroundY = this.pos.y;
+      }
 
-    // Use walking animation when moving, idle when stopped
-    if (this.vel.x === 0) {
-      this.graphics.use(this.idleSprite);
-    } else {
-      this.graphics.use(this.walkAnim);
-    }
-  }
-
-  private checkPlatformEdge(engine: Engine): void {
-    // Cast a ray downward from the front of the elf to detect platform edges
-    const rayDistance = 20; // How far ahead to check
-    const downDistance = Config.ELF.HEIGHT; // Check down from elf position
-
-    // Check in the direction we're moving
-    const checkX = this.movingRight
-      ? this.pos.x + Config.ELF.WIDTH / 2 + rayDistance
-      : this.pos.x - Config.ELF.WIDTH / 2 - rayDistance;
-
-    const rayStart = new Vector(checkX, this.pos.y);
-    const rayEnd = new Vector(checkX, this.pos.y + downDistance);
-    const ray = new Ray(rayStart, rayEnd.sub(rayStart));
-
-    const hits = engine.currentScene.physics.rayCast(ray, {
-      maxDistance: downDistance,
-      searchAllColliders: false,
+      // If we hit a wall on the side we're moving, turn around
+      if (side === "Left" && !this.movingRight) {
+        this.movingRight = true;
+        this.vel.x = Config.ELF.MOVE_SPEED;
+        this.graphics.flipHorizontal = false;
+      } else if (side === "Right" && this.movingRight) {
+        this.movingRight = false;
+        this.vel.x = -Config.ELF.MOVE_SPEED;
+        this.graphics.flipHorizontal = true;
+      }
     });
 
-    // If no ground detected ahead, turn around
-    if (hits.length === 0) {
+    this.on("postcollision", () => {
+      this.isOnGround = false;
+    });
+  }
+
+  public onPreUpdate(_engine: Engine, _delta: number): void {
+    // Simple edge detection - if we're falling and not on ground, we walked off edge
+    if (!this.isOnGround && this.pos.y > this.lastGroundY + 10) {
+      // We've walked off a platform, turn around
       if (this.movingRight) {
         this.movingRight = false;
         this.vel.x = -Config.ELF.MOVE_SPEED;
@@ -127,6 +123,16 @@ export class Elf extends Actor {
         this.vel.x = Config.ELF.MOVE_SPEED;
         this.graphics.flipHorizontal = false;
       }
+    }
+
+    // Patrol back and forth
+    this.patrol();
+
+    // Use walking animation when moving, idle when stopped
+    if (this.vel.x === 0) {
+      this.graphics.use(this.idleSprite);
+    } else {
+      this.graphics.use(this.walkAnim);
     }
   }
 
