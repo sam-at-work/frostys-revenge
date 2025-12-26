@@ -191,8 +191,12 @@ export class Player extends Actor {
         this.invincibilityEmitter.pos = this.pos.clone();
       }
 
-      // Start fading banana song 2 seconds before mode ends
-      if (this.bananaTimer <= 2000 && !this.bananaSongFading) {
+      // Start fading banana song 2 seconds before mode ends (only if song is enabled)
+      if (
+        !Config.DISABLE_BANANA_SONG &&
+        this.bananaTimer <= 2000 &&
+        !this.bananaSongFading
+      ) {
         this.bananaSongFading = true;
         this.fadeBananaSong();
       }
@@ -337,14 +341,17 @@ export class Player extends Actor {
       // Play power-up sound
       Resources.PowerUpSound.play(0.6);
 
-      // Stop background and boss music while banana song plays
-      Resources.BackgroundMusic.pause();
-      Resources.BossMusic.pause();
+      // Handle banana song based on config
+      if (!Config.DISABLE_BANANA_SONG) {
+        // Stop background and boss music while banana song plays
+        Resources.BackgroundMusic.pause();
+        Resources.BossMusic.pause();
 
-      // Play Banana Song starting at 28 seconds
-      Resources.BananaSong.seek(28);
-      Resources.BananaSong.volume = 0.5;
-      Resources.BananaSong.play();
+        // Play Banana Song starting at 28 seconds
+        Resources.BananaSong.seek(28);
+        Resources.BananaSong.volume = 0.5;
+        Resources.BananaSong.play();
+      }
 
       // Create particle effect for invincibility
       this.createInvincibilityEffect();
@@ -368,6 +375,12 @@ export class Player extends Actor {
       this.invincibilityEmitter.isEmitting = false;
       setTimeout(() => this.invincibilityEmitter?.kill(), 500);
       this.invincibilityEmitter = undefined;
+    }
+
+    // Stop banana song if it was playing
+    if (!Config.DISABLE_BANANA_SONG && Resources.BananaSong.isPlaying()) {
+      Resources.BananaSong.stop();
+      Resources.BananaSong.volume = 0.5; // Reset for next time
     }
   }
 
@@ -482,9 +495,11 @@ export class Player extends Actor {
     if (this.isBanana) {
       this.deactivateBanana();
 
-      // Stop banana song immediately
-      Resources.BananaSong.stop();
-      Resources.BananaSong.volume = 0.5; // Reset for next time
+      // Stop banana song immediately if it was enabled
+      if (!Config.DISABLE_BANANA_SONG) {
+        Resources.BananaSong.stop();
+        Resources.BananaSong.volume = 0.5; // Reset for next time
+      }
     }
 
     // Pause player movement during respawn
