@@ -63,6 +63,11 @@ export class LevelScene extends Scene {
   }
 
   public onActivate() {
+    // Stop all music including banana song
+    Resources.BackgroundMusic.stop();
+    Resources.BossMusic.stop();
+    Resources.BananaSong.stop();
+
     // Clear all actors from the scene to prevent duplicates
     this.clear();
 

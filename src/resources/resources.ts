@@ -62,5 +62,5 @@ export const Resources = {
   BananaSong: new Sound("/music/Banana Song (I'm A Banana).mp3"),
 
   // Respawn sound - plays when scrolling back to start after death
-  RespawnSound: new Sound("/sounds/phaserUp3.ogg"),
+  RespawnSound: new Sound("/sounds/zapThreeToneDown.ogg"),
 } as const;
