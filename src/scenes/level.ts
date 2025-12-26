@@ -13,6 +13,7 @@ import {
   Font,
   FontUnit,
   CollisionType,
+  ImageSource,
 } from "excalibur";
 import { Config } from "../config";
 import { Resources } from "../resources/resources";
@@ -39,6 +40,9 @@ export class LevelScene extends Scene {
   public onInitialize() {
     // Create gradient sky background
     this.createSkyBackground();
+
+    // Create mountain backgrounds
+    this.createMountainBackgrounds();
 
     // Create level platforms
     this.createLevel();
@@ -84,6 +88,7 @@ export class LevelScene extends Scene {
 
     // Reinitialize the entire scene
     this.createSkyBackground();
+    this.createMountainBackgrounds();
     this.createLevel();
     this.createDecorations();
     this.createEnemies();
@@ -133,6 +138,35 @@ export class LevelScene extends Scene {
       skyLayer.body.collisionType = CollisionType.PreventCollision;
       this.add(skyLayer);
     }
+  }
+
+  private createMountainBackgrounds() {
+    // Create mountain background layers from the pixel art images
+    // Mountains are positioned at the bottom of the canvas with transparent backgrounds
+
+    const mountains = [
+      { resource: Resources.Mountain1, z: -90, x: 500 },
+      { resource: Resources.Mountain2, z: -85, x: 1500 },
+      { resource: Resources.Mountain3, z: -80, x: 2800 },
+      { resource: Resources.Mountain1, z: -90, x: 3800 },
+      { resource: Resources.Mountain2, z: -85, x: 4500 },
+    ];
+
+    mountains.forEach((mountain) => {
+      const sprite = mountain.resource.toSprite();
+
+      const mountainActor = new Actor({
+        pos: new Vector(mountain.x, Config.GAME_HEIGHT),
+        z: mountain.z,
+      });
+
+      // Set anchor to bottom-center so mountains align with bottom of canvas
+      mountainActor.graphics.anchor = new Vector(0.5, 1);
+
+      mountainActor.body.collisionType = CollisionType.PreventCollision;
+      mountainActor.graphics.use(sprite);
+      this.add(mountainActor);
+    });
   }
 
   private createLevel() {

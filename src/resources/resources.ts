@@ -8,6 +8,12 @@
 import { ImageSource, Sound } from "excalibur";
 
 export const Resources = {
+  // ===== BACKGROUNDS =====
+  // Mountain background images (pixel art with transparent backgrounds)
+  Mountain1: new ImageSource("/backgrounds/mountain1.png"),
+  Mountain2: new ImageSource("/backgrounds/mountain2.png"),
+  Mountain3: new ImageSource("/backgrounds/mountain3.png"),
+
   // ===== SPRITE SHEETS =====
   // Elf sprite sheet (480x480, 5x5 grid, 96px sprites)
   ElfSpriteSheet: new ImageSource("/elf/sprite_sheet_96_18px.png"),

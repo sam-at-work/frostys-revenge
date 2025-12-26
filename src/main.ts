@@ -53,6 +53,12 @@ const game = new Game();
 
 // Create custom loader with all resources
 const loader = new CustomLoader();
+
+// Add background images to loader
+loader.addResource(Resources.Mountain1);
+loader.addResource(Resources.Mountain2);
+loader.addResource(Resources.Mountain3);
+
 // Add sprite sheets to loader
 loader.addResource(Resources.ElfSpriteSheet);
 loader.addResource(Resources.SnowmanSpriteSheet);
