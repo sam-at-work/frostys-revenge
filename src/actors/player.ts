@@ -39,6 +39,7 @@ export class Player extends Actor {
   private bananaIdleSprite!: any;
   private walkAnim!: Animation;
   private bananaWalkAnim!: Animation;
+  private bananaSongFading: boolean = false;
 
   constructor(pos: Vector) {
     super({
@@ -182,6 +183,12 @@ export class Player extends Actor {
         this.invincibilityEmitter.pos = this.pos.clone();
       }
 
+      // Start fading banana song 2 seconds before mode ends
+      if (this.bananaTimer <= 2000 && !this.bananaSongFading) {
+        this.bananaSongFading = true;
+        this.fadeBananaSong();
+      }
+
       if (this.bananaTimer <= 0) {
         this.deactivateBanana();
       }
@@ -288,6 +295,7 @@ export class Player extends Actor {
     this.isBanana = true;
     this.isInvincible = true;
     this.bananaTimer = Config.BANANA.DURATION;
+    this.bananaSongFading = false;
 
     // Switch to banana sprite (idle or walk will be set in onPreUpdate)
     this.graphics.use(this.bananaIdleSprite);
@@ -303,8 +311,8 @@ export class Player extends Actor {
     Resources.BackgroundMusic.pause();
     Resources.BossMusic.pause();
 
-    // Play Banana Song starting at 45 seconds
-    Resources.BananaSong.seek(27);
+    // Play Banana Song starting at 28 seconds
+    Resources.BananaSong.seek(28);
     Resources.BananaSong.volume = 0.5;
     Resources.BananaSong.play();
 
@@ -324,9 +332,6 @@ export class Player extends Actor {
     // Snowman faces left by default, so flip if facing right
     this.graphics.flipHorizontal = this.facingDirection === 1;
 
-    // Fade out and stop Banana Song
-    this.fadeBananaSong();
-
     // Stop invincibility particle effect
     if (this.invincibilityEmitter) {
       this.invincibilityEmitter.isEmitting = false;
@@ -336,9 +341,9 @@ export class Player extends Actor {
   }
 
   private fadeBananaSong(): void {
-    // Fade out over 1 second
-    const fadeSteps = 20;
-    const fadeInterval = 50; // 50ms per step = 1 second total
+    // Fade out over 2 seconds (matches the 2 second early fade time)
+    const fadeSteps = 40;
+    const fadeInterval = 50; // 50ms per step = 2 seconds total
     const volumeDecrement = Resources.BananaSong.volume / fadeSteps;
 
     let step = 0;
