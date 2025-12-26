@@ -290,8 +290,8 @@ export class LevelScene extends Scene {
   }
 
   private createPlayer() {
-    // TEMPORARY: Start near Santa for testing
-    const startPos = new Vector(4700, Config.GAME_HEIGHT / 2);
+    // Start at beginning of level
+    const startPos = new Vector(100, Config.GAME_HEIGHT / 2);
     this.player = new Player(startPos);
     this.add(this.player);
   }

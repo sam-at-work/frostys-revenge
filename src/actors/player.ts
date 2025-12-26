@@ -29,7 +29,7 @@ export class Player extends Actor {
   private isBanana: boolean = false;
   private bananaTimer: number = 0;
   private snowballCooldown: number = 0;
-  private facingDirection: number = -1; // 1 = right, -1 = left (start facing left)
+  private facingDirection: number = 1; // 1 = right, -1 = left (start facing right)
   private isOnGround: boolean = false;
   private flashTimer: number = 0;
   private invincibilityEmitter?: ParticleEmitter;
@@ -99,8 +99,9 @@ export class Player extends Actor {
     this.bananaWalkAnim.strategy = AnimationStrategy.Loop;
     this.bananaWalkAnim.scale = new Vector(0.88, 0.88);
 
-    // Set initial sprite
+    // Set initial sprite (facing right)
     this.graphics.use(this.idleSprite);
+    this.graphics.flipHorizontal = true; // Snowman sprite faces left by default, flip to face right
 
     // Set anchor to slightly above bottom so feet are on the ground
     this.graphics.anchor = new Vector(0.5, 0.5);
