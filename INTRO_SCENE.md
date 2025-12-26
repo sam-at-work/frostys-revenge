@@ -1,22 +1,35 @@
-# Intro Scene Documentation
+# Intro & Tagline Scene Documentation
 
 ## Overview
 
-The game now features a dramatic backstory/intro scene that displays before the main gameplay begins. This scene sets up the narrative context for Frosty's quest for revenge against Santa Claus.
+The game now features a two-part narrative sequence before the main gameplay begins:
+1. **Intro Scene** - Displays the backstory explaining Frosty's situation
+2. **Tagline Scene** - A dramatic reveal with the final two lines over the game's background image
 
-## Backstory Text
+This sequence sets up the narrative context for Frosty's quest for revenge against Santa Claus.
+
+## Intro Scene Text
 
 ```
 In the future, Earth's population exploded.
 Too many children. Not enough presents.
 
-Desperate to keep Christmas alive, Santa Claus made a terrible choice —
-he enslaved the Snowmen, forcing them to work endlessly in frozen factories.
+Desperate to keep Christmas alive,
+Santa Claus made a terrible choice —
+he enslaved the Snowmen, forcing them
+to work endlessly in frozen factories.
 
 But Frosty the Snowman managed to escape.
 
-Now armed with snowballs and pure determination, Frosty battles through Santa's Elves on a path straight to Santa himself.
+Now armed with snowballs and
+pure determination, Frosty battles through
+Santa's Elves on a path straight
+to Santa himself.
+```
 
+## Tagline Scene Text
+
+```
 This isn't about saving Christmas.
 
 It's about revenge.
@@ -44,50 +57,80 @@ It's about revenge.
 
 ## User Interaction
 
-### Controls
-- **SPACE** - Skip intro and start the game
-- **Mouse Click** - Skip intro and start the game
+### Intro Scene Controls
+- **SPACE** - Continue to tagline scene
+- **Mouse Click** - Continue to tagline scene
+
+### Tagline Scene Controls
+- **SPACE** - Start the game
+- **Mouse Click** - Start the game
 
 Both inputs work simultaneously for maximum accessibility.
 
 ## Technical Implementation
 
-### File Location
-- **Scene file**: `src/scenes/intro.ts`
-- **Scene name**: `"intro"`
+### File Locations
+- **Intro scene file**: `src/scenes/intro.ts`
+- **Intro scene name**: `"intro"`
+- **Tagline scene file**: `src/scenes/tagline.ts`
+- **Tagline scene name**: `"tagline"`
 
 ### Integration
-The intro scene is registered in `main.ts` and is now the first scene loaded when the game starts:
+Both scenes are registered in `main.ts`:
 ```typescript
 this.addScene("intro", new IntroScene());
+this.addScene("tagline", new TaglineScene());
 this.goToScene("intro");
 ```
 
 ### Scene Flow
 ```
-Game Start → Intro Scene → (Space/Click) → Level Scene → (Win/Death) → Win/GameOver Scene
+Game Start → Intro Scene → (Space/Click) → Tagline Scene → (Space/Click) → Level Scene → (Win/Death) → Win/GameOver Scene
 ```
 
 ## Features
 
-### Dynamic Text Sizing
-Different lines have different font sizes based on narrative importance:
-- Title: 56px
-- "revenge": 32px (largest for impact)
-- "Frosty the Snowman": 26px
-- Standard narrative: 24px
+### Intro Scene Features
 
-### Animation
+#### Dynamic Text Sizing
+Different lines have different font sizes based on narrative importance:
+- Title: 48px
+- "Frosty the Snowman": 22px
+- "revenge" (on tagline scene): 56px
+- Standard narrative: 20px
+
+#### Visual Effects
 - Snowflakes continuously fall and reset when reaching the bottom
-- Instruction text opacity pulses between 50-100% every ~600ms
+- Dark blue winter night background
+- Snow ground at the bottom
+- Instruction text opacity pulses
 - Smooth transitions maintain immersion
 
+### Tagline Scene Features
+
+#### Background
+- Uses the same background image as the loading screen (`/homescreen/image.jpg`)
+- Dark overlay (60% opacity) for text readability
+- Creates dramatic cinematic effect
+
+#### Typography
+- "This isn't about saving Christmas." - 32px, light blue
+- "It's about revenge." - 56px, dramatic red
+- Both lines centered with prominent shadows
+
+#### Animation
+- Pulsing instruction text
+- Clean, focused presentation
+
 ### Cleanup
-Proper event listener cleanup in `onDeactivate()` prevents memory leaks:
+Both scenes properly clean up event listeners in `onDeactivate()` to prevent memory leaks:
 - Keyboard listener removed
 - Mouse click listener removed
+- Scene actors cleared (tagline scene)
 
 ## Customization
+
+### Intro Scene Customization
 
 To modify the backstory text, edit the `storyLines` array in `intro.ts`:
 ```typescript
@@ -103,9 +146,25 @@ To adjust visual styling:
 - **Snowflake count**: Change the loop limit in `createSnowflakes()`
 - **Animation speed**: Adjust `pulseTime` divisor for text pulsing
 
+### Tagline Scene Customization
+
+To modify the tagline text, edit the Label text in `tagline.ts`:
+```typescript
+text: "Your tagline here..."
+```
+
+To adjust visual styling:
+- **Background image**: Change the path in `new ImageSource("/homescreen/image.jpg")`
+- **Overlay darkness**: Adjust the alpha value in `Color.fromRGB(0, 0, 0, 0.6)`
+- **Text colors**: Modify `color` values in the Label definitions
+- **Text sizes**: Adjust `size` values in the Font definitions
+
 ## Notes
 
-- The intro can be skipped immediately - players aren't forced to read it
+- Both intro and tagline screens can be skipped immediately - players aren't forced to read them
 - Text is center-aligned for visual balance
-- The scene uses the same pixel art font as the rest of the game ("Jacquard 12")
-- Cheat codes can be entered during the intro screen as well
+- Both scenes use the same pixel art font as the rest of the game ("Jacquard 12")
+- Cheat codes can be entered during both intro and tagline screens
+- The tagline scene creates a cinematic transition using the game's main background image
+- Total time through both scenes (if reading): ~10-15 seconds
+- Can skip both in under 2 seconds by pressing space twice

@@ -9,6 +9,7 @@ import { LevelScene } from "./scenes/level";
 import { GameOverScene } from "./scenes/gameover";
 import { WinScene } from "./scenes/win";
 import { IntroScene } from "./scenes/intro";
+import { TaglineScene } from "./scenes/tagline";
 import { Resources } from "./resources/resources";
 import { CustomLoader } from "./loaders/CustomLoader";
 
@@ -37,6 +38,7 @@ class Game extends Engine {
   public initialize() {
     // Add scenes
     this.addScene("intro", new IntroScene());
+    this.addScene("tagline", new TaglineScene());
     this.addScene("level", new LevelScene());
     this.addScene("gameover", new GameOverScene());
     this.addScene("win", new WinScene());

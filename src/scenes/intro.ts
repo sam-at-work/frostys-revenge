@@ -70,9 +70,6 @@ export class IntroScene extends Scene {
       "Santa's Elves on a path straight",
       "to Santa himself.",
       "",
-      "This isn't about saving Christmas.",
-      "",
-      "It's about revenge.",
     ];
 
     let yPosition = 130;
@@ -193,16 +190,16 @@ export class IntroScene extends Scene {
     // Create new keyboard listener
     this.keyHandler = (evt) => {
       if (evt.key === Input.Keys.Space) {
-        this.engine.goToScene("level");
+        this.engine.goToScene("tagline");
       }
     };
 
     // Create new click listener
     this.clickHandler = () => {
-      this.engine.goToScene("level");
+      this.engine.goToScene("tagline");
     };
 
-    // Listen for space key or click to start game
+    // Listen for space key or click to continue to tagline
     this.engine.input.keyboard.on("press", this.keyHandler);
     this.engine.input.pointers.primary.on("down", this.clickHandler);
   }
