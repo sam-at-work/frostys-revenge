@@ -120,16 +120,16 @@ export class CustomLoader extends DefaultLoader {
       ctx.fillRect(0, 0, canvasWidth, canvasHeight);
     }
 
-    // Draw loading text
-    ctx.font = "32px Arial, sans-serif";
+    // Draw game title
+    ctx.font = "48px Arial, sans-serif";
     ctx.fillStyle = "white";
     ctx.strokeStyle = "black";
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 4;
     ctx.textAlign = "center";
 
-    const loadingText = "Loading Frosty's Revenge...";
-    ctx.strokeText(loadingText, canvasWidth / 2, canvasHeight / 2 - 80);
-    ctx.fillText(loadingText, canvasWidth / 2, canvasHeight / 2 - 80);
+    const titleText = "Frosty's Revenge";
+    ctx.strokeText(titleText, canvasWidth / 2, canvasHeight / 2 - 80);
+    ctx.fillText(titleText, canvasWidth / 2, canvasHeight / 2 - 80);
 
     // Draw progress bar background
     const barWidth = 400;
