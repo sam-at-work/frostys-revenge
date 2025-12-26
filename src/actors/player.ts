@@ -125,8 +125,11 @@ export class Player extends Actor {
         if (this.isInvincible) {
           other.defeat();
         }
-        // Check if player is jumping on the elf (player is above elf)
-        else if (this.pos.y < other.pos.y && this.vel.y > 0) {
+        // Check if player is jumping on the elf (player bottom is above elf center)
+        else if (
+          this.pos.y + this.height / 2 < other.pos.y - other.height / 4 &&
+          this.vel.y > 0
+        ) {
           // Jump on head - defeat the elf
           other.defeat();
           // Bounce the player up a bit
