@@ -71,7 +71,7 @@ export class Snowball extends Actor {
     // Snowball doesn't have gravity
     this.body.useGravity = false;
 
-    // Set up collision handling with enemies
+    // Set up collision handling with enemies and platforms
     this.on("precollision", (evt) => {
       const other = evt.other;
 
@@ -84,26 +84,33 @@ export class Snowball extends Actor {
         // Remove the snowball
         this.kill();
       }
+      // Check collision with platforms (Fixed collision type)
+      else if (other.body.collisionType === CollisionType.Fixed) {
+        // Create snow puff on impact with platform
+        this.createImpactParticles();
+        // Remove the snowball
+        this.kill();
+      }
     });
   }
 
   private createImpactParticles(): void {
-    // Create a small burst of white/blue particles on impact
+    // Create a big dramatic burst of white/blue particles on impact
     const emitter = new ParticleEmitter({
       pos: this.pos.clone(),
-      width: 5,
-      height: 5,
+      width: 20,
+      height: 20,
       emitterType: EmitterType.Circle,
-      radius: 3,
-      minVel: 30,
-      maxVel: 100,
+      radius: 15,
+      minVel: 100,
+      maxVel: 300,
       minAngle: 0,
       maxAngle: Math.PI * 2,
       isEmitting: true,
-      emitRate: 30,
-      particleLife: 300,
-      maxSize: 4,
-      minSize: 1,
+      emitRate: 150,
+      particleLife: 600,
+      maxSize: 10,
+      minSize: 3,
       beginColor: Color.fromHex(Config.COLORS.SNOWBALL),
       endColor: Color.Transparent,
     });
@@ -113,8 +120,8 @@ export class Snowball extends Actor {
     // Stop emitting after a short burst
     setTimeout(() => {
       emitter.isEmitting = false;
-      setTimeout(() => emitter.kill(), 500);
-    }, 50);
+      setTimeout(() => emitter.kill(), 800);
+    }, 100);
   }
 
   public onPreUpdate(_engine: Engine, delta: number): void {
