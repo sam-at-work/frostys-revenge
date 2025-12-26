@@ -29,29 +29,30 @@ export class CustomLoader extends DefaultLoader {
       this.playButtonElement = document.createElement("button");
       this.playButtonElement.textContent = "Click to Start";
       this.playButtonElement.style.position = "absolute";
-      this.playButtonElement.style.top = "50%";
+      this.playButtonElement.style.top = "60%";
       this.playButtonElement.style.left = "50%";
       this.playButtonElement.style.transform = "translate(-50%, -50%)";
       this.playButtonElement.style.padding = "20px 40px";
       this.playButtonElement.style.fontSize = "24px";
       this.playButtonElement.style.fontWeight = "bold";
-      this.playButtonElement.style.backgroundColor = "#4CAF50";
+      this.playButtonElement.style.backgroundColor = "#ADD8E6";
       this.playButtonElement.style.color = "white";
       this.playButtonElement.style.border = "none";
       this.playButtonElement.style.borderRadius = "10px";
       this.playButtonElement.style.cursor = "pointer";
       this.playButtonElement.style.zIndex = "10000";
       this.playButtonElement.style.boxShadow = "0 4px 6px rgba(0,0,0,0.3)";
+      this.playButtonElement.style.opacity = "0.9";
 
       // Add hover effect
       this.playButtonElement.onmouseenter = () => {
         if (this.playButtonElement) {
-          this.playButtonElement.style.backgroundColor = "#45a049";
+          this.playButtonElement.style.backgroundColor = "#87CEEB";
         }
       };
       this.playButtonElement.onmouseleave = () => {
         if (this.playButtonElement) {
-          this.playButtonElement.style.backgroundColor = "#4CAF50";
+          this.playButtonElement.style.backgroundColor = "#ADD8E6";
         }
       };
 
@@ -120,7 +121,7 @@ export class CustomLoader extends DefaultLoader {
       ctx.fillRect(0, 0, canvasWidth, canvasHeight);
     }
 
-    // Draw game title
+    // Draw game title (higher up)
     ctx.font = "48px Arial, sans-serif";
     ctx.fillStyle = "white";
     ctx.strokeStyle = "black";
@@ -128,14 +129,14 @@ export class CustomLoader extends DefaultLoader {
     ctx.textAlign = "center";
 
     const titleText = "Frosty's Revenge";
-    ctx.strokeText(titleText, canvasWidth / 2, canvasHeight / 2 - 80);
-    ctx.fillText(titleText, canvasWidth / 2, canvasHeight / 2 - 80);
+    ctx.strokeText(titleText, canvasWidth / 2, 100);
+    ctx.fillText(titleText, canvasWidth / 2, 100);
 
-    // Draw progress bar background
+    // Draw progress bar background (bottom of screen)
     const barWidth = 400;
     const barHeight = 40;
     const barX = (canvasWidth - barWidth) / 2;
-    const barY = canvasHeight / 2 - 20;
+    const barY = canvasHeight - 100;
 
     // Progress bar border
     ctx.strokeStyle = "white";
@@ -150,17 +151,8 @@ export class CustomLoader extends DefaultLoader {
     const progress = this.progress; // Value between 0 and 1
     const progressWidth = barWidth * progress;
 
-    // Gradient for progress bar
-    const gradient = ctx.createLinearGradient(
-      barX,
-      barY,
-      barX + barWidth,
-      barY,
-    );
-    gradient.addColorStop(0, "#4CAF50");
-    gradient.addColorStop(1, "#8BC34A");
-
-    ctx.fillStyle = gradient;
+    // Progress bar fill (icy blue)
+    ctx.fillStyle = "#ADD8E6";
     ctx.fillRect(barX, barY, progressWidth, barHeight);
 
     // Draw percentage text
