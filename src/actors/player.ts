@@ -233,14 +233,15 @@ export class Player extends Actor {
     }
 
     // Check if player fell off the world
-    // Only trigger if player is actually falling (positive Y velocity)
+    // Falling into pits bypasses invincibility - always causes death
     if (
       this.pos.y > Config.GAME_HEIGHT + 100 &&
       this.vel.y > 0 &&
       !this.isDying &&
       !this.isRespawning
     ) {
-      this.takeDamage();
+      // Force death regardless of invincibility
+      this.fallDeath();
     }
   }
 
@@ -427,6 +428,26 @@ export class Player extends Actor {
 
   public takeDamage(): void {
     if (this.isInvincible || this.isDying || this.isRespawning) {
+      return;
+    }
+
+    // Play hurt sound
+    Resources.PlayerHurtSound.play(0.5);
+
+    this.lives--;
+
+    if (this.lives <= 0) {
+      // Game over
+      this.scene?.engine.goToScene("gameover");
+    } else {
+      // Trigger respawn
+      this.die();
+    }
+  }
+
+  private fallDeath(): void {
+    // Special death handler for falling into pits - bypasses invincibility
+    if (this.isDying || this.isRespawning) {
       return;
     }
 
