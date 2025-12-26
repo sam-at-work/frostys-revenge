@@ -22,8 +22,7 @@ import { Resources } from "../resources/resources";
 import { Snowball } from "./snowball";
 import { Elf } from "./elf";
 import { Decoration } from "./decoration";
-import type { LevelScene } from "../scenes/level";
-import { SnowParticle } from "../effects/snow";
+import { SnowEmitter } from "../effects/snow";
 
 export class Player extends Actor {
   private lives: number = Config.PLAYER.MAX_LIVES;
@@ -46,6 +45,10 @@ export class Player extends Actor {
   private bananaSongFading: boolean = false;
   private deathFlashTimer?: number;
   private deathScrollTimer?: number;
+
+  // Cheat code tracking for 'boss' teleport
+  private cheatSequence: string[] = [];
+  private cheatTimeout?: number;
 
   constructor(pos: Vector) {
     super({
@@ -154,6 +157,9 @@ export class Player extends Actor {
   }
 
   public onPreUpdate(engine: Engine, delta: number): void {
+    // Check for cheat code input
+    this.checkCheatCode(engine);
+
     // Adjust offset based on mode (banana needs to be higher)
     this.graphics.offset = this.isBanana ? new Vector(0, 0) : new Vector(0, 0);
 
@@ -541,7 +547,7 @@ export class Player extends Actor {
       Resources.RespawnSound.play(0.5);
 
       // Get respawn position from scene (boss area or level start)
-      const levelScene = engine.currentScene as LevelScene;
+      const levelScene = engine.currentScene as any;
       const respawnPos = levelScene.getPlayerRespawnPosition
         ? levelScene.getPlayerRespawnPosition()
         : new Vector(100, Config.GAME_HEIGHT / 2);
@@ -623,6 +629,108 @@ export class Player extends Actor {
       // No flash animation (for fall deaths)
       this.graphics.visible = false;
       startRespawnScroll();
+    }
+  }
+
+  private checkCheatCode(engine: Engine): void {
+    if (this.isDying) return; // Ignore input while dying
+
+    const keyboard = engine.input.keyboard;
+    const keys = ["b", "o", "s", "s"];
+
+    // Detect key presses
+    let pressedKey: string | null = null;
+    if (keyboard.wasPressed(Keys.B)) pressedKey = "b";
+    else if (keyboard.wasPressed(Keys.O)) pressedKey = "o";
+    else if (keyboard.wasPressed(Keys.S)) pressedKey = "s";
+
+    if (pressedKey) {
+      console.log(
+        `🔑 Key pressed: ${pressedKey}, Current sequence: [${this.cheatSequence.join(", ")}]`,
+      );
+      const expectedIndex = this.cheatSequence.length;
+
+      // Check if this is the next key in the sequence
+      if (expectedIndex < keys.length && pressedKey === keys[expectedIndex]) {
+        this.cheatSequence.push(pressedKey);
+        console.log(
+          `✅ Correct! New sequence: [${this.cheatSequence.join(", ")}]`,
+        );
+
+        // Reset timeout
+        if (this.cheatTimeout !== undefined) {
+          clearTimeout(this.cheatTimeout);
+        }
+
+        // Set timeout to reset sequence after 2 seconds
+        this.cheatTimeout = window.setTimeout(() => {
+          this.cheatSequence = [];
+        }, 2000);
+
+        // Check if sequence is complete
+        if (this.cheatSequence.length === keys.length) {
+          console.log("🎮 CHEAT CODE ACTIVATED: Teleporting to boss!");
+          this.teleportToBoss(engine);
+          this.cheatSequence = [];
+          if (this.cheatTimeout !== undefined) {
+            clearTimeout(this.cheatTimeout);
+            this.cheatTimeout = undefined;
+          }
+        }
+      } else if (pressedKey === "b") {
+        // If 'b' is pressed, start new sequence
+        this.cheatSequence = ["b"];
+        if (this.cheatTimeout !== undefined) {
+          clearTimeout(this.cheatTimeout);
+        }
+        this.cheatTimeout = window.setTimeout(() => {
+          this.cheatSequence = [];
+        }, 2000);
+      } else {
+        // Wrong key, reset sequence
+        this.cheatSequence = [];
+        if (this.cheatTimeout !== undefined) {
+          clearTimeout(this.cheatTimeout);
+          this.cheatTimeout = undefined;
+        }
+      }
+    }
+  }
+
+  private teleportToBoss(engine: Engine): void {
+    console.log("🚀 Teleporting to boss area...");
+    const levelScene = engine.currentScene as any;
+    const bossAreaStartX = 4300; // Same as in level.ts
+
+    // Teleport player to boss area
+    this.pos = new Vector(bossAreaStartX + 50, Config.GAME_HEIGHT / 2);
+
+    // Update camera to boss area (align left edge with boss start)
+    const cameraX = bossAreaStartX + Config.GAME_WIDTH / 2;
+    engine.currentScene.camera.pos = new Vector(
+      cameraX,
+      Config.GAME_HEIGHT / 2,
+    );
+
+    // Update maxCameraX to allow being in boss area
+    if (levelScene.maxCameraX !== undefined) {
+      levelScene.maxCameraX = cameraX;
+    }
+
+    // Trigger snow effect if not already started
+    if (!levelScene.snowStarted) {
+      levelScene.snowStarted = true;
+      if (!levelScene.snowEmitter) {
+        levelScene.snowEmitter = new SnowEmitter();
+        levelScene.snowEmitter.initialize(engine);
+      }
+    }
+
+    // Start boss music if not already playing
+    if (!Resources.BossMusic.isPlaying()) {
+      Resources.BackgroundMusic.stop();
+      Resources.BossMusic.play();
+      levelScene.isBossMusicPlaying = true;
     }
   }
 
