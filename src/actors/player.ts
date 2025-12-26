@@ -288,6 +288,10 @@ export class Player extends Actor {
     // Switch to banana sprite (idle or walk will be set in onPreUpdate)
     this.graphics.use(this.bananaIdleSprite);
 
+    // Preserve facing direction when switching sprites
+    // Banana faces right by default, so flip if facing left
+    this.graphics.flipHorizontal = this.facingDirection === -1;
+
     // Create particle effect for invincibility
     this.createInvincibilityEffect();
   }
@@ -299,6 +303,10 @@ export class Player extends Actor {
 
     // Switch back to snowman sprite (idle or walk will be set in onPreUpdate)
     this.graphics.use(this.idleSprite);
+
+    // Preserve facing direction when switching sprites
+    // Snowman faces left by default, so flip if facing right
+    this.graphics.flipHorizontal = this.facingDirection === 1;
 
     // Stop invincibility particle effect
     if (this.invincibilityEmitter) {
