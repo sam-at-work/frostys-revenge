@@ -146,15 +146,48 @@ export class LevelScene extends Scene {
     // Using parallax scrolling - farther mountains (lower z) scroll slower
 
     const mountains = [
-      { resource: Resources.Mountain1, z: -90, x: 500, parallax: 0.9 },
-      { resource: Resources.Mountain2, z: -85, x: 1500, parallax: 0.95 },
-      { resource: Resources.Mountain3, z: -80, x: 2800, parallax: 0.85 },
-      { resource: Resources.Mountain1, z: -90, x: 3800, parallax: 0.93 },
-      { resource: Resources.Mountain2, z: -85, x: 4500, parallax: 0.91 },
+      {
+        resource: Resources.Mountain3,
+        z: -90,
+        x: 500,
+        parallax: 0.9,
+        scale: 0.8,
+      },
+      {
+        resource: Resources.Mountain3,
+        z: -85,
+        x: 1500,
+        parallax: 0.95,
+        scale: 1.0,
+      },
+      {
+        resource: Resources.Mountain3,
+        z: -80,
+        x: 2800,
+        parallax: 0.85,
+        scale: 1.2,
+      },
+      {
+        resource: Resources.Mountain3,
+        z: -90,
+        x: 3800,
+        parallax: 0.93,
+        scale: 1.1,
+      },
+      {
+        resource: Resources.Mountain3,
+        z: -85,
+        x: 4500,
+        parallax: 0.91,
+        scale: 0.9,
+      },
     ];
 
     mountains.forEach((mountain) => {
       const sprite = mountain.resource.toSprite();
+
+      // Apply scale for variety
+      sprite.scale = new Vector(mountain.scale, mountain.scale);
 
       const mountainActor = new Actor({
         pos: new Vector(mountain.x, Config.GAME_HEIGHT),
