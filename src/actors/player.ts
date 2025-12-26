@@ -35,6 +35,8 @@ export class Player extends Actor {
   private invincibilityEmitter?: ParticleEmitter;
   private damageFlashTimer: number = 0;
   private isDamageFlashing: boolean = false;
+  private isDying: boolean = false;
+  private isRespawning: boolean = false;
   private idleSprite!: any;
   private bananaIdleSprite!: any;
   private walkAnim!: Animation;
@@ -205,28 +207,37 @@ export class Player extends Actor {
       }
     }
 
-    // Handle movement input
-    this.handleMovement(engine);
+    // Handle movement input (only if not dying)
+    if (!this.isDying) {
+      this.handleMovement(engine);
 
-    // Handle jumping
-    this.handleJumping(engine);
+      // Handle jumping
+      this.handleJumping(engine);
 
-    // Handle shooting
-    this.handleShooting(engine);
+      // Handle shooting
+      this.handleShooting(engine);
+    }
 
-    // Update camera to follow player
-    engine.currentScene.camera.pos = new Vector(
-      Math.max(
-        Config.GAME_WIDTH / 2,
-        Math.min(this.pos.x, Config.LEVEL.LENGTH - Config.GAME_WIDTH / 2),
-      ),
-      Config.GAME_HEIGHT / 2,
-    );
+    // Update camera to follow player (unless dying - camera scroll handles it)
+    if (!this.isDying) {
+      engine.currentScene.camera.pos = new Vector(
+        Math.max(
+          Config.GAME_WIDTH / 2,
+          Math.min(this.pos.x, Config.LEVEL.LENGTH - Config.GAME_WIDTH / 2),
+        ),
+        Config.GAME_HEIGHT / 2,
+      );
+    }
 
     // Check if player fell off the world
     // Only trigger if player is actually falling (positive Y velocity)
-    if (this.pos.y > Config.GAME_HEIGHT + 100 && this.vel.y > 0) {
-      this.die();
+    if (
+      this.pos.y > Config.GAME_HEIGHT + 100 &&
+      this.vel.y > 0 &&
+      !this.isDying &&
+      !this.isRespawning
+    ) {
+      this.takeDamage();
     }
   }
 
@@ -412,26 +423,93 @@ export class Player extends Actor {
   }
 
   public takeDamage(): void {
-    if (this.isInvincible) {
+    if (this.isInvincible || this.isDying || this.isRespawning) {
       return;
     }
 
     // Play hurt sound
     Resources.PlayerHurtSound.play(0.5);
 
-    this.die();
-  }
-
-  private die(): void {
     this.lives--;
 
     if (this.lives <= 0) {
       // Game over
       this.scene?.engine.goToScene("gameover");
     } else {
-      // Respawn at start
+      // Trigger respawn
+      this.die();
+    }
+  }
+
+  private die(): void {
+    this.isDying = true;
+    this.isRespawning = true;
+
+    // Make player invisible during death animation
+    this.graphics.visible = false;
+
+    // Always deactivate banana mode on death
+    if (this.isBanana) {
+      this.deactivateBanana();
+
+      // Stop banana song immediately
+      Resources.BananaSong.stop();
+      Resources.BananaSong.volume = 0.5; // Reset for next time
+    }
+
+    // Pause player movement during respawn
+    this.vel = Vector.Zero;
+    const engine = this.scene?.engine;
+
+    if (engine) {
+      // Scroll camera back to start (duration in milliseconds)
+      const scrollDuration = 1500;
+      const startCameraX = Config.GAME_WIDTH / 2;
+      const currentCameraX = engine.currentScene.camera.pos.x;
+      const startTime = Date.now();
+
+      // Animate camera scroll
+      const scrollInterval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / scrollDuration, 1);
+
+        // Ease-out animation
+        const easeProgress = 1 - Math.pow(1 - progress, 3);
+
+        // Interpolate camera position
+        const newCameraX =
+          currentCameraX + (startCameraX - currentCameraX) * easeProgress;
+        engine.currentScene.camera.pos = new Vector(
+          newCameraX,
+          Config.GAME_HEIGHT / 2,
+        );
+
+        if (progress >= 1) {
+          clearInterval(scrollInterval);
+
+          // Respawn player at start after scroll completes
+          this.pos = new Vector(100, Config.GAME_HEIGHT / 2);
+          this.vel = Vector.Zero;
+          this.isDying = false;
+          this.isRespawning = false;
+          this.graphics.visible = true; // Make player visible again
+
+          // Resume appropriate music
+          if (
+            !Resources.BackgroundMusic.isPlaying() &&
+            !Resources.BossMusic.isPlaying()
+          ) {
+            Resources.BackgroundMusic.play();
+          }
+        }
+      }, 16); // ~60 FPS
+    } else {
+      // Fallback if no engine
       this.pos = new Vector(100, Config.GAME_HEIGHT / 2);
       this.vel = Vector.Zero;
+      this.isDying = false;
+      this.isRespawning = false;
+      this.graphics.visible = true; // Make player visible again
     }
   }
 
