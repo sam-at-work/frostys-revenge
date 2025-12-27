@@ -279,8 +279,10 @@ export class Santa extends Actor {
     this.acc = Vector.Zero;
 
     // If Santa is in the air, move him to ground immediately
-    if (this.pos.y !== this.groundY) {
-      this.pos = new Vector(this.pos.x, this.groundY);
+    // Add offset to position him properly on the ground (accounting for sprite height)
+    const deathGroundY = this.groundY + 90; // Lower him by 60 pixels
+    if (this.pos.y !== deathGroundY) {
+      this.pos = new Vector(this.pos.x, deathGroundY);
     }
 
     this.isDying = true;
