@@ -81,14 +81,18 @@ export class Snowball extends Actor {
     this.on("precollision", (evt) => {
       const other = evt.other;
 
-      // Check collision with other snowballs
+      // Check collision with other snowballs (only during boss fight)
       if (other instanceof Snowball) {
-        // Both snowballs explode
-        this.createImpactParticles();
-        other.createImpactParticles();
-        Resources.SnowballHitSound.play(0.5);
-        this.kill();
-        other.kill();
+        // Only collide with other snowballs during boss fight (when boss music is playing)
+        const isBossFight = Resources.BossMusic.isPlaying();
+        if (isBossFight) {
+          // Both snowballs explode
+          this.createImpactParticles();
+          other.createImpactParticles();
+          Resources.SnowballHitSound.play(0.5);
+          this.kill();
+          other.kill();
+        }
       }
       // Check collision with elves
       else if (other instanceof Elf && !other.isDefeated()) {
