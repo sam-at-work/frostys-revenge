@@ -273,12 +273,17 @@ export class Santa extends Actor {
     if (this.isDying) return; // Already dying
 
     this.isDying = true;
+
+    // Disable physics completely
+    this.body.collisionType = CollisionType.PreventCollision;
+    this.body.useGravity = false;
     this.vel.x = 0;
     this.vel.y = 0;
-    this.body.useGravity = false;
+    this.acc.x = 0;
+    this.acc.y = 0;
 
     // Move Santa to ground level if he's in the air
-    this.pos.y = this.groundY;
+    this.pos = new Vector(this.pos.x, this.groundY);
 
     // Switch to dying animation
     this.graphics.use(this.dyingAnim);
