@@ -31,6 +31,7 @@ export class LevelScene extends Scene {
   private santaHealthLabel!: Label;
   private snowEmitter?: SnowEmitter;
   private santa!: Santa;
+  private santaSpawned: boolean = false; // Track if Santa has been spawned
   private winZoneX: number = 5100; // X position to reach to win
   private isBossMusicPlaying: boolean = false;
   private bossProximityDistance: number = 800; // Distance from boss to trigger boss music
@@ -55,8 +56,7 @@ export class LevelScene extends Scene {
     // Create enemies
     this.createEnemies();
 
-    // Create boss
-    this.createBoss();
+    // Boss will be created when player enters boss area
 
     // Create power-ups
     this.createPowerUps();
@@ -99,13 +99,15 @@ export class LevelScene extends Scene {
     // Reset snow flag
     this.snowStarted = false;
 
+    // Reset santa spawn flag
+    this.santaSpawned = false;
+
     // Reinitialize the entire scene
     this.createSkyBackground();
     this.createMountainBackgrounds();
     this.createLevel();
     this.createDecorations();
     this.createEnemies();
-    this.createBoss();
     this.createPowerUps();
     this.createPlayer();
     this.createUI();
@@ -508,8 +510,12 @@ export class LevelScene extends Scene {
 
   private createBoss() {
     // Place Santa at the end of the level on boss platform
-    this.santa = new Santa(new Vector(5100, Config.GAME_HEIGHT - 204));
-    this.add(this.santa);
+    // Only spawn if not already spawned
+    if (!this.santaSpawned) {
+      this.santa = new Santa(new Vector(5100, Config.GAME_HEIGHT - 204));
+      this.add(this.santa);
+      this.santaSpawned = true;
+    }
   }
 
   private createPowerUps() {
@@ -680,7 +686,7 @@ export class LevelScene extends Scene {
       this.snowEmitter.update(engine, delta, this.camera.pos.x);
     }
 
-    // Start snow when player reaches boss area (past final pit)
+    // Start snow and spawn Santa when player reaches boss area (past final pit)
     if (
       this.player &&
       this.player.pos.x >= this.bossAreaStartX &&
@@ -689,6 +695,11 @@ export class LevelScene extends Scene {
       this.snowStarted = true;
       this.snowEmitter = new SnowEmitter();
       this.snowEmitter.initialize(engine);
+
+      // Spawn Santa when entering boss area
+      if (!this.santaSpawned) {
+        this.createBoss();
+      }
     }
 
     // Check proximity to boss for music switching

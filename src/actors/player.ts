@@ -732,6 +732,11 @@ export class Player extends Actor {
       }
     }
 
+    // Spawn Santa if not already spawned
+    if (!levelScene.santaSpawned && levelScene.createBoss) {
+      levelScene.createBoss();
+    }
+
     // Start boss music if not already playing
     if (!Resources.BossMusic.isPlaying()) {
       Resources.BackgroundMusic.stop();

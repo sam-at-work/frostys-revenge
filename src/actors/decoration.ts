@@ -3,8 +3,17 @@
  * Frosty's Revenge
  */
 
-import { Actor, Vector, Color, CollisionType, Engine } from "excalibur";
+import {
+  Actor,
+  Vector,
+  Color,
+  CollisionType,
+  Engine,
+  ParticleEmitter,
+  EmitterType,
+} from "excalibur";
 import { Config } from "../config";
+import { Snowball } from "./snowball";
 
 export class Decoration extends Actor {
   private lifetime: number = 0;
@@ -17,7 +26,7 @@ export class Decoration extends Actor {
       width: 24,
       height: 24,
       color: Color.fromHex(Config.COLORS.DECORATION),
-      collisionType: CollisionType.Passive,
+      collisionType: CollisionType.Active,
     });
 
     // Arc trajectory like Bowser's axes with variation for spread
@@ -44,6 +53,56 @@ export class Decoration extends Actor {
 
     // Add some rotation for sparkly effect
     this.angularVelocity = 3; // Radians per second
+
+    // Set up collision handling with snowballs and platforms
+    this.on("precollision", (evt) => {
+      const other = evt.other;
+
+      // Check collision with snowballs
+      if (other instanceof Snowball) {
+        // Both snowball and decoration explode
+        this.explode();
+        other.kill();
+      }
+      // Check collision with platforms (Fixed collision type)
+      else if (other.body.collisionType === CollisionType.Fixed) {
+        // Explode when hitting the ground
+        this.explode();
+      }
+    });
+  }
+
+  private explode(): void {
+    // Create explosion particle effect
+    const emitter = new ParticleEmitter({
+      pos: this.pos.clone(),
+      width: 20,
+      height: 20,
+      emitterType: EmitterType.Circle,
+      radius: 15,
+      minVel: 100,
+      maxVel: 300,
+      minAngle: 0,
+      maxAngle: Math.PI * 2,
+      isEmitting: true,
+      emitRate: 150,
+      particleLife: 600,
+      maxSize: 10,
+      minSize: 3,
+      beginColor: Color.fromHex(Config.COLORS.DECORATION),
+      endColor: Color.Transparent,
+    });
+
+    this.scene?.add(emitter);
+
+    // Stop emitting after a short burst
+    setTimeout(() => {
+      emitter.isEmitting = false;
+      setTimeout(() => emitter.kill(), 800);
+    }, 100);
+
+    // Kill the decoration
+    this.kill();
   }
 
   public onPreUpdate(_engine: Engine, delta: number): void {
