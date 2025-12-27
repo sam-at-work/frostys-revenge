@@ -97,18 +97,18 @@ export class Snowball extends Actor {
         // Santa facing left means his front is on the left side
         // Santa facing right means his front is on the right side
         const hitFromLeft = this.pos.x < other.pos.x;
-        const hitFromBack =
-          (other.facingLeft && !hitFromLeft) ||
-          (!other.facingLeft && hitFromLeft);
+        const hitFromFront =
+          (other.facingLeft && hitFromLeft) ||
+          (!other.facingLeft && !hitFromLeft);
 
-        if (hitFromBack) {
-          // Hit from back - damage Santa
+        if (hitFromFront) {
+          // Hit from front (face) - damage Santa
           other.takeDamage();
           this.createImpactParticles();
           Resources.SnowballHitSound.play(0.5);
           this.kill();
         } else {
-          // Hit from front - bounce off
+          // Hit from back - bounce off
           this.vel.x = -this.vel.x * 0.8; // Reverse and reduce velocity
           Resources.SnowballHitSound.play(0.3); // Quieter sound for deflection
         }

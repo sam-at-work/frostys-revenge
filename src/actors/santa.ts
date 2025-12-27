@@ -31,7 +31,7 @@ export class Santa extends Actor {
   private patrolDistance: number = 400; // Increased from 200 to make him walk more
   private movingRight: boolean = false; // Start moving left
   public facingLeft: boolean = true; // Made public for hit detection
-  private backHitCounter: number = 0; // Count hits from behind
+  private backHitCounter: number = 0; // Count hits to the face (front hits)
 
   constructor(pos: Vector) {
     super({
@@ -186,10 +186,10 @@ export class Santa extends Actor {
       this.health = 0;
     }
 
-    // Increment back hit counter
+    // Increment front hit counter (face hits)
     this.backHitCounter++;
 
-    // Turn around after 3 hits from behind
+    // Turn around after 3 hits to the face
     if (this.backHitCounter >= 3) {
       this.movingRight = !this.movingRight;
       this.facingLeft = !this.facingLeft;
