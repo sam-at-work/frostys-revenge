@@ -45,8 +45,8 @@ export const Config = {
     WIDTH: 80,
     HEIGHT: 172,
     MOVE_SPEED: 60,
-    THROW_INTERVAL: 2000, // milliseconds
-    DECORATION_SPEED: 250,
+    THROW_INTERVAL: 1200, // milliseconds - throw more frequently
+    DECORATION_SPEED: 350, // throw faster/further
     MAX_HEALTH: 20, // Number of snowball hits required to defeat Santa
   },
 
