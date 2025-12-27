@@ -11,7 +11,12 @@ export class Decoration extends Actor {
   private maxLifetime: number = 5000; // 5 seconds
   private arcVelocity: Vector;
 
-  constructor(pos: Vector, direction: number, variation: number = 0) {
+  constructor(
+    pos: Vector,
+    direction: number,
+    variation: number = 0,
+    isLongThrow: boolean = false,
+  ) {
     super({
       pos: pos,
       width: 24,
@@ -28,8 +33,12 @@ export class Decoration extends Actor {
     // Variation creates spread: -2, -1, 0, 1, 2
     const spreadFactor = variation - 2;
 
+    // Pattern: 2 normal throws, then 1 long throw (60% faster)
+    const speedMultiplier = isLongThrow ? 1.6 : 1.0;
+
     // Vary both horizontal and vertical velocities for parabolic spread
-    const horizontalSpeed = baseHorizontalSpeed + spreadFactor * 40;
+    const horizontalSpeed =
+      (baseHorizontalSpeed + spreadFactor * 40) * speedMultiplier;
     const verticalSpeed = baseVerticalSpeed + spreadFactor * 60;
 
     this.arcVelocity = new Vector(horizontalSpeed * direction, verticalSpeed);

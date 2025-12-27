@@ -22,6 +22,7 @@ export class Santa extends Actor {
   private maxHealth: number = Config.SANTA.MAX_HEALTH;
   private throwTimer: number = 0;
   private throwDirection: number = -1; // Throw to the left (toward player)
+  private throwCounter: number = 0; // Track throw pattern: 0,1 = normal, 2 = long
   private jumpTimer: number = 0;
   private jumpInterval: number = 3000; // Jump every 3 seconds
   private groundY: number;
@@ -213,6 +214,9 @@ export class Santa extends Actor {
     const baseOffsetX = -40;
     const baseOffsetY = -10;
 
+    // Determine if this is a long throw (every 3rd throw)
+    const isLongThrow = this.throwCounter === 2;
+
     for (let i = 0; i < numDecorations; i++) {
       // Stagger the throws slightly for a spread effect
       const decorationPos = new Vector(
@@ -225,9 +229,13 @@ export class Santa extends Actor {
         decorationPos,
         this.throwDirection,
         i, // Pass index for variation
+        isLongThrow, // Pass whether this is a long throw
       );
       engine.currentScene.add(decoration);
     }
+
+    // Update throw counter for pattern: 0, 1, 2, then back to 0
+    this.throwCounter = (this.throwCounter + 1) % 3;
   }
 
   public takeDamage(): void {
