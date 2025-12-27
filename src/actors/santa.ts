@@ -32,6 +32,8 @@ export class Santa extends Actor {
   private movingRight: boolean = false; // Start moving left
   public facingLeft: boolean = true; // Made public for hit detection
   private backHitCounter: number = 0; // Count hits to the face (front hits)
+  private damageFlashTimer: number = 0;
+  private isDamageFlashing: boolean = false;
 
   constructor(pos: Vector) {
     super({
@@ -85,6 +87,22 @@ export class Santa extends Actor {
   }
 
   public onPreUpdate(engine: Engine, delta: number): void {
+    // Handle damage flash effect
+    if (this.isDamageFlashing) {
+      this.damageFlashTimer += delta;
+      // Flash between visible and slightly transparent
+      const flashInterval = 100; // Flash every 100ms
+      this.graphics.opacity =
+        Math.floor(this.damageFlashTimer / flashInterval) % 2 === 0 ? 0.3 : 1.0;
+
+      // End flash after 400ms
+      if (this.damageFlashTimer >= 400) {
+        this.isDamageFlashing = false;
+        this.damageFlashTimer = 0;
+        this.graphics.opacity = 1.0;
+      }
+    }
+
     // Prevent Santa from going off the right edge of the level
     const maxX = Config.LEVEL.LENGTH - Config.SANTA.WIDTH / 2 - 10;
     if (this.pos.x > maxX) {
@@ -185,6 +203,10 @@ export class Santa extends Actor {
     if (this.health < 0) {
       this.health = 0;
     }
+
+    // Trigger damage flash effect
+    this.isDamageFlashing = true;
+    this.damageFlashTimer = 0;
 
     // Increment front hit counter (face hits)
     this.backHitCounter++;
