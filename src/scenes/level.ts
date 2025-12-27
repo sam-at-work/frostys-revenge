@@ -28,6 +28,8 @@ export class LevelScene extends Scene {
   private player!: Player;
   private livesLabel!: Label;
   private powerUpLabel!: Label;
+  private santaHealthBarBg!: Actor;
+  private santaHealthBarFg!: Actor;
   private santaHealthLabel!: Label;
   private snowEmitter?: SnowEmitter;
   private santa!: Santa;
@@ -589,13 +591,37 @@ export class LevelScene extends Scene {
     this.powerUpLabel.z = 100;
     this.add(this.powerUpLabel);
 
-    // Santa health bar label (hidden until boss fight starts)
+    // Santa health bar background (dark red)
+    this.santaHealthBarBg = new Actor({
+      pos: new Vector(Config.GAME_WIDTH / 2, 30),
+      width: 400,
+      height: 24,
+      color: Color.fromHex("#8B0000"),
+      anchor: new Vector(0.5, 0.5),
+    });
+    this.santaHealthBarBg.graphics.visible = false;
+    this.santaHealthBarBg.z = 99;
+    this.add(this.santaHealthBarBg);
+
+    // Santa health bar foreground (green) - anchor at left edge
+    this.santaHealthBarFg = new Actor({
+      pos: new Vector(Config.GAME_WIDTH / 2 - 200, 30),
+      width: 400,
+      height: 24,
+      color: Color.fromHex("#00FF00"),
+      anchor: new Vector(0, 0.5),
+    });
+    this.santaHealthBarFg.graphics.visible = false;
+    this.santaHealthBarFg.z = 100;
+    this.add(this.santaHealthBarFg);
+
+    // Santa health bar label - removed, no label needed
     this.santaHealthLabel = new Label({
       text: "",
-      pos: new Vector(Config.GAME_WIDTH / 2, 30),
+      pos: new Vector(Config.GAME_WIDTH / 2, 15),
       font: new Font({
         family: '"Jacquard 12", system-ui',
-        size: 24,
+        size: 20,
         unit: FontUnit.Px,
         color: Color.White,
         shadow: {
@@ -605,7 +631,7 @@ export class LevelScene extends Scene {
         },
       }),
     });
-    this.santaHealthLabel.z = 100;
+    this.santaHealthLabel.z = 101;
     this.add(this.santaHealthLabel);
   }
 
@@ -663,15 +689,21 @@ export class LevelScene extends Scene {
     if (this.player && this.santa && this.isBossMusicPlaying) {
       const currentHealth = this.santa.getHealth();
       const maxHealth = this.santa.getMaxHealth();
+      const healthPercent = currentHealth / maxHealth;
 
-      // Show health bar text
-      this.santaHealthLabel.text = `Santa: ${currentHealth}/${maxHealth}`;
+      // Show health bar
+      this.santaHealthBarBg.graphics.visible = true;
+      this.santaHealthBarFg.graphics.visible = true;
 
-      // Keep health label fixed to camera at top center
-      this.santaHealthLabel.pos = new Vector(
-        this.camera.pos.x,
-        this.camera.pos.y - Config.GAME_HEIGHT / 2 + 30,
-      );
+      // Keep health bar fixed to camera at top center
+      const centerX = this.camera.pos.x;
+      const topY = this.camera.pos.y - Config.GAME_HEIGHT / 2 + 30;
+
+      this.santaHealthBarBg.pos = new Vector(centerX, topY);
+
+      // Position foreground bar at left edge of background and scale to shrink from right to left
+      this.santaHealthBarFg.pos = new Vector(centerX - 200, topY);
+      this.santaHealthBarFg.scale = new Vector(healthPercent, 1);
 
       // Check if Santa is defeated
       if (this.santa.isDefeated() && !this.santa.isDeathAnimationComplete()) {
@@ -684,6 +716,8 @@ export class LevelScene extends Scene {
       }
     } else {
       // Hide health bar when not in boss fight
+      this.santaHealthBarBg.graphics.visible = false;
+      this.santaHealthBarFg.graphics.visible = false;
       this.santaHealthLabel.text = "";
     }
 
