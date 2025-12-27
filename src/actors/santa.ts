@@ -73,14 +73,14 @@ export class Santa extends Actor {
     );
     this.walkAnim.strategy = AnimationStrategy.Loop;
 
-    // Create dying animation sprite sheet (13x12 grid, 128x190px sprites, 150 total with 6 on bottom row)
+    // Create dying animation sprite sheet (13x12 grid, 128x128px sprites, 150 total with 6 on bottom row)
     const dyingSheet = SpriteSheet.fromImageSource({
       image: Resources.SantaDyingSpriteSheet,
       grid: {
         rows: 12,
         columns: 13,
         spriteWidth: 128,
-        spriteHeight: 190,
+        spriteHeight: 128,
       },
     });
 
