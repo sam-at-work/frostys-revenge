@@ -42,6 +42,7 @@ export class LevelScene extends Scene {
   private maxCameraX: number = Config.GAME_WIDTH / 2; // Track max camera position for one-way scrolling
   public snowStarted: boolean = false; // Track if snow has started for boss area
   private justReset: boolean = false; // Flag to force camera reset on first frame
+  public cameraLockedAtBoss: boolean = false; // Track if camera has locked at boss area
 
   public onInitialize() {
     // Create gradient sky background
@@ -105,6 +106,7 @@ export class LevelScene extends Scene {
     // Reset santa spawn flag
     this.santaSpawned = false;
     this.santaIsDying = false;
+    this.cameraLockedAtBoss = false;
 
     // Reinitialize the entire scene
     this.createSkyBackground();
@@ -685,8 +687,8 @@ export class LevelScene extends Scene {
       );
     }
 
-    // Update Santa health bar (show only during boss fight)
-    if (this.player && this.santa && this.isBossMusicPlaying) {
+    // Update Santa health bar (show only when camera is locked at boss area)
+    if (this.player && this.santa && this.cameraLockedAtBoss) {
       const currentHealth = this.santa.getHealth();
       const maxHealth = this.santa.getMaxHealth();
       const healthPercent = currentHealth / maxHealth;
@@ -726,51 +728,37 @@ export class LevelScene extends Scene {
       this.snowEmitter.update(engine, delta, this.camera.pos.x);
     }
 
-    // Start snow and spawn Santa when player reaches boss area (past final pit)
+    // Trigger 1: Player enters boss area (position-based) - music change, banana deactivation
     if (
       this.player &&
       this.player.pos.x >= this.bossAreaStartX &&
-      !this.snowStarted
+      !this.isBossMusicPlaying
     ) {
-      this.snowStarted = true;
-      this.snowEmitter = new SnowEmitter();
-      this.snowEmitter.initialize(engine);
+      // Start boss music
+      Resources.BackgroundMusic.stop();
+      Resources.BossMusic.play();
+      this.isBossMusicPlaying = true;
 
       // Deactivate banana mode when entering boss area
       if (this.player.isInvincibleState()) {
         this.player.deactivateBanana();
       }
+    }
 
-      // Spawn Santa when entering boss area
+    // Trigger 2: Camera locks at end - spawn Santa, show health bar, start snow
+    if (this.cameraLockedAtBoss && !this.snowStarted) {
+      this.snowStarted = true;
+      this.snowEmitter = new SnowEmitter();
+      this.snowEmitter.initialize(engine);
+
+      // Spawn Santa when camera locks at boss area
       if (!this.santaSpawned) {
         this.createBoss();
       }
     }
 
-    // Check proximity to boss for music switching
-    // But don't switch music if banana song is playing
-    if (this.player && this.santa && !Resources.BananaSong.isPlaying()) {
-      const distanceToBoss = Math.abs(this.player.pos.x - this.santa.pos.x);
-
-      // Switch to boss music when close to Santa
-      if (
-        distanceToBoss < this.bossProximityDistance &&
-        !this.isBossMusicPlaying
-      ) {
-        Resources.BackgroundMusic.stop();
-        Resources.BossMusic.play();
-        this.isBossMusicPlaying = true;
-      }
-      // Switch back to normal music if moving away
-      else if (
-        distanceToBoss >= this.bossProximityDistance &&
-        this.isBossMusicPlaying
-      ) {
-        Resources.BossMusic.stop();
-        Resources.BackgroundMusic.play();
-        this.isBossMusicPlaying = false;
-      }
-    }
+    // Note: Boss music switching is now handled by Trigger 1 (position-based)
+    // No need for proximity-based music switching anymore
 
     // Win condition: player runs off the right edge after Santa is defeated
     // Trigger when player is halfway off screen (player width / 2)

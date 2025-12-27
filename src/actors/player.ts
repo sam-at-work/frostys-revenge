@@ -254,14 +254,26 @@ export class Player extends Actor {
         return;
       }
 
+      // Lock camera at boss area once reached
+      const bossAreaCameraX = Config.LEVEL.LENGTH - Config.GAME_WIDTH / 2;
+
       const desiredCameraX = Math.max(
         Config.GAME_WIDTH / 2,
-        Math.min(this.pos.x, Config.LEVEL.LENGTH - Config.GAME_WIDTH / 2),
+        Math.min(this.pos.x, bossAreaCameraX),
       );
 
-      // Only update camera if moving forward
+      // Only update camera if moving forward and not locked at boss area
       if (levelScene.maxCameraX !== undefined) {
-        levelScene.maxCameraX = Math.max(levelScene.maxCameraX, desiredCameraX);
+        const newCameraX = Math.max(levelScene.maxCameraX, desiredCameraX);
+
+        // Once camera reaches boss area, lock it there
+        if (newCameraX >= bossAreaCameraX) {
+          levelScene.maxCameraX = bossAreaCameraX;
+          levelScene.cameraLockedAtBoss = true;
+        } else {
+          levelScene.maxCameraX = newCameraX;
+        }
+
         engine.currentScene.camera.pos = new Vector(
           levelScene.maxCameraX,
           Config.GAME_HEIGHT / 2,
@@ -720,10 +732,10 @@ export class Player extends Actor {
     const levelScene = engine.currentScene as any;
     const bossAreaStartX = 4300; // Same as in level.ts
 
-    // Teleport player to boss area
+    // Teleport player to boss area (between trigger 1 and trigger 2)
     this.pos = new Vector(bossAreaStartX + 50, Config.GAME_HEIGHT / 2);
 
-    // Update camera to boss area (align left edge with boss start)
+    // Update camera to boss area start (NOT locked yet - player can still scroll right)
     const cameraX = bossAreaStartX + Config.GAME_WIDTH / 2;
     engine.currentScene.camera.pos = new Vector(
       cameraX,
@@ -735,26 +747,20 @@ export class Player extends Actor {
       levelScene.maxCameraX = cameraX;
     }
 
-    // Trigger snow effect if not already started
-    if (!levelScene.snowStarted) {
-      levelScene.snowStarted = true;
-      if (!levelScene.snowEmitter) {
-        levelScene.snowEmitter = new SnowEmitter();
-        levelScene.snowEmitter.initialize(engine);
-      }
-    }
-
-    // Spawn Santa if not already spawned
-    if (!levelScene.santaSpawned && levelScene.createBoss) {
-      levelScene.createBoss();
-    }
-
-    // Start boss music if not already playing
+    // Trigger 1: Start boss music and deactivate banana (position-based trigger)
     if (!Resources.BossMusic.isPlaying()) {
       Resources.BackgroundMusic.stop();
       Resources.BossMusic.play();
       levelScene.isBossMusicPlaying = true;
     }
+
+    // Deactivate banana mode when entering boss area
+    if (this.isInvincibleState()) {
+      this.deactivateBanana();
+    }
+
+    // Trigger 2 will happen naturally when player walks right and camera locks at end
+    // Santa will spawn, health bar will appear, snow will start
   }
 
   private cleanupDeathTimers(): void {
