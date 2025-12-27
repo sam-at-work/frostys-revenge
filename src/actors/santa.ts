@@ -92,6 +92,8 @@ export class Santa extends Actor {
       60, // 60ms per frame
     );
     this.dyingAnim.strategy = AnimationStrategy.End;
+    // Scale up dying animation to match walking sprite size (128px -> 190px height = 1.484x scale)
+    this.dyingAnim.scale = new Vector(1.484, 1.484);
 
     // Set initial animation
     this.graphics.use(this.walkAnim);
@@ -278,13 +280,33 @@ export class Santa extends Actor {
     // Switch to dying animation
     this.graphics.use(this.dyingAnim);
 
+    // Adjust vertical offset to keep Santa on ground (dying sprites are shorter, need to move down)
+    // Walking sprite: 190px tall, dying sprite: 128px scaled to 190px
+    // Offset needs to move down by (190-128)/2 scaled = 31 * 1.484 ≈ 46px
+    this.graphics.offset = new Vector(0, 0);
+
     // Calculate total animation duration (149 sprites * 60ms per frame)
     const totalDuration = 149 * 60;
 
-    // Call onComplete when animation finishes
+    // After animation completes, freeze on last frame and fade out
     setTimeout(() => {
-      this.deathAnimationComplete = true;
-      onComplete();
+      // Animation is complete, now freeze and fade out
+      const fadeDuration = 2000; // 2 seconds fade
+      const fadeSteps = 20;
+      const fadeInterval = fadeDuration / fadeSteps;
+      let currentStep = 0;
+
+      const fadeTimer = setInterval(() => {
+        currentStep++;
+        this.graphics.opacity = 1.0 - currentStep / fadeSteps;
+
+        if (currentStep >= fadeSteps) {
+          clearInterval(fadeTimer);
+          this.graphics.opacity = 0;
+          this.deathAnimationComplete = true;
+          onComplete();
+        }
+      }, fadeInterval);
     }, totalDuration);
   }
 

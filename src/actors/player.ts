@@ -221,8 +221,11 @@ export class Player extends Actor {
       }
     }
 
-    // Handle movement input (only if not dying)
-    if (!this.isDying) {
+    // Handle movement input (only if not dying and Santa is not dying)
+    const levelScene = engine.currentScene as any;
+    const santaIsDying = levelScene.santaIsDying || false;
+
+    if (!this.isDying && !santaIsDying) {
       this.handleMovement(engine);
 
       // Handle jumping
@@ -230,6 +233,9 @@ export class Player extends Actor {
 
       // Handle shooting
       this.handleShooting(engine);
+    } else if (santaIsDying) {
+      // Stop player movement when Santa is dying
+      this.vel.x = 0;
     }
 
     // Update camera to follow player (unless dying - camera scroll handles it)

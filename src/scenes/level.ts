@@ -32,6 +32,7 @@ export class LevelScene extends Scene {
   private snowEmitter?: SnowEmitter;
   private santa!: Santa;
   private santaSpawned: boolean = false; // Track if Santa has been spawned
+  private santaIsDying: boolean = false; // Track if Santa is dying
   private winZoneX: number = 5100; // X position to reach to win
   private isBossMusicPlaying: boolean = false;
   private bossProximityDistance: number = 800; // Distance from boss to trigger boss music
@@ -101,6 +102,7 @@ export class LevelScene extends Scene {
 
     // Reset santa spawn flag
     this.santaSpawned = false;
+    this.santaIsDying = false;
 
     // Reinitialize the entire scene
     this.createSkyBackground();
@@ -674,6 +676,7 @@ export class LevelScene extends Scene {
       // Check if Santa is defeated
       if (this.santa.isDefeated() && !this.santa.isDeathAnimationComplete()) {
         // Play death animation, then go to win scene
+        this.santaIsDying = true;
         this.santa.playDeathAnimation(() => {
           engine.goToScene("win");
         });
