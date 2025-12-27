@@ -28,6 +28,7 @@ export class LevelScene extends Scene {
   private player!: Player;
   private livesLabel!: Label;
   private powerUpLabel!: Label;
+  private santaHealthLabel!: Label;
   private snowEmitter?: SnowEmitter;
   private santa!: Santa;
   private winZoneX: number = 5100; // X position to reach to win
@@ -507,7 +508,7 @@ export class LevelScene extends Scene {
 
   private createBoss() {
     // Place Santa at the end of the level on boss platform
-    this.santa = new Santa(new Vector(4700, Config.GAME_HEIGHT - 204));
+    this.santa = new Santa(new Vector(5100, Config.GAME_HEIGHT - 204));
     this.add(this.santa);
   }
 
@@ -579,6 +580,25 @@ export class LevelScene extends Scene {
     });
     this.powerUpLabel.z = 100;
     this.add(this.powerUpLabel);
+
+    // Santa health bar label (hidden until boss fight starts)
+    this.santaHealthLabel = new Label({
+      text: "",
+      pos: new Vector(Config.GAME_WIDTH / 2, 30),
+      font: new Font({
+        family: '"Jacquard 12", system-ui',
+        size: 24,
+        unit: FontUnit.Px,
+        color: Color.White,
+        shadow: {
+          blur: 0,
+          offset: new Vector(2, 2),
+          color: Color.Black,
+        },
+      }),
+    });
+    this.santaHealthLabel.z = 100;
+    this.add(this.santaHealthLabel);
   }
 
   public onPreUpdate(engine: Engine, delta: number) {
@@ -631,6 +651,30 @@ export class LevelScene extends Scene {
       );
     }
 
+    // Update Santa health bar (show only during boss fight)
+    if (this.player && this.santa && this.isBossMusicPlaying) {
+      const currentHealth = this.santa.getHealth();
+      const maxHealth = this.santa.getMaxHealth();
+
+      // Show health bar text
+      this.santaHealthLabel.text = `Santa: ${currentHealth}/${maxHealth}`;
+
+      // Keep health label fixed to camera at top center
+      this.santaHealthLabel.pos = new Vector(
+        this.camera.pos.x,
+        this.camera.pos.y - Config.GAME_HEIGHT / 2 + 30,
+      );
+
+      // Check if Santa is defeated
+      if (this.santa.isDefeated()) {
+        // Trigger win condition
+        engine.goToScene("win");
+      }
+    } else {
+      // Hide health bar when not in boss fight
+      this.santaHealthLabel.text = "";
+    }
+
     // Update snow effect (only during boss fight)
     if (this.snowEmitter) {
       this.snowEmitter.update(engine, delta, this.camera.pos.x);
@@ -672,10 +716,7 @@ export class LevelScene extends Scene {
       }
     }
 
-    // Check win condition
-    if (this.player && this.player.pos.x >= this.winZoneX) {
-      engine.goToScene("win");
-    }
+    // Win condition is now handled by defeating Santa (checked in health bar update above)
   }
 
   public getPlayerRespawnPosition(): Vector {

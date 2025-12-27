@@ -16,6 +16,7 @@ import {
 import { Config } from "../config";
 import { Resources } from "../resources/resources";
 import { Elf } from "./elf";
+import { Santa } from "./santa";
 
 export class Snowball extends Actor {
   private lifetime: number = 0;
@@ -89,6 +90,28 @@ export class Snowball extends Actor {
         Resources.SnowballHitSound.play(0.5);
         // Remove the snowball
         this.kill();
+      }
+      // Check collision with Santa
+      else if (other instanceof Santa && !other.isDefeated()) {
+        // Determine if hit from front or back
+        // Santa facing left means his front is on the left side
+        // Santa facing right means his front is on the right side
+        const hitFromLeft = this.pos.x < other.pos.x;
+        const hitFromBack =
+          (other.facingLeft && !hitFromLeft) ||
+          (!other.facingLeft && hitFromLeft);
+
+        if (hitFromBack) {
+          // Hit from back - damage Santa
+          other.takeDamage();
+          this.createImpactParticles();
+          Resources.SnowballHitSound.play(0.5);
+          this.kill();
+        } else {
+          // Hit from front - bounce off
+          this.vel.x = -this.vel.x * 0.8; // Reverse and reduce velocity
+          Resources.SnowballHitSound.play(0.3); // Quieter sound for deflection
+        }
       }
       // Check collision with platforms (Fixed collision type)
       else if (other.body.collisionType === CollisionType.Fixed) {

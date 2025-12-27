@@ -18,6 +18,8 @@ import { Resources } from "../resources/resources";
 import { Decoration } from "./decoration";
 
 export class Santa extends Actor {
+  private health: number = Config.SANTA.MAX_HEALTH;
+  private maxHealth: number = Config.SANTA.MAX_HEALTH;
   private throwTimer: number = 0;
   private throwDirection: number = -1; // Throw to the left (toward player)
   private jumpTimer: number = 0;
@@ -26,11 +28,10 @@ export class Santa extends Actor {
   private isJumping: boolean = false;
   private walkAnim!: Animation;
   private startX: number;
-  private patrolDistance: number = 200;
+  private patrolDistance: number = 400; // Increased from 200 to make him walk more
   private movingRight: boolean = false; // Start moving left
-  private facingLeft: boolean = true;
-  private platformLeft: number = 4800; // Left edge of platform
-  private platformRight: number = 5000; // Right edge of platform
+  public facingLeft: boolean = true; // Made public for hit detection
+  private backHitCounter: number = 0; // Count hits from behind
 
   constructor(pos: Vector) {
     super({
@@ -84,6 +85,19 @@ export class Santa extends Actor {
   }
 
   public onPreUpdate(engine: Engine, delta: number): void {
+    // Prevent Santa from going off the right edge of the level
+    const maxX = Config.LEVEL.LENGTH - Config.SANTA.WIDTH / 2 - 10;
+    if (this.pos.x > maxX) {
+      this.pos.x = maxX;
+      // Force turn around if trying to go right
+      if (this.movingRight || this.vel.x > 0) {
+        this.movingRight = false;
+        this.facingLeft = true;
+        this.vel.x = -Config.SANTA.MOVE_SPEED;
+        this.graphics.flipHorizontal = false;
+      }
+    }
+
     // Patrol back and forth
     this.patrol();
 
@@ -112,37 +126,34 @@ export class Santa extends Actor {
   }
 
   private patrol(): void {
-    // Check if we've reached the platform edge or patrol boundary
-    const halfWidth = Config.SANTA.WIDTH / 2;
-    const edgeBuffer = 10; // Stay 10px from edge
-
+    // Patrol based on distance from start position
     if (this.movingRight) {
-      // Turn around if reaching right edge of platform or patrol boundary
-      if (
-        this.pos.x + halfWidth >= this.platformRight - edgeBuffer ||
-        this.pos.x >= this.startX + this.patrolDistance
-      ) {
+      // Set velocity to move right
+      this.vel.x = Config.SANTA.MOVE_SPEED;
+
+      // Turn around if reaching right patrol boundary
+      if (this.pos.x >= this.startX + this.patrolDistance) {
         this.movingRight = false;
         this.facingLeft = true;
-        this.vel.x = -Config.SANTA.MOVE_SPEED;
         this.graphics.flipHorizontal = false; // Santa faces left by default
+        this.backHitCounter = 0; // Reset counter on turn
       }
     } else {
-      // Turn around if reaching left edge of platform or patrol boundary
-      if (
-        this.pos.x - halfWidth <= this.platformLeft + edgeBuffer ||
-        this.pos.x <= this.startX - this.patrolDistance
-      ) {
+      // Set velocity to move left
+      this.vel.x = -Config.SANTA.MOVE_SPEED;
+
+      // Turn around if reaching left patrol boundary
+      if (this.pos.x <= this.startX - this.patrolDistance) {
         this.movingRight = true;
         this.facingLeft = false;
-        this.vel.x = Config.SANTA.MOVE_SPEED;
         this.graphics.flipHorizontal = true; // Flip to face right
+        this.backHitCounter = 0; // Reset counter on turn
       }
     }
   }
 
   private jump(): void {
-    this.vel.y = -400; // Jump velocity
+    this.vel.y = -600; // Jump velocity - increased so player can run underneath
     this.isJumping = true;
   }
 
@@ -169,8 +180,38 @@ export class Santa extends Actor {
     }
   }
 
+  public takeDamage(): void {
+    this.health--;
+    if (this.health < 0) {
+      this.health = 0;
+    }
+
+    // Increment back hit counter
+    this.backHitCounter++;
+
+    // Turn around after 3 hits from behind
+    if (this.backHitCounter >= 3) {
+      this.movingRight = !this.movingRight;
+      this.facingLeft = !this.facingLeft;
+      this.graphics.flipHorizontal = !this.graphics.flipHorizontal;
+      this.backHitCounter = 0; // Reset counter after turning
+    }
+  }
+
+  public isDefeated(): boolean {
+    return this.health <= 0;
+  }
+
+  public getHealth(): number {
+    return this.health;
+  }
+
+  public getMaxHealth(): number {
+    return this.maxHealth;
+  }
+
   public isInvulnerable(): boolean {
-    // Santa cannot be defeated - player must get past him
-    return true;
+    // Santa can now be defeated via snowball hits
+    return this.isDefeated();
   }
 }
