@@ -64,6 +64,7 @@ loader.addResource(Resources.ElfSpriteSheet);
 loader.addResource(Resources.SnowmanSpriteSheet);
 loader.addResource(Resources.BananaSpriteSheet);
 loader.addResource(Resources.SantaSpriteSheet);
+loader.addResource(Resources.SantaDyingSpriteSheet);
 
 // Add sound effects to loader
 loader.addResource(Resources.JumpSound);

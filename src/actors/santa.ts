@@ -27,6 +27,7 @@ export class Santa extends Actor {
   private groundY: number;
   private isJumping: boolean = false;
   private walkAnim!: Animation;
+  private dyingAnim!: Animation;
   private startX: number;
   private patrolDistance: number = 400; // Increased from 200 to make him walk more
   private movingRight: boolean = false; // Start moving left
@@ -34,6 +35,8 @@ export class Santa extends Actor {
   private backHitCounter: number = 0; // Count hits to the face (front hits)
   private damageFlashTimer: number = 0;
   private isDamageFlashing: boolean = false;
+  private isDying: boolean = false;
+  private deathAnimationComplete: boolean = false;
 
   constructor(pos: Vector) {
     super({
@@ -70,6 +73,26 @@ export class Santa extends Actor {
     );
     this.walkAnim.strategy = AnimationStrategy.Loop;
 
+    // Create dying animation sprite sheet (13x12 grid, 128x190px sprites, 150 total with 6 on bottom row)
+    const dyingSheet = SpriteSheet.fromImageSource({
+      image: Resources.SantaDyingSpriteSheet,
+      grid: {
+        rows: 12,
+        columns: 13,
+        spriteWidth: 128,
+        spriteHeight: 190,
+      },
+    });
+
+    // Create dying animation using all sprites (11 full rows of 13 + 6 from last row = 149 sprites)
+    const dyingSprites = [...range(0, 142), 143, 144, 145, 146, 147, 148];
+    this.dyingAnim = Animation.fromSpriteSheet(
+      dyingSheet,
+      dyingSprites,
+      60, // 60ms per frame
+    );
+    this.dyingAnim.strategy = AnimationStrategy.End;
+
     // Set initial animation
     this.graphics.use(this.walkAnim);
 
@@ -87,6 +110,13 @@ export class Santa extends Actor {
   }
 
   public onPreUpdate(engine: Engine, delta: number): void {
+    // If dying, stop all movement and wait for animation to complete
+    if (this.isDying) {
+      this.vel.x = 0;
+      this.vel.y = 0;
+      return;
+    }
+
     // Handle damage flash effect
     if (this.isDamageFlashing) {
       this.damageFlashTimer += delta;
@@ -235,5 +265,30 @@ export class Santa extends Actor {
   public isInvulnerable(): boolean {
     // Santa can now be defeated via snowball hits
     return this.isDefeated();
+  }
+
+  public playDeathAnimation(onComplete: () => void): void {
+    if (this.isDying) return; // Already dying
+
+    this.isDying = true;
+    this.vel.x = 0;
+    this.vel.y = 0;
+    this.body.useGravity = false;
+
+    // Switch to dying animation
+    this.graphics.use(this.dyingAnim);
+
+    // Calculate total animation duration (149 sprites * 60ms per frame)
+    const totalDuration = 149 * 60;
+
+    // Call onComplete when animation finishes
+    setTimeout(() => {
+      this.deathAnimationComplete = true;
+      onComplete();
+    }, totalDuration);
+  }
+
+  public isDeathAnimationComplete(): boolean {
+    return this.deathAnimationComplete;
   }
 }

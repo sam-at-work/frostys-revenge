@@ -672,9 +672,11 @@ export class LevelScene extends Scene {
       );
 
       // Check if Santa is defeated
-      if (this.santa.isDefeated()) {
-        // Trigger win condition
-        engine.goToScene("win");
+      if (this.santa.isDefeated() && !this.santa.isDeathAnimationComplete()) {
+        // Play death animation, then go to win scene
+        this.santa.playDeathAnimation(() => {
+          engine.goToScene("win");
+        });
       }
     } else {
       // Hide health bar when not in boss fight

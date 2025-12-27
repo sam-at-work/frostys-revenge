@@ -27,6 +27,11 @@ export const Resources = {
   // Santa sprite sheet (768x1140, 6x6 grid, 128x190px sprites, 34 total)
   SantaSpriteSheet: new ImageSource("/santa/sprite_sheet_128_5px.png"),
 
+  // Santa dying sprite sheet (1664x2280, 13x12 grid, 128x190px sprites, 150 total with 6 on bottom row)
+  SantaDyingSpriteSheet: new ImageSource(
+    "/santa/sprite_sheet_128_5px-dying.png",
+  ),
+
   // ===== SOUND EFFECTS =====
   // You can download free game sound effects from:
   // - https://freesound.org/
