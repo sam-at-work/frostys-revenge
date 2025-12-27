@@ -304,6 +304,8 @@ export class Santa extends Actor {
           clearInterval(fadeTimer);
           this.graphics.opacity = 0;
           this.deathAnimationComplete = true;
+          // Remove Santa's collision box from the scene
+          this.kill();
           onComplete();
         }
       }, fadeInterval);
