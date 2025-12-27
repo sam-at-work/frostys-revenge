@@ -149,9 +149,15 @@ export class Player extends Actor {
 
       // Check collision with Santa's decorations
       if (other instanceof Decoration && !this.isInvincible) {
-        // Decorations always damage the player (unless invincible)
-        this.takeDamage();
-        other.kill();
+        // Check if Santa is dying - player is invincible during death animation
+        const levelScene = this.scene as any;
+        const santaIsDying = levelScene?.santaIsDying || false;
+
+        if (!santaIsDying) {
+          // Decorations damage the player (unless invincible or Santa is dying)
+          this.takeDamage();
+          other.kill();
+        }
       }
     });
   }

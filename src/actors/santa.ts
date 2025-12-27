@@ -277,6 +277,9 @@ export class Santa extends Actor {
     this.vel.y = 0;
     this.body.useGravity = false;
 
+    // Move Santa to ground level if he's in the air
+    this.pos.y = this.groundY;
+
     // Switch to dying animation
     this.graphics.use(this.dyingAnim);
 
