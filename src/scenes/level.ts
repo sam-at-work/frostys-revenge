@@ -773,11 +773,12 @@ export class LevelScene extends Scene {
     }
 
     // Win condition: player runs off the right edge after Santa is defeated
+    // Trigger when player is halfway off screen (player width / 2)
     if (
       this.player &&
       this.santa &&
       this.santa.isDeathAnimationComplete() &&
-      this.player.pos.x > Config.LEVEL.LENGTH + 100
+      this.player.pos.x > Config.LEVEL.LENGTH + this.player.width / 2
     ) {
       engine.goToScene("win");
     }

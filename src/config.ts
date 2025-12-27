@@ -47,7 +47,7 @@ export const Config = {
     MOVE_SPEED: 60,
     THROW_INTERVAL: 1200, // milliseconds - throw more frequently
     DECORATION_SPEED: 350, // throw faster/further
-    MAX_HEALTH: 1, // Number of snowball hits required to defeat Santa
+    MAX_HEALTH: 20, // Number of snowball hits required to defeat Santa
   },
 
   // Power-up settings
