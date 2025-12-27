@@ -203,7 +203,7 @@ export class Santa extends Actor {
   }
 
   private jump(): void {
-    this.vel.y = -600; // Jump velocity - increased so player can run underneath
+    this.vel.y = -400; // Jump velocity - lower so player cannot run underneath
     this.isJumping = true;
   }
 

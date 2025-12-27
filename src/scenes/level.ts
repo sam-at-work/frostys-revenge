@@ -675,10 +675,11 @@ export class LevelScene extends Scene {
 
       // Check if Santa is defeated
       if (this.santa.isDefeated() && !this.santa.isDeathAnimationComplete()) {
-        // Play death animation, then go to win scene
+        // Play death animation, then allow player to run off screen
         this.santaIsDying = true;
         this.santa.playDeathAnimation(() => {
-          engine.goToScene("win");
+          // After death animation completes, allow player to move again
+          this.santaIsDying = false;
         });
       }
     } else {
@@ -732,7 +733,15 @@ export class LevelScene extends Scene {
       }
     }
 
-    // Win condition is now handled by defeating Santa (checked in health bar update above)
+    // Win condition: player runs off the right edge after Santa is defeated
+    if (
+      this.player &&
+      this.santa &&
+      this.santa.isDeathAnimationComplete() &&
+      this.player.pos.x > Config.LEVEL.LENGTH + 100
+    ) {
+      engine.goToScene("win");
+    }
   }
 
   public getPlayerRespawnPosition(): Vector {

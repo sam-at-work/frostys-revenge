@@ -291,10 +291,6 @@ export class Player extends Actor {
       engine.currentScene.camera.pos.x - Config.GAME_WIDTH / 2;
     const atLeftBoundary = this.pos.x <= cameraLeftEdge + this.width / 2;
 
-    // Check if player is at right boundary (end of level)
-    const maxX = Config.LEVEL.LENGTH - this.width / 2;
-    const atRightBoundary = this.pos.x >= maxX;
-
     // Left movement (Arrow Left or A) - disabled if at left boundary
     if (
       (keyboard.isHeld(Keys.Left) || keyboard.isHeld(Keys.A)) &&
@@ -306,11 +302,8 @@ export class Player extends Actor {
       this.graphics.flipHorizontal = this.isBanana ? true : false;
     }
 
-    // Right movement (Arrow Right or D) - disabled if at right boundary
-    if (
-      (keyboard.isHeld(Keys.Right) || keyboard.isHeld(Keys.D)) &&
-      !atRightBoundary
-    ) {
+    // Right movement (Arrow Right or D)
+    if (keyboard.isHeld(Keys.Right) || keyboard.isHeld(Keys.D)) {
       velocityX = Config.PLAYER.MOVE_SPEED;
       this.facingDirection = 1;
       // Snowman faces left by default, banana faces right by default
@@ -318,11 +311,6 @@ export class Player extends Actor {
     }
 
     this.vel.x = velocityX;
-
-    // Clamp player position to right boundary
-    if (this.pos.x > maxX) {
-      this.pos.x = maxX;
-    }
   }
 
   private handleJumping(engine: Engine): void {
