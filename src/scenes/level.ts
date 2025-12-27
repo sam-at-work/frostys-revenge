@@ -702,6 +702,11 @@ export class LevelScene extends Scene {
       this.snowEmitter = new SnowEmitter();
       this.snowEmitter.initialize(engine);
 
+      // Deactivate banana mode when entering boss area
+      if (this.player.isInvincibleState()) {
+        this.player.deactivateBanana();
+      }
+
       // Spawn Santa when entering boss area
       if (!this.santaSpawned) {
         this.createBoss();

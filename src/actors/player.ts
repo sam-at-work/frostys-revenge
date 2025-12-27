@@ -396,7 +396,7 @@ export class Player extends Actor {
     }
   }
 
-  private deactivateBanana(): void {
+  public deactivateBanana(): void {
     this.isBanana = false;
     this.isInvincible = false;
     this.graphics.opacity = 1; // Reset opacity
