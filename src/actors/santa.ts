@@ -272,25 +272,21 @@ export class Santa extends Actor {
   public playDeathAnimation(onComplete: () => void): void {
     if (this.isDying) return; // Already dying
 
-    this.isDying = true;
-
-    // Disable physics completely
-    this.body.collisionType = CollisionType.PreventCollision;
+    // Completely freeze physics first
+    this.body.collisionType = CollisionType.Fixed;
     this.body.useGravity = false;
-    this.vel.x = 0;
-    this.vel.y = 0;
-    this.acc.x = 0;
-    this.acc.y = 0;
+    this.vel = Vector.Zero;
+    this.acc = Vector.Zero;
 
-    // Move Santa to ground level if he's in the air
-    this.pos = new Vector(this.pos.x, this.groundY);
+    // If Santa is in the air, move him to ground immediately
+    if (this.pos.y !== this.groundY) {
+      this.pos = new Vector(this.pos.x, this.groundY);
+    }
+
+    this.isDying = true;
 
     // Switch to dying animation
     this.graphics.use(this.dyingAnim);
-
-    // Adjust vertical offset to keep Santa on ground (dying sprites are shorter, need to move down)
-    // Walking sprite: 190px tall, dying sprite: 128px scaled to 190px
-    // Offset needs to move down by (190-128)/2 scaled = 31 * 1.484 ≈ 46px
     this.graphics.offset = new Vector(0, 0);
 
     // Calculate total animation duration (149 sprites * 60ms per frame)
