@@ -33,8 +33,8 @@ export class Decoration extends Actor {
     // Variation creates spread: -2, -1, 0, 1, 2
     const spreadFactor = variation - 2;
 
-    // Pattern: 2 normal throws, then 1 long throw (60% faster)
-    const speedMultiplier = isLongThrow ? 1.6 : 1.0;
+    // Pattern: 2 normal throws, then 1 long throw (100% faster - travels much further)
+    const speedMultiplier = isLongThrow ? 2.0 : 1.0;
 
     // Vary both horizontal and vertical velocities for parabolic spread
     const horizontalSpeed =
