@@ -179,8 +179,8 @@ export class Santa extends Actor {
   private patrol(): void {
     // Patrol based on distance from start position
     if (this.movingRight) {
-      // Set velocity to move right
-      this.vel.x = Config.SANTA.MOVE_SPEED;
+      // Set velocity to move right - faster to make it harder for player
+      this.vel.x = Config.SANTA.MOVE_SPEED * 1.5;
 
       // Turn around if reaching right patrol boundary
       if (this.pos.x >= this.startX + this.patrolDistance) {
@@ -248,16 +248,10 @@ export class Santa extends Actor {
     this.isDamageFlashing = true;
     this.damageFlashTimer = 0;
 
-    // Increment front hit counter (face hits)
+    // Increment front hit counter (face hits) for tracking purposes
     this.backHitCounter++;
 
-    // Turn around after 3 hits to the face
-    if (this.backHitCounter >= 3) {
-      this.movingRight = !this.movingRight;
-      this.facingLeft = !this.facingLeft;
-      this.graphics.flipHorizontal = !this.graphics.flipHorizontal;
-      this.backHitCounter = 0; // Reset counter after turning
-    }
+    // Removed: turn-around logic on hits - Santa only turns at patrol boundaries
   }
 
   public isDefeated(): boolean {
