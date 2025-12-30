@@ -38,7 +38,7 @@ export class LevelScene extends Scene {
   private isBossMusicPlaying: boolean = false;
   // private bossProximityDistance: number = 800; // Distance from boss to trigger boss music
   private bossAreaStartX: number = 4300; // X position where boss area begins
-  // private maxCameraX: number = Config.GAME_WIDTH / 2; // Track max camera position for one-way scrolling
+  public maxCameraX: number = Config.GAME_WIDTH / 2; // Track max camera position for one-way scrolling
   public snowStarted: boolean = false; // Track if snow has started for boss area
   private justReset: boolean = false; // Flag to force camera reset on first frame
   public cameraLockedAtBoss: boolean = false; // Track if camera has locked at boss area
@@ -94,7 +94,7 @@ export class LevelScene extends Scene {
     this.isBossMusicPlaying = false;
 
     // Reset max camera position
-    // this.maxCameraX = Config.GAME_WIDTH / 2;
+    this.maxCameraX = Config.GAME_WIDTH / 2;
 
     // Set flag to force camera reset on first frame
     this.justReset = true;
@@ -643,7 +643,7 @@ export class LevelScene extends Scene {
         Config.GAME_WIDTH / 2,
         Config.GAME_HEIGHT / 2,
       );
-      // this.maxCameraX = Config.GAME_WIDTH / 2;
+      this.maxCameraX = Config.GAME_WIDTH / 2;
       this.justReset = false;
     }
 
