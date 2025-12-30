@@ -3,6 +3,7 @@ import { resolve } from "path";
 
 export default defineConfig({
   root: ".",
+  base: "/frostys-revenge/", // default
   publicDir: "public",
   build: {
     outDir: "dist",
