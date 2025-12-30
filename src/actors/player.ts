@@ -22,7 +22,7 @@ import { Resources } from "../resources/resources";
 import { Snowball } from "./snowball";
 import { Elf } from "./elf";
 import { Decoration } from "./decoration";
-import { SnowEmitter } from "../effects/snow";
+// import { SnowEmitter } from "../effects/snow";
 
 export class Player extends Actor {
   private lives: number = Config.PLAYER.MAX_LIVES;
@@ -32,7 +32,7 @@ export class Player extends Actor {
   private snowballCooldown: number = 0;
   private facingDirection: number = 1; // 1 = right, -1 = left (start facing right)
   private isOnGround: boolean = false;
-  private flashTimer: number = 0;
+  // private flashTimer: number = 0;
   private invincibilityEmitter?: ParticleEmitter;
   private damageFlashTimer: number = 0;
   private isDamageFlashing: boolean = false;

@@ -52,11 +52,11 @@ export class SnowEmitter {
   private emitTimer: number = 0;
   private emitRate: number = 80; // Boss fight snow - heavier snowfall
 
-  public initialize(engine: Engine): void {
+  public initialize(_engine: Engine): void {
     // No pre-spawning - snow will start falling from top naturally
   }
 
-  public update(engine: Engine, delta: number, cameraX: number): void {
+  public update(engine: Engine, delta: number, _cameraX: number): void {
     this.emitTimer += delta;
 
     if (this.emitTimer >= this.emitRate) {

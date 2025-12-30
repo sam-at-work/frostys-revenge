@@ -4,25 +4,24 @@
  */
 
 import {
-  Scene,
-  Engine,
   Actor,
-  Vector,
+  CollisionType,
   Color,
-  Label,
+  Engine,
   Font,
   FontUnit,
-  CollisionType,
-  ImageSource,
+  Label,
+  Scene,
+  Vector,
 } from "excalibur";
-import { Config } from "../config";
-import { Resources } from "../resources/resources";
-import { Player } from "../actors/player";
 import { Elf } from "../actors/elf";
+import { Player } from "../actors/player";
 import { Santa } from "../actors/santa";
+import { Config } from "../config";
 import { SnowEmitter } from "../effects/snow";
-import { BananaBlock } from "../powerups/bananablock";
 import { TileType, createTile } from "../graphics/tiles";
+import { BananaBlock } from "../powerups/bananablock";
+import { Resources } from "../resources/resources";
 
 export class LevelScene extends Scene {
   private player!: Player;
@@ -34,12 +33,12 @@ export class LevelScene extends Scene {
   private snowEmitter?: SnowEmitter;
   private santa!: Santa;
   private santaSpawned: boolean = false; // Track if Santa has been spawned
-  private santaIsDying: boolean = false; // Track if Santa is dying
-  private winZoneX: number = 5100; // X position to reach to win
+  // private santaIsDying: boolean = false; // Track if Santa is dying
+  // private winZoneX: number = 5100; // X position to reach to win
   private isBossMusicPlaying: boolean = false;
-  private bossProximityDistance: number = 800; // Distance from boss to trigger boss music
+  // private bossProximityDistance: number = 800; // Distance from boss to trigger boss music
   private bossAreaStartX: number = 4300; // X position where boss area begins
-  private maxCameraX: number = Config.GAME_WIDTH / 2; // Track max camera position for one-way scrolling
+  // private maxCameraX: number = Config.GAME_WIDTH / 2; // Track max camera position for one-way scrolling
   public snowStarted: boolean = false; // Track if snow has started for boss area
   private justReset: boolean = false; // Flag to force camera reset on first frame
   public cameraLockedAtBoss: boolean = false; // Track if camera has locked at boss area
@@ -95,7 +94,7 @@ export class LevelScene extends Scene {
     this.isBossMusicPlaying = false;
 
     // Reset max camera position
-    this.maxCameraX = Config.GAME_WIDTH / 2;
+    // this.maxCameraX = Config.GAME_WIDTH / 2;
 
     // Set flag to force camera reset on first frame
     this.justReset = true;
@@ -105,7 +104,7 @@ export class LevelScene extends Scene {
 
     // Reset santa spawn flag
     this.santaSpawned = false;
-    this.santaIsDying = false;
+    // this.santaIsDying = false;
     this.cameraLockedAtBoss = false;
 
     // Reinitialize the entire scene
@@ -432,7 +431,7 @@ export class LevelScene extends Scene {
     color: Color,
     scale: number = 1,
   ) {
-    const treeHeight = 60 * scale;
+    // const treeHeight = 60 * scale;
     const treeWidth = 40 * scale;
 
     // Tree trunk (brown rectangle)
@@ -644,7 +643,7 @@ export class LevelScene extends Scene {
         Config.GAME_WIDTH / 2,
         Config.GAME_HEIGHT / 2,
       );
-      this.maxCameraX = Config.GAME_WIDTH / 2;
+      // this.maxCameraX = Config.GAME_WIDTH / 2;
       this.justReset = false;
     }
 
@@ -710,10 +709,10 @@ export class LevelScene extends Scene {
       // Check if Santa is defeated
       if (this.santa.isDefeated() && !this.santa.isDeathAnimationComplete()) {
         // Play death animation, then allow player to run off screen
-        this.santaIsDying = true;
+        // this.santaIsDying = true;
         this.santa.playDeathAnimation(() => {
           // After death animation completes, allow player to move again
-          this.santaIsDying = false;
+          // this.santaIsDying = false;
         });
       }
     } else {
