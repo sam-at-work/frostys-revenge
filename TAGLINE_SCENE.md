@@ -69,7 +69,7 @@ Intro Scene → [SPACE/Click] → Tagline Scene → [SPACE/Click] → Game Start
 
 ```typescript
 // Background image loading
-this.backgroundImage = new ImageSource("/homescreen/image.jpg");
+this.backgroundImage = new ImageSource("homescreen/image.jpg");
 await this.backgroundImage.load();
 
 // Scale to cover screen

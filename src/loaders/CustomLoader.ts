@@ -20,7 +20,7 @@ export class CustomLoader extends DefaultLoader {
     this.backgroundImage.onload = () => {
       this.imageLoaded = true;
     };
-    this.backgroundImage.src = "/homescreen/image.jpg";
+    this.backgroundImage.src = "homescreen/image.jpg";
 
     // Load the custom font
     this.loadFont();

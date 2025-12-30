@@ -25,7 +25,7 @@ export class TaglineScene extends Scene {
 
   public onInitialize() {
     // Load background image
-    this.backgroundImage = new ImageSource("/homescreen/image.jpg");
+    this.backgroundImage = new ImageSource("homescreen/image.jpg");
   }
 
   public async onActivate() {
