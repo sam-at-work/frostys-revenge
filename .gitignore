@@ -1,6 +1,6 @@
 # Dependencies
 node_modules/
-package-lock.json
+#package-lock.json # was here be defauly, but we need it to run github actions
 yarn.lock
 
 /Excalibur
